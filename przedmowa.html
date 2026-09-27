@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TERJ i badanie numeryczne — dwa rejestry, jedna przedmowa</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#1f2328; --muted:#5b636b; --link:#1f5fa8; --line:#dcd8cf; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#16181b; --fg:#e6e3dc; --muted:#a0a6ad; --link:#7db3f0; --line:#33373c; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font:18px/1.6 Georgia, "Times New Roman", serif; }
+  main { max-width:44rem; margin:0 auto; padding:2.5rem 1rem 3rem; }
+  h1 { font-size:2rem; margin:0 0 1rem; }
+  h2 { font-size:1.25rem; margin:2rem 0 .5rem; padding-bottom:.25rem; border-bottom:1px solid var(--line); }
+  a { color:var(--link); }
+  hr { border:0; border-top:1px solid var(--line); margin:2rem 0; }
+  .tabela { overflow-x:auto; }
+  table { border-collapse:collapse; width:100%; font-size:.9rem; }
+  th, td { border:1px solid var(--line); padding:.4rem .6rem; text-align:left; vertical-align:top; }
+  th { background:rgba(127,127,127,.12); }
+  code { font-size:.85em; }
+  nav, footer { color:var(--muted); font-size:.9rem; }
+  footer { margin-top:3rem; padding-top:1rem; border-top:1px solid var(--line); }
+</style>
+</head>
+<body>
+<main>
+  <nav><a href="index.html">← Spis treści</a></nav>
+  <h1>TERJ i badanie numeryczne — dwa rejestry, jedna przedmowa</h1>
+  <p>Ten fragment otwiera oba repozytoria naraz: esej i postulat TERJ oraz numeryczne badanie zer funkcji dzeta Riemanna prowadzone pod jego inspiracją. Oba wyrastają z tego samego pytania o to, czy relacja i geometria są bardziej fundamentalne niż substancja — ale odpowiadają na nie w dwóch różnych rejestrach, których celowo nie mieszamy.</p>
+  <p>Pierwszy rejestr, esej TERJ, jest twórczą syntezą intelektualną: odczytaniem semantyki hebrajskiej, fizyki pól kwantowych, termodynamiki nieliniowej i mechaniki relacyjnej jako jednego języka. Jego wartość leży w spójności metaforycznej i w tym, że raz po razu trafia w struktury, które nauka opisała już z innej strony. Nie jest to twierdzenie empiryczne i nie rości sobie praw dowodu — czytaj go jako filozofię, nie jako fizykę.</p>
+  <p>Drugi rejestr, dziennik badawczy, jest czymś innym: numerycznym testem konkretnych, możliwych do obalenia przewidywań, prowadzonym z pełną gotowością na wynik negatywny. Żadne zdanie merytoryczne w tym dzienniku nie stoi bez znacznika mówiącego, ile jest warte.</p>
+  <h2>Znaczniki wiarygodności</h2>
+  <div class="tabela"><table>
+    <thead><tr><th>Znacznik</th><th>Znaczenie</th></tr></thead>
+    <tbody>
+      <tr><td><code>[TWIERDZENIE]</code></td><td>wynik dowiedziony w literaturze matematycznej lub fizycznej, cytowany ze źródła</td></tr>
+      <tr><td><code>[FAKT NUMERYCZNY]</code></td><td>własny, odtwarzalny wynik obliczeniowy — z komendą, która go odtwarza</td></tr>
+      <tr><td><code>[HIPOTEZA]</code></td><td>zdanie testowalne; status podany wprost, także gdy wynik jest negatywny</td></tr>
+      <tr><td><code>[ANALOGIA TERJ]</code></td><td>odczytanie pojęciowe łączące wynik z ramą TERJ — interpretacja, nie dowód</td></tr>
+    </tbody>
+  </table></div>
+  <h2>Stan przewidywań (uzupełniany na bieżąco)</h2>
+  <div class="tabela"><table>
+    <thead><tr><th>Przewidywanie TERJ</th><th>Test</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>Poziomy energetyczne zer dzety odpowiadają widmu układu chaotycznego (macierze losowe)</td><td>Test 1</td><td><code>[FAKT NUMERYCZNY]</code> potwierdzone, zgodne z Bogomolny i in. 2006</td></tr>
+      <tr><td>Efektywna liczba stopni swobody rośnie z wysokością zer</td><td>Test 2</td><td><code>[FAKT NUMERYCZNY]</code> potwierdzone w granicach rozdzielczości danych</td></tr>
+      <tr><td>W statystyce zer pozostaje domieszka symetrii odwrócenia czasu na dużych wysokościach</td><td>Test 1</td><td><code>[HIPOTEZA]</code> odrzucona — brak śladu ponad model zerowy</td></tr>
+      <tr><td>Sąsiednie zera działają na parę jak siła pływowa przy zderzeniu w przepływie ciepła (t_c/t_c⁰ ≥ 1)</td><td>Test 3, faza A</td><td><code>[FAKT NUMERYCZNY]</code> potwierdzone dla 42 z 42 sprawdzonych par</td></tr>
+      <tr><td>Reszta niewyjaśniona geometrią lokalną niesie ślad arytmetyczny (ζ′, faza Grama)</td><td>Test 3, analiza reszt</td><td><code>[HIPOTEZA]</code> bez potwierdzenia w tej próbie; moc testu ograniczona</td></tr>
+    </tbody>
+  </table></div>
+  <p>Każdy nowy test w repozytorium riemann-terj dopisuje tu wiersz, niezależnie od tego, czy wynik wesprze TERJ, czy go osłabi. Reguła jest prosta: żadna hipoteza nie zostaje bez statusu dłużej, niż trzeba na policzenie.</p>
+  <h2>Jak to sprawdzić samemu</h2>
+  <p>Kod, dane i logi z każdego testu leżą w repozytorium riemann-terj pod licencją MIT. Jego README prowadzi krok po kroku do odtworzenia dowolnego wiersza z tabeli powyżej na zwykłym laptopie, zwykle w czasie od kilku minut do godziny. Zgłoszenie błędu w metodzie, w kodzie albo w interpretacji jest dokładnie tym, po co ta przedmowa istnieje.</p>
+  <hr>
+  <p>Esej TERJ jest dostępny na licencji CC BY 4.0 (<code>LICENSE</code> w tamtym repozytorium). Kod i dane badania numerycznego — na licencji MIT (<code>LICENSE</code> w repozytorium riemann-terj).</p>
+
+  <footer>
+    <p><a href="index.html">Spis treści</a> · Esej na licencji <a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+  </footer>
+</main>
+</body>
+</html>
