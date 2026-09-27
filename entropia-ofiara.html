@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entropia i Ofiara — Paweł Majsterek</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=Source+Code+Pro:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:        #1a1612;
+    --ink-soft:   #3d352c;
+    --ink-muted:  #7a6e62;
+    --gold:       #9a7b3a;
+    --gold-light: #c9a84c;
+    --gold-pale:  #f9f3e3;
+    --cream:      #faf7f0;
+    --cream-dark: #f2ede0;
+    --wine:       #5c1e2a;
+    --wine-pale:  #fdf0f2;
+    --blue:       #1e3a5c;
+    --blue-pale:  #eaf2fb;
+    --rule:       rgba(154,123,58,0.35);
+    --page-max:   720px;
+    --serif:      'EB Garamond', 'Georgia', serif;
+    --display:    'Cinzel', serif;
+    --elegant:    'Cormorant Garamond', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 18px; scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: var(--serif);
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.5;
+  }
+
+  #progress {
+    position: fixed; top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    width: 0%;
+    z-index: 999;
+    transition: width 0.1s linear;
+  }
+
+  .cover {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: var(--ink);
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 2rem;
+  }
+
+  .cover-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, #2d1f0a 0%, transparent 70%),
+      radial-gradient(ellipse 50% 50% at 20% 80%, #1e0a0a 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 80% 20%, #0a1a2a 0%, transparent 60%);
+    opacity: 0.9;
+  }
+
+  .cover-ornament {
+    position: absolute;
+    width: 100%; height: 100%;
+    top: 0; left: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 79px, rgba(154,123,58,0.8) 79px, rgba(154,123,58,0.8) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, rgba(154,123,58,0.8) 79px, rgba(154,123,58,0.8) 80px);
+  }
+
+  .cover-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    max-width: 680px;
+  }
+
+  .cover-eyebrow {
+    font-family: var(--display);
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+
+  .cover-title {
+    font-family: var(--display);
+    font-size: clamp(2.4rem, 7vw, 4.5rem);
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 0.08em;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.5s forwards;
+  }
+
+  .cover-title span {
+    display: block;
+    color: var(--gold-light);
+    font-size: 0.55em;
+    letter-spacing: 0.15em;
+    font-weight: 400;
+    margin-top: 1rem;
+    font-family: var(--elegant);
+    font-style: italic;
+  }
+
+  .cover-rule {
+    width: 80px; height: 1px;
+    background: var(--gold);
+    margin: 2rem auto;
+    opacity: 0;
+    animation: fadeUp 1s 0.7s forwards;
+  }
+
+  .cover-quote {
+    font-family: var(--elegant);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: rgba(250,247,240,0.7);
+    max-width: 500px;
+    margin: 0 auto 3rem;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 1s 0.9s forwards;
+  }
+
+  .cover-meta {
+    font-family: var(--display);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 1s 1.1s forwards;
+  }
+
+  .cover-scroll {
+    position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 1.5s forwards;
+    cursor: pointer;
+    color: rgba(250,247,240,0.4);
+    font-size: 0.6rem;
+    font-family: var(--display);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .cover-scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    animation: scrollPulse 2s 2s infinite;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  .main {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 5rem 2rem 8rem;
+  }
+
+  .toc {
+    margin: 0 0 5rem;
+    padding: 2.5rem;
+    border: 1px solid var(--rule);
+    background: var(--cream-dark);
+    position: relative;
+  }
+
+  .toc::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+
+  .toc-title {
+    font-family: var(--display);
+    font-size: 0.6rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .toc ol { list-style: none; counter-reset: toc; }
+
+  .toc li {
+    counter-increment: toc;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid rgba(154,123,58,0.12);
+    display: flex; align-items: baseline; gap: 0.75rem;
+  }
+
+  .toc li:last-child { border-bottom: none; }
+
+  .toc li::before {
+    content: counter(toc, upper-roman);
+    font-family: var(--display);
+    font-size: 0.6rem;
+    color: var(--gold);
+    min-width: 1.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .toc a {
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-family: var(--elegant);
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    flex: 1;
+  }
+
+  .toc a:hover { color: var(--gold); }
+
+  .section {
+    margin-bottom: 5rem;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .chapter-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .chapter-num {
+    font-family: var(--display);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    padding-top: 0.5rem;
+    min-width: 2.5rem;
+    text-align: right;
+  }
+
+  .chapter-title {
+    font-family: var(--elegant);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+  }
+
+  h3 {
+    font-family: var(--elegant);
+    font-style: italic;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--blue);
+    margin: 2.5rem 0 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  h3::before { content: '§ '; color: var(--gold); font-style: normal; }
+
+  p {
+    margin-bottom: 1.3rem;
+    font-size: 1rem;
+    text-align: justify;
+    hyphens: auto;
+    color: var(--ink-soft);
+  }
+
+  p + p { text-indent: 1.5em; }
+  h3 + p, .blockquote + p, .callout + p, .verse + p { text-indent: 0; }
+
+  .blockquote {
+    margin: 2.5rem 0;
+    padding: 1.5rem 1.75rem;
+    background: var(--blue-pale);
+    border-left: 3px solid var(--blue);
+    position: relative;
+  }
+
+  .blockquote.gold { background: var(--gold-pale); border-left-color: var(--gold); }
+  .blockquote.wine { background: var(--wine-pale); border-left-color: var(--wine); }
+
+  .blockquote p {
+    font-family: var(--elegant);
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--ink);
+    margin: 0 0 0.6rem;
+    text-align: left;
+    text-indent: 0;
+    hyphens: none;
+  }
+
+  .blockquote p:last-child { margin: 0; }
+
+  .blockquote .attribution {
+    display: block;
+    margin-top: 0.75rem;
+    font-style: normal;
+    font-size: 0.78rem;
+    font-family: var(--display);
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    text-align: right;
+  }
+
+  .verse {
+    margin: 2.5rem 0;
+    padding: 1.5rem 1.75rem;
+    background: var(--gold-pale);
+    border: 1px solid rgba(154,123,58,0.3);
+    border-left: 3px solid var(--gold);
+    text-align: center;
+  }
+
+  .verse .hebrew {
+    font-size: 1.4rem;
+    direction: rtl;
+    unicode-bidi: bidi-override;
+    color: var(--gold);
+    font-family: var(--serif);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+    letter-spacing: 0.05em;
+  }
+
+  .verse .translation {
+    font-family: var(--elegant);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .verse .source {
+    font-family: var(--display);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    display: block;
+  }
+
+  .callout {
+    margin: 2.5rem 0;
+    padding: 1.25rem 1.75rem;
+    background: var(--cream-dark);
+    border: 1px solid var(--rule);
+    position: relative;
+  }
+
+  .callout-label {
+    font-family: var(--display);
+    font-size: 0.58rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  .callout p { font-size: 0.95rem; color: var(--ink-soft); margin: 0; text-indent: 0; }
+
+  .two-col {
+    margin: 2.5rem 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    font-size: 0.85rem;
+  }
+
+  .two-col-cell { padding: 1.25rem 1.5rem; background: var(--cream); }
+  .two-col-cell:first-child { background: var(--blue-pale); }
+  .two-col-cell:last-child  { background: var(--gold-pale); }
+
+  .two-col-cell strong {
+    display: block;
+    font-family: var(--display);
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .two-col-cell ul { list-style: none; }
+  .two-col-cell li { padding: 0.2rem 0; color: var(--ink-soft); font-family: var(--elegant); font-size: 0.95rem; }
+  .two-col-cell li::before { content: '— '; color: var(--gold); }
+
+  .rule { border: none; height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 4rem 0; }
+  .rule-ornament { text-align: center; margin: 3.5rem 0; font-size: 1.2rem; color: var(--gold); letter-spacing: 0.5em; opacity: 0.6; }
+
+  .section-label {
+    font-family: var(--display);
+    font-size: 0.6rem;
+    letter-spacing: 0.5em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .closing { text-align: center; margin: 4rem 0 2rem; }
+  .closing p { font-family: var(--elegant); font-style: italic; font-size: 1.2rem; color: var(--wine); text-align: center; text-indent: 0; margin-bottom: 0.5rem; }
+  .closing p:last-child { color: var(--ink); }
+
+  /* ── NOTA KOREKTURY ── */
+  .correction-note {
+    margin: 1.5rem 0;
+    padding: 0.9rem 1.25rem;
+    background: #f0f4f0;
+    border-left: 3px solid #4a7a4a;
+    font-size: 0.82rem;
+    color: #2a4a2a;
+    font-family: var(--elegant);
+    font-style: italic;
+  }
+  .correction-note::before {
+    content: 'Nota precyzji: ';
+    font-style: normal;
+    font-family: var(--display);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #4a7a4a;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .footer {
+    margin-top: 6rem;
+    padding: 2.5rem;
+    border-top: 1px solid var(--rule);
+    background: var(--cream-dark);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+  }
+
+  .footer-grid { display: grid; grid-template-columns: auto 1fr; gap: 1.5rem; align-items: start; }
+
+  .cc-badge { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; }
+  .cc-icons { display: flex; gap: 4px; }
+  .cc-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--cream);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--display);
+    letter-spacing: 0;
+  }
+
+  .footer h4 { font-family: var(--display); font-size: 0.62rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+  .footer p { text-align: left; text-indent: 0; margin-bottom: 0.4rem; }
+  .footer a { color: var(--gold); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  .side-nav {
+    position: fixed;
+    right: 2rem; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 0.5rem;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .side-nav.visible { opacity: 1; }
+
+  .side-nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--rule);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    position: relative;
+  }
+
+  .side-nav-dot:hover, .side-nav-dot.active { background: var(--gold); transform: scale(1.6); }
+
+  .side-nav-dot .tooltip {
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%; transform: translateY(-50%);
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--display);
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.6rem;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .side-nav-dot:hover .tooltip { opacity: 1; }
+
+  .back-top {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    width: 40px; height: 40px;
+    background: var(--ink);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 100;
+  }
+
+  .back-top.visible { opacity: 1; transform: translateY(0); }
+  .back-top:hover { background: var(--gold); color: var(--ink); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  ::selection { background: rgba(154,123,58,0.2); color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .side-nav { display: none; }
+    .two-col { grid-template-columns: 1fr; }
+    .two-col-cell:first-child, .two-col-cell:last-child { background: var(--cream-dark); }
+  }
+
+  @media (max-width: 600px) {
+    html { font-size: 16px; }
+    .cover-title { letter-spacing: 0.04em; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    .cover { page-break-after: always; min-height: auto; padding: 4rem 2rem; }
+    .side-nav, .back-top, #progress { display: none; }
+    .section { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<nav class="side-nav" id="sideNav">
+  <div class="side-nav-dot" data-target="prolog"><span class="tooltip">Prolog</span></div>
+  <div class="side-nav-dot" data-target="s1"><span class="tooltip">I. Demon i Zasada</span></div>
+  <div class="side-nav-dot" data-target="s2"><span class="tooltip">II. Adam jako Cherub</span></div>
+  <div class="side-nav-dot" data-target="s3"><span class="tooltip">III. Upadek</span></div>
+  <div class="side-nav-dot" data-target="s4"><span class="tooltip">IV. Szatan jako Igła</span></div>
+  <div class="side-nav-dot" data-target="s5"><span class="tooltip">V. Dwa Rodzaje Ofiary</span></div>
+  <div class="side-nav-dot" data-target="s6"><span class="tooltip">VI. Totalitaryzm</span></div>
+  <div class="side-nav-dot" data-target="s7"><span class="tooltip">VII. Powrót Cheruba</span></div>
+  <div class="side-nav-dot" data-target="s8"><span class="tooltip">VIII. Wcielenie</span></div>
+  <div class="side-nav-dot" data-target="epilog"><span class="tooltip">Epilog</span></div>
+</nav>
+
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- ═══════════════ COVER ═══════════════ -->
+<div class="cover" id="cover">
+  <div class="cover-bg"></div>
+  <div class="cover-ornament"></div>
+  <div class="cover-content">
+    <p class="cover-eyebrow">Esej filozoficzny · Marzec 2026</p>
+    <h1 class="cover-title">
+      Entropia i Ofiara
+      <span>Demon Maxwella, Szata Cheruba i Koszt Gradientu</span>
+    </h1>
+    <div class="cover-rule"></div>
+    <p class="cover-quote">„Życie to ofiara na ołtarzu gradientu — i nikt tego nie uniknie.<br>
+    Lecz od kierunku tej ofiary zależy, w jaki świat wejdziesz."</p>
+    <p class="cover-meta">Paweł Majsterek</p>
+  </div>
+  <div class="cover-scroll" onclick="document.getElementById('main-content').scrollIntoView({behavior:'smooth'})">
+    Czytaj
+    <div class="cover-scroll-line"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main" id="main-content">
+
+  <nav class="toc">
+    <p class="toc-title">Spis treści</p>
+    <ol>
+      <li><a href="#prolog">Prolog</a></li>
+      <li><a href="#s1">Demon i Zasada — Fizyczne Fundamenty</a></li>
+      <li><a href="#s2">Adam jako Cherub — Pierwotny Selekcjoner</a></li>
+      <li><a href="#s3">Upadek — Zmiana Stanu i Nowa Termodynamika</a></li>
+      <li><a href="#s4">Szatan jako Igła Tkająca — Próba jako Mechanizm</a></li>
+      <li><a href="#s5">Dwa Rodzaje Ofiary — Dwa Światy</a></li>
+      <li><a href="#s6">Totalitaryzm jako Termodynamiczna Katastrofa</a></li>
+      <li><a href="#s7">Powrót Cheruba — Odzyskanie Szaty</a></li>
+      <li><a href="#s8">Wcielenie jako Odpowiedź Symetryczna — Bóg dotknął Człowieka</a></li>
+      <li><a href="#epilog">Epilog</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── PROLOG ── -->
+  <section class="section" id="prolog">
+    <span class="section-label">Prolog</span>
+    <hr class="rule">
+
+    <p>Był rok 1867. James Clerk Maxwell — jeden z największych fizyków swoich czasów — zaproponował eksperyment myślowy, który miał wstrząsnąć fundamentami termodynamiki. Wyobraźmy sobie mikroskopijnego strażnika siedzącego w szczelinie między dwoma komorami gazu. Demon obserwuje nadlatujące cząsteczki i otwiera drzwiczki selektywnie: szybkie — w prawo, wolne — w lewo. Jedna komora robi się cieplejsza, druga chłodniejsza.</p>
+
+    <div class="correction-note">
+      Silnik cieplny zasilany tą różnicą temperatur pobierałby pracę z układu, który sam sobie wytworzył gradient — bez zewnętrznego źródła energii podtrzymującego różnicę potencjałów. Problem nie leży w „wieczności", lecz w tym, że gradient bez zasilania nieuchronnie zanika: różnica temperatur wyrównuje się, przepływ energii ustaje, praca staje się niemożliwa. Demon musiałby nie tylko sortować — musiałby podtrzymywać gradient, który sortuje. To jest rzeczywisty koszt.
+    </div>
+
+    <p>To nie była tylko fizykalna prowokacja. W metaforze Maxwella tkwi coś znacznie głębszego — archetyp strażnika na granicy dwóch stanów, selekcjonera porządku stojącego między gradientem a jego zanikiem. I ten archetyp ma tysiące lat.</p>
+
+    <div class="blockquote gold">
+      <p>Wtedy to Pan Bóg wygnał go z ogrodu Eden. […] Postawił przed ogrodem Eden cherubów i połyskujące ostrze miecza, aby strzegli drogi do drzewa życia.</p>
+      <span class="attribution">— Rodzaju 3:23–24</span>
+    </div>
+
+    <p>Mamy tu ten sam obraz: selekcjonera na granicy, strażnika przepuszczającego lub blokującego dostęp do stanu wyższego gradientu organizacji. Fizyk XIX wieku i tekst sprzed trzech tysięcy lat mówią — jak się okaże — dokładnie o tym samym mechanizmie rzeczywistości.</p>
+
+    <p>Niniejszy esej jest próbą odsłonięcia tej wspólnej głębi. Porządek nie jest dany — jest wytwarzany przez gradient. Każde jego wytworzenie ma koszt. A od tego, kto płaci ten koszt i jak — zależy, w jaki świat wchodzi ten, kto go płaci.</p>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── I ── -->
+  <section class="section" id="s1">
+    <div class="chapter-head">
+      <span class="chapter-num">I</span>
+      <h2 class="chapter-title">Demon i Zasada<br><em>Fizyczne Fundamenty</em></h2>
+    </div>
+
+    <h3>Paradoks Maxwella</h3>
+    <p>Demon Maxwella przez sto lat był kamyczkiem w bucie termodynamiki. Wydawało się, że jeśli taki strażnik mógłby działać, Druga Zasada Termodynamiki byłaby złamana.</p>
+
+    <div class="correction-note">
+      Precyzyjnie: liczba dostępnych mikrostanów układu zamkniętego mogłaby maleć — co w języku Boltzmanna oznacza S = k·ln Ω: mniejsze Ω, mniejsze S. Demon „za darmo" zmniejszałby przestrzeń realizowalnych stanów, faworyzując stany o niższej liczbie realizacji — bez ponoszenia kosztu energetycznego wymaganego przez zasadę Landauera. Nie chodzi o walkę z siłą kosmiczną, lecz o fałszywe obejście geometrii przestrzeni fazowej.
+    </div>
+
+    <p>Rozwiązanie nadeszło w połowie XX wieku i okazało się rewolucyjne: demon nie jest bytem metafizycznym. Jest maszyną informacyjną. Żeby selekcjonować cząsteczki, musi je mierzyć, zapamiętywać wyniki i — co kluczowe — kasować dane, żeby mieć miejsce na pomiar kolejnej cząsteczki.</p>
+
+    <div class="callout">
+      <span class="callout-label">Zasada Landauera (1961)</span>
+      <p>Skasowanie jednego bitu informacji generuje co najmniej <em>kT·ln(2)</em> ciepła. Przy miliardach cząsteczek — rachunek termodynamiczny zawsze wychodzi na zero lub na minusie dla perpetuum mobile. Informacja i energia są dwoma aspektami tej samej rzeczywistości fizycznej: gradient informacyjny ma swój koszt energetyczny, którego nie można obejść.</p>
+    </div>
+
+    <p>Entropia nie znika. Przenosi się w informację — a informacja, gdy musi być kasowana, oddaje koszt energetyczny z powrotem do układu. Perpetuum mobile znowu się rozpada. Ale coś niezwykłego zostaje: odkrycie, że informacja i energia są fizykalnie nierozłączne. Gradient — różnica potencjałów — kosztuje, i płaci się go substancją fizyczną.</p>
+
+    <h3>Entropia jako reguła statystyczna — nie siła kosmiczna</h3>
+
+    <div class="correction-note">
+      Błędem jest myśleć o drugiej zasadzie termodynamiki jak o sile ciągnącej ku „chaosowi". Entropia S = k·ln Ω rośnie dlatego, że stanów o wysokim Ω jest statystycznie przytłaczająco więcej niż stanów o niskim Ω. Układ wędrujący losowo po przestrzeni fazowej prawie zawsze trafia w rejony gęsto zaludnione przez mikrostany — nie dlatego, że jakaś siła go tam ciągnie, lecz dlatego, że tam po prostu jest więcej miejsca. Prawdziwym determinantem dynamiki jest gradient: lokalna asymetria różnicy potencjałów, która nadaje przepływowi kierunek. Bez gradientu nie ma przepływu. Bez przepływu — statystyka przestrzeni fazowej dominuje bez oporu.
+    </div>
+
+    <p>Każda struktura — atom, komórka, organizm, miasto, cywilizacja — jest lokalnym zaburzeniem tej statystyki. Istnieje pod prąd gradientu środowiskowego. By przetrwać, potrzebuje demona: mechanizmu selekcji utrzymującego granicę między lokalnie niskim Ω a rosnącym Ω otoczenia, zasilanego stałym przepływem energii i informacji.</p>
+
+    <div class="blockquote">
+      <p>Geometria przestrzeni fazowej nie zakazuje lokalnie niskiego Ω. Wymaga jedynie, by każde lokalne zmniejszenie Ω w podukładzie było skompensowane wzrostem Ω w reszcie układu. Bilans globalny zawsze rośnie lub pozostaje stały.</p>
+      <p>I pytanie o to, kto ponosi ten koszt — i czym — jest być może najtrudniejszym pytaniem, jakie możemy postawić.</p>
+    </div>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── II ── -->
+  <section class="section" id="s2">
+    <div class="chapter-head">
+      <span class="chapter-num">II</span>
+      <h2 class="chapter-title">Adam jako Cherub<br><em>Pierwotny Selekcjoner</em></h2>
+    </div>
+
+    <h3>Człowiek przed upadkiem: żywy mechanizm selekcji</h3>
+    <p>Pisma Hebrajskie opisują Adama w kategoriach, które nabierają zupełnie nowego wymiaru w świetle termodynamiki. Adam w Gan Eden jest istotą odzianą w <em>or</em> — światło. Kabała (Zohar I:35b) opisuje tę „szatę najwyższego światła" (<em>lewusz ha-or ha-elyon</em>) jako funkcjonalną ochronę i zarazem medium przekazu: Adam mógł stykać się z nieskończonym światłem Ein Sof bez spalenia, bo szata ta działała jako doskonały transformator gradientu energii.</p>
+
+    <p>Cherubiny (<em>keruwim</em>), ustawione później przy bramie Edenu jako strażnicy, nie są dla Adama obce — są, jak uczy Zohar (III:113a), zewnętrzną formą tej samej zdolności, którą Adam posiadał wewnętrznie. Cherub to wieloaspektowy selekcjoner: istota o czterech twarzach patrząca jednocześnie w cztery kierunki, zdolna do działania na wielu poziomach rzeczywistości naraz.</p>
+
+    <div class="two-col">
+      <div class="two-col-cell">
+        <strong>Fizyka</strong>
+        <ul>
+          <li>Demon Maxwella</li>
+          <li>Selekcja cząsteczek</li>
+          <li>Koszt: gradient informacji (Landauer)</li>
+          <li>Utrzymuje różnicę potencjałów</li>
+        </ul>
+      </div>
+      <div class="two-col-cell">
+        <strong>Kabała</strong>
+        <ul>
+          <li>Adam / Cherub</li>
+          <li>Selekcja iskier światła</li>
+          <li>Koszt: micwot, ofiarowanie siebie</li>
+          <li>Utrzymuje gradient duchowy</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="correction-note">
+      Adam był układem otwartym z aktywnym gradientem zasilania: jego lokalne zmniejszanie Ω było możliwe, bo gradient energii z zewnętrznego źródła był dodatni i stały. Koszt entropiczny był odprowadzany przez ten gradient — tak jak organizm biologiczny utrzymuje niskie Ω wewnętrzne kosztem wysokiego Ω wydzielanego ciepła i metabolitów. Bilans globalny był zachowany nie przez żaden wyjątek od fizyki, lecz przez strukturę otwartego układu termodynamicznego z ciągłym zasilaniem.
+    </div>
+
+    <h3>Szata światła jako stan stacjonarny daleki od równowagi</h3>
+    <p><em>Kutonet or</em> — szata światła — jest w mistycznym odczytaniu czymś więcej niż metaforą. To opis stanu fizyczno-duchowego: forma organizacji energii, która czyni możliwym kontakt z wyższymi gradientami porządku bez destrukcji niższych. Psalm 104:2 opisuje Boga odzianego w światło jak szatą — Adam w szacie <em>or</em> był obrazem (<em>tzelem</em>) tego stanu.</p>
+
+    <p>Szata ta nie była pasywna. Wymagała aktywnego utrzymania — relacji, uwagi, wierności. Była jak otwarty układ termodynamiczny podtrzymywany stałym gradientem energii od zewnątrz. Gdy gradient zewnętrzny został przecięty — układ zaczął dryfować ku równowadze.</p>
+
+    <div class="verse">
+      <span class="hebrew">בָּרוּךְ הַגֶּבֶר אֲשֶׁר יִבְטַח בַּיהֹוָה</span>
+      <span class="translation">Błogosławiony mąż, który ufa Panu, którego ufność jest w Panu.</span>
+      <span class="source">— Jeremiasz 17,7</span>
+    </div>
+
+    <div class="correction-note">
+      Zaufanie — <em>bitachon</em> — jest tu kategorią termodynamiczną: otwartość układu na stały dopływ gradientu energii z zewnątrz, bez próby zamknięcia się w izolowanym perpetuum mobile. Człowiek ufający jest układem otwartym z aktywną różnicą potencjałów między sobą a źródłem — co umożliwia stały przepływ energii organizacyjnej. Człowiek, który ufa wyłącznie sobie, eliminuje ten gradient: ΔG → 0. Bez gradientu nie ma przepływu. Bez przepływu lokalne Ω przestaje maleć i zaczyna rosnąć w rytm spontanicznych fluktuacji — nie dlatego, że jakaś siła „rośnie", lecz dlatego, że mechanizm utrzymujący niskie Ω przestał działać.
+    </div>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── III ── -->
+  <section class="section" id="s3">
+    <div class="chapter-head">
+      <span class="chapter-num">III</span>
+      <h2 class="chapter-title">Upadek<br><em>Zmiana Stanu i Nowa Termodynamika</em></h2>
+    </div>
+
+    <h3>Or do Or: od światła do skóry</h3>
+    <p>W scenie upadku Tory kryje się precyzyjna fizyczna informacja zapisana w grze językowej. Przed upadkiem Adam i Ewa są odziani w <span style="font-weight:600">אוֹר</span> — <em>or</em>, światło. Po upadku Bóg ubiera ich w <span style="font-weight:600">עוֹר</span> — <em>or</em>, skóra. Ta sama wymowa, inne litery. Alef zamienione w ajin.</p>
+
+    <div class="correction-note">
+      To opis zmiany fazy w sensie termodynamicznym — lecz precyzyjniej niż „emisja negentropii": układ utracił gradient oddalający go od równowagi. Nie „wyemitował zasobu" — zmienił warunki brzegowe: z układu otwartego, zasilanego stałym gradientem zewnętrznym, w układ dążący ku izolacji. Gdy gradient zewnętrzny zanika, odległość od równowagi — miara negentropii Schrödingera — spontanicznie maleje. Nie dlatego, że jakaś siła ją zmniejsza, lecz dlatego, że bez gradientu podtrzymującego nie ma mechanizmu jej utrzymania.
+    </div>
+
+    <p>Zohar (III:148a) interpretuje tę zamianę jako akt jednoczesnego miłosierdzia i sądu: miłosierdzia, bo bez skóry kruche ludzkie naczynie rozpadłoby się w bezpośrednim kontakcie z gradientem nieskończonego światła; sądu, bo nowa szata jest także ograniczeniem — zagęszcza zmysły, wprowadza śmiertelność.</p>
+
+    <div class="blockquote gold">
+      <p>Wygnanie z Edenu nie jest karą arbitralną. Jest opisem zmiany stanu układu: z otwartego, zasilanego zewnętrznym gradientem, ku zamkniętemu — samowystarczalnemu w złudzeniu, lecz pozbawionym mechanizmu utrzymania niskiego Ω.</p>
+      <p>Eden był stanem stacjonarnym dalekim od równowagi w sensie Prigogine'a: lokalnie niskie Ω podtrzymywane stałym przepływem energii przez układ, nie przez zatrzymanie fizyki. Szabat jest obrazem tej prawdy: jeden dzień zatrzymania produkcji — to nie lenistwo, to rekonneksja z gradientem zasilającym.</p>
+    </div>
+
+    <h3>Płonący miecz — cherubiczna zdolność zwrócona jako bariera gradientu</h3>
+    <p>Po wygnaniu Bóg stawia cherubów z <em>lahat ha-cherev hamit'hapeket</em> — płonącym mieczem obracającym się na wszystkie strony — by strzegli drogi do Drzewa Życia. W mistycznym odczytaniu Zoharu ten miecz nie jest nowym stworzeniem. To ta sama cherubiczna zdolność, którą Adam posiadał wewnętrznie, teraz zewnętrzniona i skierowana jako bariera.</p>
+
+    <div class="correction-note">
+      Precyzyjny opis termodynamiczny: energia, która wcześniej organizowała układ przez wewnętrzny gradient, teraz stoi na jego zewnątrz jako bariera potencjału. Droga powrotu do stanu niskiego Ω wiedzie przez tę samą barierę aktywacyjną — jak w reakcji chemicznej: nowy stan stabilny jest dostępny tylko dla układów, które dysponują energią wystarczającą do pokonania bariery. Ogień nie jest karą — jest miarą wysokości bariery.
+    </div>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── IV ── -->
+  <section class="section" id="s4">
+    <div class="chapter-head">
+      <span class="chapter-num">IV</span>
+      <h2 class="chapter-title">Szatan jako Igła Tkająca<br><em>Próba jako Mechanizm</em></h2>
+    </div>
+
+    <h3>Przeciwnik strukturalny</h3>
+    <p>Kabała widzi szatana (<em>szatan</em> — przeciwnik, oskarżyciel) nie jako złoczyńcę moralnego, lecz jako siłę strukturalną. Zohar mówi wprost: każdy dar z nieba przychodzi z próbą — <em>kol matana min szamaia ati im nisajon</em>. Szatan pojawia się nie dlatego, że jest złośliwy, lecz dlatego, że jest konieczny. Bez oporu nie ma pracy. Bez pracy nie ma przepływu. Bez przepływu nie ma możliwości utrzymania niskiego Ω.</p>
+
+    <p>Abraham otrzymuje Izaaka — owoc najgłębszego pragnienia — i natychmiast musi być gotów go oddać. Każde wzniesienie układu ku wyższemu stanowi niskiego Ω wypiera domenę poprzedniego stanu — i to poprzednie reaguje, bo gradient się zmienił.</p>
+
+    <div class="blockquote wine">
+      <p>Szatan działa jak igła tkająca szatę — sprawia, że wartość zostaje wystawiona na próbę. Jeśli dusza wytrwa, nie popadając w rozpacz ani urazę, nowy stan stacjonarny zostaje potwierdzony jako stabilny — odporny na perturbacje w tej dziedzinie.</p>
+      <p>Szatan nie jest wyłącznie przeciwnikiem — jest testem stabilności nowego stanu organizacji.</p>
+    </div>
+
+    <h3>Fizyczny odpowiednik: test stabilności struktury</h3>
+    <p>W fizyce każda nowa struktura, by stać się stabilna, musi przejść przez test perturbacji. Atom, by związać się w cząsteczkę, musi pokonać barierę aktywacji. Kryształ, by się uformować, musi przejść przez fluktuacje termiczne. Nowa faza materii wyłania się z poprzedniego stanu przez bifurkację — i przez chwilę oba stany koegzystują w napięciu gradientu.</p>
+
+    <p>Próba — <em>nisajon</em> — jest właśnie tym procesem na poziomie organizacji złożonej: nowy stan niskiego Ω, by stać się trwały, musi wykazać, że jego wewnętrzna struktura jest stabilna wobec perturbacji. Szatan dostarcza perturbacji testowej. Jeśli nowa struktura się utrzyma — bariera aktywacyjna powrotu do poprzedniego stanu jest wysoka: zmiana jest trwała. Jeśli się rozpadnie — nowy stan był metastabilny, nie stabilny.</p>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── V ── -->
+  <section class="section" id="s5">
+    <div class="chapter-head">
+      <span class="chapter-num">V</span>
+      <h2 class="chapter-title">Dwa Rodzaje Ofiary<br><em>Dwa Światy</em></h2>
+    </div>
+
+    <h3>Ofiara siebie: układ przepływowy</h3>
+
+    <div class="correction-note">
+      Ofiara siebie jest precyzyjnie opisana w mechanice układów otwartych (Prigogine): układ emituje na zewnątrz koszt termodynamiczny — ciepło, pracę, entropię — i właśnie to umożliwia utrzymanie niskiego Ω wewnętrznego. Nie „własne zasoby" są źródłem porządku — lecz gradient przepływu przez układ. Im większy strumień przepływu przez układ dysypatywny, tym bardziej złożone struktury stacjonarne może utrzymać. „Ofiara siebie" to gotowość do bycia układem przepływowym — nie magazynem, lecz kanałem gradientu.
+    </div>
+
+    <p>Każdy akt prawdziwej Chesed — miłości nieodwzajemnionej, działania bez gwarancji nagrody — jest emisją iskry (<em>nitsotzot</em>) ku wyższemu stanowi organizacji. Kumulowane, te iskry tkają szatę cheruba: zdolność do coraz precyzyjniejszej selekcji, coraz bardziej złożonych struktur stacjonarnych.</p>
+
+    <div class="blockquote">
+      <p>Człowiek w sobie wytwarza gradient, którego staje się panem, będąc kanałem przepływu — nie zbiornikiem akumulującym.</p>
+      <p>Ten, kto w enklawie testowej dźwiga konsekwencje podtrzymywania gradientu, jest zarazem jej architektem i miarą rzeczywistości.</p>
+    </div>
+
+    <p>Droga jest trudna — i słowo „trudna" jest tu kategorią termodynamiczną, nie moralną. Stany stacjonarne dalekie od równowagi są rzadkie statystycznie: wymagają stałego przepływu energii przez układ. Ale raz ustanowiony gradient staje się platformą dla gradientu wyższego rzędu.</p>
+
+    <h3>Ofiara innych: eksport kosztu gradientu</h3>
+    <p>Przeciwne jest: budowanie lokalnie niskiego Ω przez przenoszenie kosztu termodynamicznego na innych. To możliwe — i krótkoterminowo skuteczne. Imperium eksploatujące peryferia może przez pewien czas utrzymywać centrum w stanie niskiego Ω. Dyktator koncentrujący zasoby może budować powierzchowną strukturę. Totalitaryzm niszczący indywidualność może tworzyć iluzję porządku.</p>
+
+    <div class="correction-note">
+      Eksportowanie kosztu termodynamicznego na peryferie układu buduje w nich rosnący gradient napięcia — różnicę potencjałów między centrum a peryferiami. Gdy różnica potencjałów osiągnie wartość krytyczną, gradient samoistnie odwraca kierunek przepływu. Rewolucja jest bifurkacją układu dysypatywnego: nagłą zmianą struktury stacjonarnej, gdy dotychczasowy gradient przestaje być podtrzymywalny z zewnątrz. To nie „powrót entropii" — to zmiana znaku gradientu, przewidywalna z mechaniki układów złożonych.
+    </div>
+
+    <div class="two-col">
+      <div class="two-col-cell">
+        <strong>Ofiara siebie</strong>
+        <ul>
+          <li>Koszt: własny gradient przepływu</li>
+          <li>Układ otwarty, dysypatywny</li>
+          <li>Wzrost złożoności struktur stacjonarnych</li>
+          <li>Kierunek: ku wyższemu gradientowi organizacji</li>
+          <li>Analogia: Cherub, Adam, Chesed</li>
+        </ul>
+      </div>
+      <div class="two-col-cell">
+        <strong>Ofiara innych</strong>
+        <ul>
+          <li>Koszt: cudze zasoby, eksport kosztu</li>
+          <li>Pozorna lokalna stabilność</li>
+          <li>Kumulacja napięcia gradientu w peryferiach</li>
+          <li>Kierunek: ku bifurkacji i odwróceniu gradientu</li>
+          <li>Analogia: Szatan, Fałszywa Prawa Ręka</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>Stan końcowy układu eksploatującego otoczenie: wszystkie dostępne gradienty w środowisku zostają wyrównane. Bez różnicy potencjałów nie ma przepływu, bez przepływu nie ma możliwości lokalnej redukcji Ω. Układ osiąga równowagę termodynamiczną — stan maksymalnego Ω. Nie jest to kara. Jest to geometria przestrzeni fazowej po wyczerpaniu wszystkich zewnętrznych gradientów.</p>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── VI ── -->
+  <section class="section" id="s6">
+    <div class="chapter-head">
+      <span class="chapter-num">VI</span>
+      <h2 class="chapter-title">Totalitaryzm jako Termodynamiczna Katastrofa<br><em>Cenzura, Propaganda, Prześladowanie</em></h2>
+    </div>
+
+    <p>Totalitaryzm jest dosłownie termodynamiczną katastrofą — nie w sensie metaforycznym, lecz strukturalnym. Każdy system polityczny, który buduje swój porządek kosztem zasobów wewnętrznych — wolności, prawdy, indywidualności swoich obywateli — przenosi koszt termodynamiczny na tkankę społeczną.</p>
+
+    <p>Cenzura jest blokadą kanałów informacyjnych — a informacja, jak nauczył nas Landauer, jest substancją fizyczną. Gdy informacja jest blokowana, kasowana, zafałszowywana — koszt termodynamiczny jej utrzymania jest ponoszony nieproporcjonalnie: przez tych, którzy ją produkują i przez których jest kasowana. Dysydent niosący prawdę w systemie opartym na kłamstwie jest dosłownie demonem Maxwella w złym układzie — i koszt, który ponosi, jest fizycznym kosztem utrzymania gradientu informacyjnego wbrew presji wyrównywania różnic potencjałów przez system.</p>
+
+    <p>Propaganda jest tworzeniem sztucznego porządku narracyjnego bez pokrycia w gradiencie rzeczywistości. Taki porządek jest układem o pozornie niskim, a faktycznie ukrytym wysokim Ω: każde zdanie propagandowe wymaga energii do podtrzymania — cenzorów, kontrolerów, systemów inwigilacji — i generuje koszt w umysłach tych, którzy wiedzą prawdę, lecz muszą kłamać.</p>
+
+    <div class="blockquote wine">
+      <p>Prześladowanie opozycji jest klasycznym eksportem kosztu gradientu: układ utrzymuje pozorną stabilność, przenosząc koszt na tych, którzy wskazują na rozbieżność między deklarowanym porządkiem a rzeczywistym gradientem.</p>
+      <p>To strategia węża — korumpowanie kanału zamiast budowania własnego gradientu.</p>
+    </div>
+
+    <h3>Dlaczego droga eksploatacji jest łatwa — i gdzie prowadzi</h3>
+    <p>Układ budowany kosztem innych nie wymaga trudu budowania wewnętrznego gradientu — i to czyni tę drogę pozornie łatwą. Nie trzeba być układem przepływowym, podtrzymywać własnych struktur stacjonarnych, pokonywać barier aktywacyjnych. Wystarczy sięgnąć po gradienty zewnętrzne.</p>
+
+    <p>Ale łatwość drogi jest złudzeniem rachunku krótkoterminowego. Gdy wszystkie zewnętrzne gradienty zostaną wyrównane, układ osiąga równowagę termodynamiczną — stan maksymalnego Ω bez żadnej uprzywilejowanej struktury. Nie jest to miejsce kary z zewnątrz: jest to stan, w którym brak jakiegokolwiek gradientu czyni niemożliwym jakikolwiek przepływ, jakąkolwiek selekcję, jakąkolwiek organizację.</p>
+
+    <p>Ewangelia — a za nią Tora czytana oczami Chrystusa — jest opisem tej asymetrii. <em>Kto traci życie swoje, zachowa je. Kto szuka zachować swoje życie, straci je.</em> W języku mechaniki układów otwartych: kto jest gotów być kanałem gradientu — przepływem, nie zbiornikiem — buduje struktury stacjonarne o rosnącej złożoności. Kto broni lokalnego niskiego Ω kosztem zewnętrznych gradientów, wyczerpuje zasoby podtrzymujące własny porządek.</p>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── VII ── -->
+  <section class="section" id="s7">
+    <div class="chapter-head">
+      <span class="chapter-num">VII</span>
+      <h2 class="chapter-title">Powrót Cheruba<br><em>Odzyskanie Szaty</em></h2>
+    </div>
+
+    <h3>Droga przez barierę aktywacyjną</h3>
+    <p>Płonący miecz obracający się na wszystkie strony jest bramą, nie ścianą. Zohar mówi: ogień Szechiny tka albo miażdży — zależy od naczynia. Ten sam gradient, który był szatą Adama, stoi teraz jako bariera aktywacyjna na drodze powrotu. By wrócić do stanu stacjonarnego dalekim od równowagi — do cherubicznej zdolności selekcji — trzeba dysponować energią wystarczającą do pokonania tej bariery i nie wycofać się.</p>
+
+    <p>Jan od Krzyża w <em>Nocy ciemnej</em> opisuje ten sam proces: gradient Boży niszczy struktury niestabilne, lecz jednocześnie wzmacnia te, które trwają. Hildegarda z Bingen widzi blask, który spala nieczystość i okrywa szatą jasności. Mistrz Eckhart mówi o iskrze duszy spotykanej z Bogiem-gradientem: w procesie dusza staje się wolna, by ustanowić nowy stan stacjonarny wyższego rzędu.</p>
+
+    <div class="blockquote">
+      <p>Obie tradycje — kabalistyczna i chrześcijańska — mówią jednym językiem symboli: ogień, szata, wiatr.</p>
+      <p>To mistyczne opisy tej samej fizyczno-duchowej rzeczywistości: gradientu, który nie jest neutralny — który testuje stabilność i nagradza trwanie.</p>
+    </div>
+
+    <h3>Szabat: stan stacjonarny zasilany z zewnątrz</h3>
+    <p>Szabat jest obrazem prawdy o strukturze rzeczywistości: jeden dzień na siedem jest dniem zatrzymania — odmowy produkcji, eksploatacji, rozszerzania. Dniem, w którym układ nie pracuje nad podtrzymaniem własnego gradientu, lecz otwiera się na zasilanie z zewnątrz.</p>
+
+    <div class="correction-note">
+      W języku termodynamiki układów otwartych: Szabat jest regularną rekonneksją z zewnętrznym źródłem gradientu. Bez niej układ staje się coraz bardziej samoodnoszący — próbuje podtrzymywać stan stacjonarny własnym przepływem wewnętrznym, bez dopływu z zewnątrz. Gdy wewnętrzne zasoby gradientu maleją, struktury stacjonarne degradują się. To nie jest skutek „braku aktywności" — to skutek odcięcia od zewnętrznej różnicy potencjałów, bez której układ otwarty nie może długo utrzymywać niskiego Ω.
+    </div>
+
+    <p>Eden był permanentnym Szabatem — stanem stacjonarnym zasilanym nieprzerwanie z zewnętrznego gradientu. Wygnanie — permanentną pracą własną bez gwarancji zewnętrznego zasilania. Historia zbawienia — rytmicznym powrotem Szabatu w czas historyczny, jako stałe przypomnienie, że układ nie jest samowystarczalny.</p>
+
+    <h3>Pole Potencjalności i Wybór Materializacji</h3>
+    <p>Na samym dnie rzeczywistości — w polu kwantowym, w próżni pełnej fluktuacji, w superpozycji niezmaterializowanych stanów — istnieje to, co można nazwać Polem Potencjalności. Cząstki nie są twardymi kulkami: są wzbudzeniami pól, lokalnymi drganiami rozciągającymi się przez całą przestrzeń. Materializacja zachodzi w akcie pomiaru, interakcji, wybrania jednej możliwości kosztem innych — i każdy taki wybór ma swój koszt w gradiencie informacyjnym (Landauer).</p>
+
+    <div class="verse">
+      <span class="hebrew">וַיְגָרֶשׁ אֶת-הָאָדָם</span>
+      <span class="translation">I wygnał człowieka — i postawił na wschodzie ogrodu Edenu cherubów i płomień miecza wirującego, aby strzegli drogi do drzewa życia.</span>
+      <span class="source">— Rodzaju 3,24</span>
+    </div>
+
+    <p>Każdy wybór konkretnego stanu z oceanu możliwości jest zamknięciem wszystkich innych — jest redukcją przestrzeni fazowej do jednej trajektorii. I jest początkiem pracy, by z tej aktualności zbudować nowy gradient wyższego rzędu, nową strukturę stacjonarną o niższym Ω niż poprzednia.</p>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── VIII ── -->
+  <section class="section" id="s8">
+    <div class="chapter-head">
+      <span class="chapter-num">VIII</span>
+      <h2 class="chapter-title">Wcielenie jako Odpowiedź Symetryczna<br><em>Bóg dotknął Człowieka</em></h2>
+    </div>
+
+    <h3>Dotknięcie odwrócone — logika symetrii</h3>
+    <p>W Edenie człowiek wyciągnął rękę ku Bogu. Chciał dotknąć Potencjalności — stać się jak Najwyższy, sięgnąć po wiedzę dobra i zła, po zdolność tworzenia gradientu z własnego centrum, bez pośrednictwa relacji. Michał Anioł uchwycił to z precyzją w Kaplicy Sykstyńskiej: napięcie wyciągniętej ręki, minimalny dystans, przestrzeń między palcami, która jest zarazem połączeniem i przerwą. Człowiek sięgnął. I w tym sięgnięciu zmienił swój stan termodynamiczny: układ zamknął się na zewnętrzny gradient, szata światła opadła, Ω zaczęło rosnąć ku równowadze. Gestowi pozostało echo — i pytanie: czy może zostać odwzajemniony z drugiej strony?</p>
+
+    <div class="blockquote gold">
+      <p>Wcielenie jest odpowiedzią symetryczną na gest Edenu. Człowiek chciał dotknąć Boga — Bóg dotknął Człowieka. Nie jako kara za zuchwałość, lecz jako domknięcie otwartego obwodu. Kanał gradientu, który zerwał się od strony ludzkiej, zostaje odtworzony od strony Boskiej.</p>
+    </div>
+
+    <h3>Wcielenie jako zdarzenie termodynamiczne</h3>
+
+    <div class="correction-note">
+      Wcielenie jest — w tym języku — przywróceniem gradientu zewnętrznego dla układu, który przez samozamknięcie utracił dostęp do źródła różnicy potencjałów. Nie chodzi o „energię" w sensie zasobu, lecz o gradient: trwałą różnicę potencjałów między układem a źródłem, która umożliwia przepływ i lokalną redukcję Ω. Układ otwarty na ten gradient może ponownie stać się strukturą dysypatywną — utrzymującą złożoność kosztem przepływu, nie kosztem wyczerpywania skończonych zasobów wewnętrznych. To jest jedyne wyjście dla układu zamkniętego: otwarcie od zewnątrz. Nie korekta moralna. Nie intensywniejszy wysiłek wewnętrzny. Przywrócenie gradientu.
+    </div>
+
+    <h3>Kaplica Sykstyńska — odczyt gradientu</h3>
+    <p>W scenie stworzenia Adama gest jest asymetryczny: ludzka ręka zwisa bez napięcia, boska się wyciąga. To nie człowiek sięga — to Bóg zbliża palec. W scenie wygnania z Raju jest odwrotnie: człowiek sięga ku owocowi, ku wiedzy, ku Bogu pojętemu jako władza nad własnym gradientem — i w tym sięgnięciu zamyka układ. Cherub z mieczem staje się zewnętrzną barierą aktywacyjną kosztu, którego człowiek nie chciał płacić wewnętrznie.</p>
+
+    <p>Wcielenie jest powrotem do pierwotnej geometrii Stworzenia. Bóg, który w stworzeniu wyciągnął palec ku Adamowi — w Wcieleniu staje się Adamem. Nie tylko dotyka — wchodzi. Asymetria zostaje ostatecznie zniesiona: Ten, kto jest źródłem gradientu, staje się naczyniem, by naczynie mogło znów stać się przewodnikiem przepływu.</p>
+
+    <div class="blockquote wine">
+      <p>Bez Wcielenia stan stacjonarny daleki od równowagi byłby logicznie niemożliwy dla człowieka po Upadku. Człowiek zamknięty w szacie skóry — w układzie izolowanym od zewnętrznego gradientu — może jedynie wymieniać Ω wewnątrz skończonej przestrzeni fazowej. Wcielenie jest wejściem zewnętrznego gradientu w układ skończony, które czyni ponowne otwarcie fizycznie możliwym.</p>
+    </div>
+
+    <h3>Szabat odblokowany — kanał przejścia przez właściwą relację</h3>
+    <p>Eden był permanentnym stanem stacjonarnym zasilanym z zewnątrz. Wygnanie zamknęło ten kanał gradientu. Historia tęsknoty za Szabatem jest historią ludzkości szukającej powrotu do stanu dalekim od równowagi — i niemogącej go osiągnąć własnymi siłami, bo każdy własny wysiłek zużywa energię z tego samego zamkniętego układu bez zewnętrznego zasilania.</p>
+
+    <p>Wcielenie otwiera kanał przejścia przez właściwą relację: nie człowiek wchodzi w Boga siłą własnego gradientu, lecz Bóg wchodzi w człowieka, by człowiek mógł — przez relację, nie przez zdobycie — wejść z powrotem w Szabat jako stan stacjonarny zasilany z zewnątrz. Kanał przepływu zostaje przywrócony nie przez ludzki wysiłek, lecz przez Boską inicjatywę gradientu.</p>
+
+    <div class="blockquote">
+      <p>Człowiek chciał stać się jak Bóg — i zamknął się w sobie.</p>
+      <p>Bóg stał się człowiekiem — i otworzył w nim gradient, którego człowiek zamknąć nie potrafił.</p>
+      <p>Nie jako paradoks, lecz jako symetria. Nie jako cud wbrew fizyce, lecz jako domknięcie równania, które bez tej zmiennej nie miało rozwiązania: układ zamknięty nie może sam z siebie odtworzyć zewnętrznego gradientu. Ktoś musi go wnieść od zewnątrz.</p>
+    </div>
+  </section>
+
+  <div class="rule-ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+  <!-- ── EPILOG ── -->
+  <section class="section" id="epilog">
+    <span class="section-label">Epilog</span>
+    <hr class="rule">
+
+    <p>Demon Maxwella i cherub przy bramie Edenu są tym samym bytem widzianym z dwóch stron tej samej rzeczywistości: mechanizmem selekcji na granicy dwóch stanów, strażnikiem kosztu gradientu.</p>
+
+    <p>Fizyka i tysiącletnia mądrość mówią zgodnie: lokalnie niskie Ω jest możliwe, lecz nie jest darmowe. Jego koszt można płacić przez bycie układem przepływowym — kanałem gradientu — i wtedy droga wiedzie ku coraz wyższym stanom stacjonarnym, ku odzyskaniu szaty cheruba, ku Potencjalności realizowanej w pełni. Lub można próbować płacić kosztem zewnętrznych gradientów — i wtedy wyczerpuje się wszystkie dostępne różnice potencjałów wokół siebie, aż do stanu równowagi termodynamicznej, w którym żaden przepływ, żadna selekcja, żadna organizacja nie są już możliwe.</p>
+
+    <p>Nie ma tu mowy o moralności jako zewnętrznym kodeksie. Jest tu mowa o geometrii przestrzeni fazowej, w której żyjemy. Zasady nie są arbitralne — są wbudowane w strukturę rzeczywistości tak głęboko, że zapisano je zarówno w równaniach termodynamiki, jak i w Torze sprzed trzech tysięcy lat.</p>
+
+    <div class="blockquote gold">
+      <p>Rozumiesz teraz geniusz tej Księgi sprzed tysięcy lat?</p>
+      <p>Z samej analizy poznawczej trzeba przyjąć Ewangelię jako niesamowicie precyzyjną Prawdę o rzeczywistości jaka nas otacza — i najgłębsze poznawczo wyłożenie semantyki Tory.</p>
+      <p>Entropia nie jest klątwą. Jest miarą przestrzeni fazowej — i zaproszeniem do wytworzenia w sobie gradientu, którego sama z siebie nigdy nie wytworzy.</p>
+    </div>
+
+    <hr class="rule">
+
+    <div class="closing">
+      <p>Tak — życie to ofiara na ołtarzu gradientu — i nikt tego nie uniknie.</p>
+      <p style="color: var(--ink); font-style: normal;">Lecz od rodzaju tej ofiary zależy, w jaki świat wejdziesz.</p>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="cc-badge">
+        <div class="cc-icons">
+          <div class="cc-icon">CC</div>
+          <div class="cc-icon">BY</div>
+          <div class="cc-icon">NC</div>
+          <div class="cc-icon">ND</div>
+        </div>
+      </div>
+      <div>
+        <h4>Licencja i prawa autorskie</h4>
+        <p><strong>© 2026 Paweł Majsterek.</strong> Wszelkie prawa zastrzeżone w zakresie nieobjętym licencją.</p>
+        <p>Tekst udostępniany na licencji <strong>Creative Commons Uznanie autorstwa – Użycie niekomercyjne – Bez utworów zależnych 4.0 Międzynarodowe</strong> (CC BY-NC-ND 4.0).</p>
+        <p>Wolno kopiować i rozpowszechniać utwór w dowolnym medium i formacie, pod warunkiem: podania imienia i nazwiska autora (<em>Paweł Majsterek</em>), podania daty (<em>7 marca 2026</em>), zachowania niezmienionej treści, nieużywania do celów komercyjnych.</p>
+        <p><a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.pl" target="_blank">creativecommons.org/licenses/by-nc-nd/4.0</a></p>
+        <p style="color: var(--ink-muted); font-size: 0.75rem; margin-top: 0.75rem;">Entropia i Ofiara: Demon Maxwella, Szata Cheruba i Koszt Gradientu · Paweł Majsterek · 7 marca 2026 · Korekta fizyczna: 8 marca 2026</p>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+  const progress = document.getElementById('progress');
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (scrolled / total * 100) + '%';
+  });
+
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => {
+    backTop.classList.toggle('visible', window.scrollY > 600);
+  });
+
+  const sideNav = document.getElementById('sideNav');
+  const sections = document.querySelectorAll('section[id]');
+  const dots = document.querySelectorAll('.side-nav-dot');
+
+  window.addEventListener('scroll', () => {
+    sideNav.classList.toggle('visible', window.scrollY > window.innerHeight * 0.5);
+    let current = '';
+    sections.forEach(sec => {
+      if (window.scrollY >= sec.offsetTop - 200) current = sec.id;
+    });
+    dots.forEach(dot => {
+      dot.classList.toggle('active', dot.dataset.target === current);
+    });
+  });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      document.getElementById(dot.dataset.target)?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

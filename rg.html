@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERJ · Przepływ RG · Diagram Faz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0a0f;--bg2:#10101a;--bg3:#16162a;
+  --border:rgba(160,160,220,.12);--border-bright:rgba(160,160,220,.3);
+  --text:#e8e8f0;--text-muted:#8888aa;--text-dim:#4a4a6a;
+  --gold:#c9a84c;--gold-dim:rgba(201,168,76,.15);
+  --teal:#4ecdc4;--teal-dim:rgba(78,205,196,.12);
+  --purple:#9b72cf;--purple-dim:rgba(155,114,207,.12);
+  --coral:#e07560;--coral-dim:rgba(224,117,96,.12);
+  --blue:#5b9bd5;--green:#7ec8a0;
+  --font-serif:'EB Garamond',Georgia,serif;
+  --font-body:'Crimson Pro',Georgia,serif;
+  --font-mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:18px;line-height:1.75;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:1rem 3rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:rgba(10,10,15,.85);backdrop-filter:blur(12px);}
+.nav-logo{font-family:var(--font-mono);font-size:12px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-family:var(--font-mono);font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:var(--text);}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 3rem 4rem;position:relative;border-bottom:1px solid var(--border);}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.4;pointer-events:none;}
+.hero-label{font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:2.5rem;}
+.hero-title{font-family:var(--font-serif);font-size:clamp(2.5rem,6vw,5rem);font-weight:400;line-height:1.05;max-width:900px;margin-bottom:1.5rem;}
+.hero-title em{color:var(--teal);font-style:italic;}
+.hero-sub{font-size:1.15rem;color:var(--text-muted);max-width:600px;line-height:1.7;margin-bottom:3rem;}
+.hero-eq-row{font-family:var(--font-mono);font-size:.75rem;color:var(--text-dim);display:flex;flex-wrap:wrap;gap:1.5rem;border-top:1px solid var(--border);padding-top:2rem;max-width:900px;}
+.hero-eq-row span{color:var(--teal);}
+
+section{padding:6rem 3rem;border-bottom:1px solid var(--border);position:relative;}
+.sec-num{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:.2em;text-transform:uppercase;margin-bottom:3rem;display:flex;align-items:center;gap:1rem;}
+.sec-num::after{content:'';flex:1;height:1px;background:var(--border);max-width:200px;}
+.sec-title{font-family:var(--font-serif);font-size:clamp(1.8rem,3vw,2.8rem);font-weight:400;margin-bottom:1rem;line-height:1.15;}
+.sec-sub{font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;margin-bottom:2rem;}
+.prose{max-width:680px;font-size:1.05rem;line-height:1.8;color:#c8c8d8;}
+.prose+.prose{margin-top:1.5rem;}
+
+/* ── CANVAS BOXES ─────────────────────────────── */
+.canvas-box{background:var(--bg2);border:1px solid var(--border);padding:2rem;margin-top:3rem;}
+.cb-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
+.cb-title{font-family:var(--font-mono);font-size:11px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase;}
+.cb-controls{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;}
+.ctrl-btn{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);background:none;border:1px solid var(--border);padding:.35rem .8rem;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:all .2s;}
+.ctrl-btn:hover,.ctrl-btn.active{color:var(--text);border-color:var(--border-bright);background:rgba(255,255,255,.04);}
+.ctrl-slider{display:flex;align-items:center;gap:.5rem;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);}
+.ctrl-slider input[type=range]{width:90px;accent-color:var(--teal);}
+canvas.viz{width:100%;display:block;}
+
+/* ── BETA FUNCTION CARDS ──────────────────────── */
+.beta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.5rem;margin-top:3rem;}
+.beta-card{border:1px solid var(--border);padding:1.75rem;position:relative;overflow:hidden;transition:border-color .3s;}
+.beta-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:.5;}
+.beta-card:hover{border-color:var(--border-bright);}
+.bc-mphi::before{background:var(--purple);}
+.bc-kappa::before{background:var(--teal);}
+.bc-ew::before{background:var(--blue);}
+.bc-mu::before{background:var(--coral);}
+.bc-label{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.4rem;}
+.bc-name{font-family:var(--font-serif);font-size:1.05rem;margin-bottom:.5rem;}
+.bc-mphi .bc-name{color:var(--purple);}
+.bc-kappa .bc-name{color:var(--teal);}
+.bc-ew .bc-name{color:var(--blue);}
+.bc-mu .bc-name{color:var(--coral);}
+.bc-formula{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);line-height:1.8;padding:.75rem;background:var(--bg3);}
+.bc-interp{font-size:.9rem;color:#9898b0;margin-top:.75rem;line-height:1.6;}
+
+/* ── TRAJECTORY CARDS ──────────────────────────── */
+.traj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem;}
+.traj-card{border:1px solid var(--border);padding:1.75rem;cursor:pointer;transition:all .3s;}
+.traj-card:hover,.traj-card.active{border-color:var(--border-bright);}
+.traj-card.active{background:rgba(255,255,255,.02);}
+.traj-label{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.5rem;}
+.traj-name{font-family:var(--font-serif);font-size:1.05rem;margin-bottom:.5rem;}
+.traj-A .traj-name{color:var(--teal);}
+.traj-B .traj-name{color:var(--coral);}
+.traj-C .traj-name{color:var(--gold);}
+.traj-desc{font-size:.9rem;color:#9898b0;line-height:1.6;}
+
+/* ── THEOREM BOX ───────────────────────────────── */
+.theorem-box{border:1px solid var(--border-bright);padding:2.5rem;max-width:820px;margin:3rem 0;position:relative;}
+.theorem-box::before{content:'TWIERDZENIE';position:absolute;top:-10px;left:24px;font-family:var(--font-mono);font-size:9px;color:var(--gold);letter-spacing:.2em;background:var(--bg);padding:0 8px;}
+.theorem-title{font-family:var(--font-serif);font-size:1.3rem;color:var(--gold);margin-bottom:1.5rem;}
+.theorem-body{font-size:1rem;color:#c8c8d8;line-height:1.8;}
+.theorem-eq{font-family:var(--font-mono);font-size:12px;background:var(--bg2);border:1px solid var(--border);padding:1rem 1.25rem;margin:1.5rem 0;color:var(--text);line-height:1.9;}
+.theorem-eq .h{color:var(--teal);}
+.theorem-eq .g{color:var(--gold);}
+.theorem-eq .p{color:var(--purple);}
+.theorem-eq .comment{color:var(--text-dim);font-size:11px;}
+
+/* ── SCALE TABLE ──────────────────────────────── */
+.scale-table{width:100%;max-width:900px;border-collapse:collapse;margin-top:2rem;font-size:.88rem;}
+.scale-table th{font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;text-align:left;padding:.75rem 1rem;border-bottom:1px solid var(--border);}
+.scale-table td{padding:.9rem 1rem;border-bottom:1px solid var(--border);color:#9898b0;line-height:1.5;vertical-align:top;}
+.scale-table td:first-child{font-family:var(--font-mono);font-size:11px;color:var(--teal);}
+.scale-table tr:hover td{background:rgba(255,255,255,.02);}
+
+.discovery-box{border-left:2px solid var(--gold);padding:1.5rem 2rem;background:var(--gold-dim);margin:3rem 0;max-width:680px;}
+.discovery-box p{font-family:var(--font-body);font-size:1.05rem;color:var(--text);font-style:italic;line-height:1.75;}
+.discovery-label{font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.75rem;}
+
+blockquote{border-left:2px solid var(--teal);padding:1.25rem 2rem;margin:2.5rem 0;max-width:680px;}
+blockquote p{font-family:var(--font-serif);font-size:1.1rem;font-style:italic;color:var(--text-muted);line-height:1.7;}
+blockquote cite{display:block;margin-top:.75rem;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;font-style:normal;}
+
+.diamond-divider{text-align:center;padding:2rem;color:var(--gold);font-size:.8rem;letter-spacing:.3em;}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* readout strip */
+.readout{font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:1rem;display:flex;gap:2rem;flex-wrap:wrap;}
+
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem;}section{padding:4rem 1.5rem;}
+  .traj-grid{grid-template-columns:1fr;}
+  .beta-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .hero{padding:6rem 1.5rem 3rem;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">TERJ · Przepływ RG</div>
+  <ul class="nav-links">
+    <li><a href="#rg">Skale</a></li>
+    <li><a href="#diagram">Diagram Faz</a></li>
+    <li><a href="#beta">Funkcje Beta</a></li>
+    <li><a href="#trajectories">Trajektorie</a></li>
+    <li><a href="komentarz.html">↗ TERJ</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div style="position:relative;z-index:1;">
+    <div class="hero-label">TERJ Working Paper · Kwiecień 2026 · Renormalizacja Grupy</div>
+    <h1 class="hero-title">Przepływ <em>RG</em>:<br>parametry przez skale</h1>
+    <p class="hero-sub">Jak efektywny Lagrangian zmienia się gdy przechodzimy od jednostki przez instytucję do cywilizacji. Skala nie jest energetyczna — jest skalą organizacji społecznej. Faza relacyjna kontra faza narracyjna (kondensat).</p>
+    <div class="hero-eq-row">
+      <div>dg_i/dt = β_i(g_j) <span>— funkcje beta</span></div>
+      <div>ξ_nar ~ |κ − κ_c|^{−ν} <span>— dywergencja</span></div>
+      <div>l_c = l₀ · exp[…] <span>— skala kondensacji</span></div>
+      <div>dC/dt ≤ 0 <span>— twierdzenie c</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- RG SCALES -->
+<section id="rg">
+  <div class="sec-num">I — Skale Organizacji</div>
+  <h2 class="sec-title">Od jednostki do cywilizacji:<br>Wilsonowskie odgrubszczanie</h2>
+  <div class="sec-sub">t = ln(l/l₀) · skala jako organizacja społeczna</div>
+
+  <p class="prose reveal">W kwantowej teorii pola renormalizacja grupy odpowiada na pytanie: jak efektywny Lagrangian zmienia się gdy integrujemy fluktuacje krótkofalowe i patrzymy na dynamikę długofalową. W TERJ skala nie jest energetyczna — jest skalą organizacji społecznej.</p>
+
+  <div class="canvas-box reveal">
+    <div class="cb-header">
+      <div class="cb-title">Przepływ parametrów przez skale l</div>
+      <div class="cb-controls">
+        <div class="ctrl-slider">
+          <label>κ₀</label>
+          <input type="range" id="kappa0" min="5" max="95" value="35">
+          <span id="kappa0-val" style="min-width:28px;">35</span>
+        </div>
+        <div class="ctrl-slider">
+          <label>m²_φ,0</label>
+          <input type="range" id="mphi0" min="5" max="95" value="40">
+          <span id="mphi0-val" style="min-width:28px;">40</span>
+        </div>
+        <div class="ctrl-slider">
+          <label>μ²₀</label>
+          <input type="range" id="mu20" min="10" max="95" value="65">
+          <span id="mu20-val" style="min-width:28px;">65</span>
+        </div>
+      </div>
+    </div>
+    <canvas class="viz" id="flowCanvas" height="380"></canvas>
+    <div class="readout" id="flow-readout"></div>
+  </div>
+
+  <table class="scale-table reveal">
+    <thead>
+      <tr>
+        <th>Skala l</th><th>Poziom organizacji</th><th>μ²</th><th>κ</th><th>ε_w</th><th>m²_φ</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>l ~ 1</td><td>Jednostka poznawcza</td><td>duże</td><td>małe</td><td>małe</td><td>małe (plastyczna narracja)</td></tr>
+      <tr><td>l ~ 10²</td><td>Grupa / wspólnota</td><td>↓ spada</td><td>↑ rośnie</td><td>rośnie</td><td>rośnie</td></tr>
+      <tr><td>l ~ 10⁴</td><td>Instytucja (kościół, partia)</td><td>silna erozja −κ²φ₀²</td><td>szybki wzrost</td><td>duże</td><td>duże (narracja twardnieje)</td></tr>
+      <tr><td>l ~ 10⁶</td><td>Kultura / naród</td><td>μ² → μ²_* lub → 0</td><td>κ → κ_* lub → ∞</td><td>→ ε_w,*</td><td>m²_φ,* duże</td></tr>
+      <tr><td>l ~ 10⁸</td><td>Cywilizacja</td><td colspan="4">Atraktor: faza relacyjna (WF) LUB faza narracyjna (kondensat φ₀)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- PHASE DIAGRAM -->
+<section id="diagram">
+  <div class="sec-num">II — Diagram Faz</div>
+  <h2 class="sec-title reveal">Diagram faz w przestrzeni (κ, m²_φ):<br>separatrisa i atraktory</h2>
+  <div class="sec-sub">Faza relacyjna · Separatrisa · Faza narracyjna (kondensat)</div>
+
+  <p class="prose reveal">Kluczowa dwuwymiarowa projekcja przepływu. Separatrisa dzieli obszar przyciągania punktu Wilsona-Fishera (faza relacyjna, ξ_nar → ∞) od obszaru przyciągania atraktora narracyjnego (kondensat φ₀ ≠ 0, ξ_nar → 0). Dodaj trajektorię i obserwuj, gdzie system trafia po przejściu przez skale.</p>
+
+  <div class="canvas-box reveal">
+    <div class="cb-header">
+      <div class="cb-title">Diagram faz κ vs m²_φ · kliknij by dodać trajektorię</div>
+      <div class="cb-controls">
+        <div class="ctrl-slider">
+          <label>μ²</label>
+          <input type="range" id="pd-mu2" min="10" max="90" value="60">
+          <span id="pd-mu2-val" style="min-width:28px;">60</span>
+        </div>
+        <button class="ctrl-btn active" id="pd-btn-show" onclick="toggleArrows()">Strzałki przepływu</button>
+        <button class="ctrl-btn" onclick="clearTrajectories()">Wyczyść</button>
+      </div>
+    </div>
+    <canvas class="viz" id="phaseCanvas" height="460" style="cursor:crosshair;"></canvas>
+    <div class="readout" id="phase-readout">
+      Kliknij na diagramie, aby dodać trajektorię systemu. Obserwuj do którego atraktora zmierza.
+    </div>
+  </div>
+</section>
+
+<!-- BETA FUNCTIONS -->
+<section id="beta">
+  <div class="sec-num">III — Funkcje Beta</div>
+  <h2 class="sec-title reveal">Funkcje beta TERJ:<br>kierunek przepływu każdego parametru</h2>
+  <div class="sec-sub">dg_i/dt = β_i(g_j) · mechanizm samonapędzania</div>
+
+  <p class="prose reveal">Serce renormalizacji: równania różniczkowe opisujące jak każdy parametr zmienia się ze skalą organizacji. Pozytywne sprzężenie zwrotne — kluczowy wynik: narracja, gdy raz przekroczy próg κ_c, aktywnie niszczy μ², które było jedyną barierą przed pełną kondensacją.</p>
+
+  <div class="canvas-box reveal">
+    <div class="cb-header">
+      <div class="cb-title">Animacja przepływu parametrów dg/dt</div>
+      <div class="cb-controls">
+        <button class="ctrl-btn active" id="bf-btn-all" onclick="setBetaParam('all')">Wszystkie</button>
+        <button class="ctrl-btn" id="bf-btn-mu" onclick="setBetaParam('mu')">β(μ²)</button>
+        <button class="ctrl-btn" id="bf-btn-kappa" onclick="setBetaParam('kappa')">β(κ)</button>
+        <button class="ctrl-btn" id="bf-btn-mphi" onclick="setBetaParam('mphi')">β(m²_φ)</button>
+        <button class="ctrl-btn" id="bf-btn-ew" onclick="setBetaParam('ew')">β(ε_w)</button>
+      </div>
+    </div>
+    <canvas class="viz" id="betaCanvas" height="300"></canvas>
+    <div class="readout" id="beta-readout"></div>
+  </div>
+
+  <div class="beta-grid reveal">
+    <div class="beta-card bc-mphi">
+      <div class="bc-label">β(m²_φ)</div>
+      <div class="bc-name">Masa narracyjna</div>
+      <div class="bc-formula">= 2m²_φ − κ²/(16π²)·v² + ε_w/(8π²)·⟨Tr|∇ρ|²⟩</div>
+      <p class="bc-interp">+2m²_φ: wymiarowy wzrost — narracje na dużych skalach naturalnie sztywniejsze. −κ²v²: silna relacyjność zmiękcza narrację. +ε_w: aktywne modele usztywniają narrację.</p>
+    </div>
+    <div class="beta-card bc-kappa">
+      <div class="bc-label">β(κ)</div>
+      <div class="bc-name">Sprzężenie narracja↔relacja</div>
+      <div class="bc-formula">= κ·[ε_w/(8π²)·⟨Tr|∇ρ|²⟩ − λ/(16π²) − m²_π/(16π²v²)]</div>
+      <p class="bc-interp">Sprzężenie rośnie gdy zasłona aktywna, maleje gdy pojemność relacyjna duża. Silna relacyjność tłumi sprzężenie narracji z systemem.</p>
+    </div>
+    <div class="beta-card bc-ew">
+      <div class="bc-label">β(ε_w)</div>
+      <div class="bc-name">Stała zasłony</div>
+      <div class="bc-formula">= 2ε_w + κ²/(8π²)·[φ₀]²/m²_Φ</div>
+      <p class="bc-interp">Zasłona perturbacyjnie nierenormalizowalna: rośnie ze skalą (+2) plus wkład od kondensatu. Im silniejszy kondensat φ₀ i słabsze m_Φ, tym szybszy wzrost ε_w.</p>
+    </div>
+    <div class="beta-card bc-mu">
+      <div class="bc-label">β(μ²)</div>
+      <div class="bc-name">Pojemność Masah</div>
+      <div class="bc-formula">= −2μ² + λ/(8π²)·v² − κ²/(16π²)·[φ₀]²</div>
+      <p class="bc-interp">Maleje ze skalą (−2). Korekcja λ spowalnia zanik. Kluczowe: −κ²φ₀² od kondensatu aktywnie erorduje μ². Narracja dominująca niszczy pojemność relacyjną.</p>
+    </div>
+  </div>
+
+  <div class="discovery-box reveal">
+    <div class="discovery-label">Pozytywne sprzężenie zwrotne — mechanizm samonapędzania</div>
+    <p>Kondensat φ₀ wzmacnia ε_w, które przyspiesza erozję μ², co zmniejsza opór wobec kondensacji — co wzmacnia φ₀. System przyspiesza ku atraktorowi narracyjnemu. To jest formalna struktura „zawłaszczenia rzeczywistości jako proces samonapędzający się".</p>
+  </div>
+</section>
+
+<!-- TRAJECTORIES -->
+<section id="trajectories">
+  <div class="sec-num">IV — Trajektorie i Twierdzenie</div>
+  <h2 class="sec-title reveal">Trajektorie systemów<br>i twierdzenie o autodekondensacji</h2>
+  <div class="sec-sub">Trzy typy trajektorii · Niemożność reformy od wewnątrz</div>
+
+  <div class="traj-grid reveal">
+    <div class="traj-card traj-A active" onclick="showTraj('A',this)">
+      <div class="traj-label">Trajektoria A</div>
+      <div class="traj-name">Odporny (WF)</div>
+      <p class="traj-desc">Jednostka z silną relacyjnością μ²₀ dużym, κ₀ małym. System zbiega ku punktowi Wilsona-Fishera. Odporność na kondensację narracyjną na wszystkich skalach.</p>
+    </div>
+    <div class="traj-card traj-B" onclick="showTraj('B',this)">
+      <div class="traj-label">Trajektoria B</div>
+      <div class="traj-name">Instytucja (kondensat)</div>
+      <p class="traj-desc">κ₀ duże, ε_w rosnące, φ₀ > 0. Pozytywne sprzężenie zwrotne: kondensat φ₀ → β(ε_w) rośnie → μ² spada → kondensacja przyspiesza. Skala kondensacji l_c na poziomie kulturowym (pokolenie lub dwa).</p>
+    </div>
+    <div class="traj-card traj-C" onclick="showTraj('C',this)">
+      <div class="traj-label">Trajektoria C</div>
+      <div class="traj-name">Krytyczny (separatrisa)</div>
+      <p class="traj-desc">κ₀ = κ_c(m²_φ,0). System przepływa wzdłuż separatrisy ku punktowi WF. Nigdy nie kondensuje, nigdy nie w pełni wolny. Stan chroniczny: maksymalna wrażliwość na S(t) i jednocześnie maksymalna podatność na perturbacje.</p>
+    </div>
+  </div>
+
+  <!-- Trajectory detail canvas -->
+  <div class="canvas-box reveal" style="margin-top:2rem;">
+    <div class="cb-header">
+      <div class="cb-title" id="traj-canvas-title">Trajektoria A — przepływ parametrów przez skale</div>
+      <div class="cb-controls">
+        <div class="ctrl-slider">
+          <label>Czas</label>
+          <input type="range" id="traj-speed" min="1" max="10" value="5">
+          <span id="traj-speed-val" style="min-width:20px;">5</span>
+        </div>
+      </div>
+    </div>
+    <canvas class="viz" id="trajCanvas" height="320"></canvas>
+    <div class="readout" id="traj-readout"></div>
+  </div>
+
+  <!-- Main theorem -->
+  <div class="theorem-box reveal">
+    <div class="theorem-title">Twierdzenie o przepływie TERJ</div>
+    <div class="theorem-body">
+      W przestrzeni parametrów (κ, μ², m²_φ, ε_w, λ) istnieje separatrisa dzieląca obszar przyciągania punktu Wilsona-Fishera (faza relacyjna) od obszaru przyciągania atraktora narracyjnego (kondensat). Położenie systemu względem separatrisy wyznaczone jest przez stosunek siły relacyjności μ² do kwadratu sprzężenia narracyjnego κ²/m²_φ.
+    </div>
+    <div class="theorem-eq">
+<span class="comment">// Kryterium fazy relacyjnej</span><br>
+<span class="h">μ²</span> <span class="g">&gt;</span> <span class="p">κ²φ₀²</span> / (2λ<span class="p">m²_φ</span>)<br><br>
+<span class="comment">// Kryterium fazy narracyjnej (kondensatu)</span><br>
+<span class="h">μ²</span> <span class="g">&lt;</span> <span class="p">κ²φ₀²</span> / (2λ<span class="p">m²_φ</span>)<br><br>
+<span class="comment">// Niemożność autodekondensacji</span><br>
+β(<span class="h">μ²</span>) = −2<span class="h">μ²</span> − <span class="p">κ²φ₀²</span>/16π² &lt; 0 wewnątrz kondensatu<br>
+Wymagana perturbacja zewnętrzna przekraczająca skalę <span class="h">ξ_nar⁻¹</span>
+    </div>
+    <div class="theorem-body">
+      System nie może sam siebie zdekondensować. Każda wewnętrzna fluktuacja jest tłumiona przez masywne m_Φ. Stąd formalna odpowiedź na pytanie, dlaczego systemy totalitarne nie reformują się od wewnątrz: są w stabilnym IR atraktorze RG. Wymagają zewnętrznego wstrząsu o amplitudzie przekraczającej ξ_nar^{−1}.
+    </div>
+  </div>
+
+  <!-- Condensation time canvas -->
+  <div class="canvas-box reveal">
+    <div class="cb-header">
+      <div class="cb-title">Skala kondensacji l_c i czas zaniku relacyjności τ_relacji</div>
+      <div class="cb-controls">
+        <div class="ctrl-slider">
+          <label>κ/κ_c</label>
+          <input type="range" id="kappa-ratio" min="101" max="300" value="150">
+          <span id="kappa-ratio-val" style="min-width:36px;">1.50×</span>
+        </div>
+        <div class="ctrl-slider">
+          <label>m²_φ</label>
+          <input type="range" id="cond-mphi" min="10" max="90" value="50">
+          <span id="cond-mphi-val" style="min-width:28px;">50</span>
+        </div>
+      </div>
+    </div>
+    <canvas class="viz" id="condCanvas" height="280"></canvas>
+    <div class="readout" id="cond-readout"></div>
+  </div>
+
+  <blockquote class="reveal">
+    <p>Narracja, gdy raz przekroczy próg κ_c, aktywnie niszczy warunek swojej własnej odporności w systemie — eroduje μ², które było jedyną barierą przed pełną kondensacją. To jest formalna struktura intuicji o „zawłaszczeniu rzeczywistości jako procesie samonapędzającym się".</p>
+    <cite>— Przepływ RG dla TERJ, Funkcje beta i mechanizm kondensacji narracyjnej</cite>
+  </blockquote>
+</section>
+
+<div class="diamond-divider">◈</div>
+<section style="padding:3rem;border-bottom:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:2rem;">
+    <div>
+      <div class="nav-logo" style="margin-bottom:.5rem;">TERJ · Przepływ RG</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">Kwiecień 2026 · Część III z IV</div>
+    </div>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+      <a href="lagrangian.html" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;">← Lagrangian</a>
+      <a href="komentarz.html" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;">↗ TERJ I–IV</a>
+    </div>
+  </div>
+</section>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SHARED HELPERS
+// ═══════════════════════════════════════════════════════════
+function resize(canvas) {
+  const W = canvas.offsetWidth;
+  if (canvas.width !== W) canvas.width = W;
+  return { W, H: canvas.height };
+}
+
+// ═══════════════════════════════════════════════════════════
+// I. FLOW CANVAS — parameter evolution across scales
+// ═══════════════════════════════════════════════════════════
+const flowCanvas = document.getElementById('flowCanvas');
+const fCtx = flowCanvas.getContext('2d');
+let flowT = 0;
+
+function getFlowParams() {
+  return {
+    k0: parseFloat(document.getElementById('kappa0').value) / 100,
+    mp0: parseFloat(document.getElementById('mphi0').value) / 100,
+    mu0: parseFloat(document.getElementById('mu20').value) / 100
+  };
+}
+
+function runFlow(k0, mp0, mu0, steps) {
+  let k = k0, mp = mp0, mu = mu0, ew = 0.05, phi0 = 0;
+  const traj = [{ t: 0, k, mp, mu, ew, phi0 }];
+  const dt = 0.15;
+  for (let i = 1; i <= steps; i++) {
+    const t = i * dt;
+    // simplified beta functions
+    const beta_mp = 2 * mp - k * k * mu * mu / (16 * Math.PI * Math.PI) + ew * 0.02;
+    const beta_k  = k * (ew * 0.05 - 0.003 - mp * 0.01);
+    const beta_mu = -2 * mu + 0.001 - k * k * phi0 * phi0 * 0.1;
+    const beta_ew = 2 * ew + k * k * phi0 * phi0 / (8 * Math.PI * Math.PI * Math.max(mp, 0.01));
+    // condensate builds if k > critical
+    const kc = Math.sqrt(16 * Math.PI * Math.PI * mp * mu * mu / (Math.max(mu, 0.01)));
+    if (k > kc * 0.8) phi0 = Math.min(phi0 + 0.002 * (k - kc * 0.8), 1);
+    k  = Math.max(0.01, k  + beta_k  * dt * 0.3);
+    mp = Math.max(0.01, mp + beta_mp * dt * 0.1);
+    mu = Math.max(0.001, mu + beta_mu * dt * 0.1);
+    ew = Math.max(0.01, ew + beta_ew * dt * 0.05);
+    traj.push({ t, k, mp, mu, ew, phi0 });
+  }
+  return traj;
+}
+
+function drawFlow() {
+  const { W, H } = resize(flowCanvas);
+  const { k0, mp0, mu0 } = getFlowParams();
+  fCtx.clearRect(0, 0, W, H);
+  fCtx.fillStyle = '#0a0a0f';
+  fCtx.fillRect(0, 0, W, H);
+
+  const pad = { l: 60, r: 30, t: 30, b: 50 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const steps = 80;
+  const traj = runFlow(k0, mp0, mu0, steps);
+
+  // grid
+  fCtx.strokeStyle = 'rgba(160,160,220,0.06)';
+  fCtx.lineWidth = 1;
+  for (let x = pad.l; x <= pad.l + iW; x += iW / 5) {
+    fCtx.beginPath(); fCtx.moveTo(x, pad.t); fCtx.lineTo(x, pad.t + iH); fCtx.stroke();
+  }
+  for (let y = pad.t; y <= pad.t + iH; y += iH / 5) {
+    fCtx.beginPath(); fCtx.moveTo(pad.l, y); fCtx.lineTo(pad.l + iW, y); fCtx.stroke();
+  }
+
+  // axes
+  fCtx.strokeStyle = 'rgba(160,160,220,0.25)';
+  fCtx.lineWidth = 1;
+  fCtx.beginPath(); fCtx.moveTo(pad.l, pad.t); fCtx.lineTo(pad.l, pad.t + iH); fCtx.stroke();
+  fCtx.beginPath(); fCtx.moveTo(pad.l, pad.t + iH); fCtx.lineTo(pad.l + iW, pad.t + iH); fCtx.stroke();
+
+  // scale labels
+  fCtx.font = '9px Space Mono, monospace';
+  fCtx.fillStyle = 'rgba(160,160,220,0.35)';
+  const scaleLabels = ['l~1\njednostka', 'l~10²\ngrupa', 'l~10⁴\ninstytucja', 'l~10⁶\nkultura', 'l~10⁸\ncywilizacja'];
+  scaleLabels.forEach((lb, i) => {
+    const x = pad.l + (i / (scaleLabels.length - 1)) * iW;
+    fCtx.textAlign = 'center';
+    lb.split('\n').forEach((line, li) => {
+      fCtx.fillText(line, x, pad.t + iH + 16 + li * 12);
+    });
+    fCtx.strokeStyle = 'rgba(160,160,220,0.08)';
+    fCtx.setLineDash([3, 5]);
+    fCtx.beginPath(); fCtx.moveTo(x, pad.t); fCtx.lineTo(x, pad.t + iH); fCtx.stroke();
+    fCtx.setLineDash([]);
+  });
+
+  // draw param curves
+  const params = [
+    { key: 'k',    color: '#4ecdc4', label: 'κ (sprzężenie)' },
+    { key: 'mp',   color: '#9b72cf', label: 'm²_φ (masa narracji)' },
+    { key: 'mu',   color: '#e07560', label: 'μ² (Masah)' },
+    { key: 'ew',   color: '#5b9bd5', label: 'ε_w (zasłona)' },
+    { key: 'phi0', color: '#c9a84c', label: 'φ₀ (kondensat)' }
+  ];
+
+  // find max for normalisation
+  const maxVals = {};
+  params.forEach(p => {
+    maxVals[p.key] = Math.max(...traj.map(pt => pt[p.key])) * 1.1 + 0.01;
+  });
+
+  const visibleSteps = Math.min(Math.floor(flowT), steps);
+  flowT += 0.6;
+  if (flowT > steps + 20) flowT = 0;
+
+  params.forEach(p => {
+    fCtx.beginPath();
+    fCtx.strokeStyle = p.color;
+    fCtx.lineWidth = 1.5;
+    fCtx.globalAlpha = 0.85;
+    for (let i = 0; i <= Math.min(visibleSteps, traj.length - 1); i++) {
+      const x = pad.l + (traj[i].t / traj[steps].t) * iW;
+      const y = pad.t + iH - (traj[i][p.key] / maxVals[p.key]) * iH;
+      i === 0 ? fCtx.moveTo(x, y) : fCtx.lineTo(x, y);
+    }
+    fCtx.stroke();
+    fCtx.globalAlpha = 1;
+  });
+
+  // legend
+  fCtx.font = '9px Space Mono, monospace';
+  params.forEach((p, i) => {
+    fCtx.fillStyle = p.color;
+    fCtx.fillRect(pad.l + 10 + i * 120, pad.t + 8, 10, 2);
+    fCtx.fillStyle = 'rgba(160,160,220,0.5)';
+    fCtx.textAlign = 'left';
+    fCtx.fillText(p.label, pad.l + 24 + i * 120, pad.t + 14);
+  });
+
+  // axis label
+  fCtx.fillStyle = 'rgba(160,160,220,0.3)';
+  fCtx.textAlign = 'right';
+  fCtx.fillText('t = ln(l/l₀)', pad.l + iW, pad.t + iH - 5);
+
+  // readout
+  const last = traj[Math.min(visibleSteps, traj.length - 1)];
+  const condensed = last.phi0 > 0.3;
+  document.getElementById('flow-readout').innerHTML = `
+    <span style="color:var(--teal)">κ = ${last.k.toFixed(3)}</span>
+    <span style="color:var(--purple)">m²_φ = ${last.mp.toFixed(3)}</span>
+    <span style="color:var(--coral)">μ² = ${last.mu.toFixed(3)}</span>
+    <span style="color:var(--blue)">ε_w = ${last.ew.toFixed(3)}</span>
+    <span style="color:var(--gold)">φ₀ = ${last.phi0.toFixed(3)}</span>
+    <span style="color:${condensed ? '#e07560' : '#7ec8a0'}">${condensed ? '⊗ KONDENSAT' : '◯ Faza relacyjna'}</span>
+  `;
+  requestAnimationFrame(drawFlow);
+}
+
+['kappa0','mphi0','mu20'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    document.getElementById(id + '-val').textContent = e.target.value;
+    flowT = 0;
+  });
+});
+drawFlow();
+
+// ═══════════════════════════════════════════════════════════
+// II. PHASE DIAGRAM
+// ═══════════════════════════════════════════════════════════
+const phaseCanvas = document.getElementById('phaseCanvas');
+const pCtx = phaseCanvas.getContext('2d');
+let showArrows = true;
+let trajectories = [];
+let phaseAnimFrame;
+
+function toggleArrows() {
+  showArrows = !showArrows;
+  document.getElementById('pd-btn-show').classList.toggle('active', showArrows);
+}
+function clearTrajectories() { trajectories = []; }
+
+function getSeparatrixY(kappa, mu2) {
+  return 0.4 * mu2 * kappa;
+}
+
+phaseCanvas.addEventListener('click', function(e) {
+  const rect = phaseCanvas.getBoundingClientRect();
+  const { W, H } = resize(phaseCanvas);
+  const pad = { l: 60, r: 40, t: 40, b: 60 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const kappa = ((mx - pad.l) / iW);
+  const mphi  = 1 - ((my - pad.t) / iH);
+  if (kappa < 0 || kappa > 1 || mphi < 0 || mphi > 1) return;
+  trajectories.push({ k0: kappa, m0: mphi, pts: [] });
+});
+
+function computePhaseTraj(k0, m0, steps) {
+  let k = k0, m = m0;
+  const mu2 = parseFloat(document.getElementById('pd-mu2').value) / 100;
+  const pts = [{ k, m }];
+  const dt = 0.04;
+  for (let i = 0; i < steps; i++) {
+    const kc = 0.4 * mu2 / Math.max(m, 0.05);
+    const bk = k * (0.015 - m * 0.02 + (k > kc ? 0.03 : 0));
+    const bm = 0.08 * m - k * k * mu2 * 0.2;
+    k = Math.max(0.01, Math.min(0.99, k + bk * dt));
+    m = Math.max(0.01, Math.min(0.99, m + bm * dt));
+    pts.push({ k, m });
+    if (Math.abs(bk) < 0.001 && Math.abs(bm) < 0.001) break;
+  }
+  return pts;
+}
+
+function drawPhase() {
+  const { W, H } = resize(phaseCanvas);
+  pCtx.clearRect(0, 0, W, H);
+  pCtx.fillStyle = '#0a0a0f';
+  pCtx.fillRect(0, 0, W, H);
+
+  const pad = { l: 60, r: 40, t: 40, b: 60 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const mu2 = parseFloat(document.getElementById('pd-mu2').value) / 100;
+
+  function toScreen(k, m) {
+    return { x: pad.l + k * iW, y: pad.t + (1 - m) * iH };
+  }
+
+  // Background regions
+  // Relational phase (left of separatrix): teal tint
+  // Narrative phase (right): purple tint
+  const kSep = 0.42;
+  const sepPts = [];
+  for (let m = 0; m <= 1; m += 0.01) {
+    const k = kSep + m * 0.15; // separatrix curve
+    sepPts.push(toScreen(k, m));
+  }
+
+  pCtx.beginPath();
+  pCtx.moveTo(pad.l, pad.t + iH);
+  sepPts.forEach(p => pCtx.lineTo(p.x, p.y));
+  pCtx.lineTo(pad.l, pad.t);
+  pCtx.closePath();
+  pCtx.fillStyle = 'rgba(78,205,196,0.06)';
+  pCtx.fill();
+
+  pCtx.beginPath();
+  sepPts.forEach((p, i) => i === 0 ? pCtx.moveTo(p.x, p.y) : pCtx.lineTo(p.x, p.y));
+  pCtx.lineTo(pad.l + iW, pad.t);
+  pCtx.lineTo(pad.l + iW, pad.t + iH);
+  pCtx.closePath();
+  pCtx.fillStyle = 'rgba(155,114,207,0.06)';
+  pCtx.fill();
+
+  // Grid
+  pCtx.strokeStyle = 'rgba(160,160,220,0.06)';
+  pCtx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const x = pad.l + (i / 5) * iW;
+    const y = pad.t + (i / 5) * iH;
+    pCtx.beginPath(); pCtx.moveTo(x, pad.t); pCtx.lineTo(x, pad.t + iH); pCtx.stroke();
+    pCtx.beginPath(); pCtx.moveTo(pad.l, y); pCtx.lineTo(pad.l + iW, y); pCtx.stroke();
+  }
+
+  // Separatrix
+  pCtx.beginPath();
+  sepPts.forEach((p, i) => i === 0 ? pCtx.moveTo(p.x, p.y) : pCtx.lineTo(p.x, p.y));
+  pCtx.strokeStyle = 'rgba(201,168,76,0.7)';
+  pCtx.lineWidth = 2;
+  pCtx.setLineDash([6, 4]);
+  pCtx.stroke();
+  pCtx.setLineDash([]);
+
+  // Flow arrows
+  if (showArrows) {
+    const gridN = 8;
+    for (let ki = 0; ki <= gridN; ki++) {
+      for (let mi = 0; mi <= gridN; mi++) {
+        const k = ki / gridN;
+        const m = mi / gridN;
+        const kc = 0.42 + m * 0.15;
+        const bk = k * (0.015 - m * 0.02 + (k > kc ? 0.03 : 0));
+        const bm = 0.08 * m - k * k * mu2 * 0.2;
+        const len = Math.sqrt(bk * bk + bm * bm);
+        if (len < 0.001) continue;
+        const { x, y } = toScreen(k, m);
+        const nx = bk / len * 12;
+        const ny = -bm / len * 12;
+        const alpha = Math.min(0.4, len * 20);
+        const inCondensate = k > kc;
+        pCtx.strokeStyle = inCondensate
+          ? `rgba(155,114,207,${alpha})`
+          : `rgba(78,205,196,${alpha})`;
+        pCtx.lineWidth = 1;
+        pCtx.beginPath();
+        pCtx.moveTo(x, y);
+        pCtx.lineTo(x + nx, y + ny);
+        pCtx.stroke();
+        // arrowhead
+        const ang = Math.atan2(ny, nx);
+        pCtx.beginPath();
+        pCtx.moveTo(x + nx, y + ny);
+        pCtx.lineTo(x + nx - 4 * Math.cos(ang - 0.4), y + ny - 4 * Math.sin(ang - 0.4));
+        pCtx.lineTo(x + nx - 4 * Math.cos(ang + 0.4), y + ny - 4 * Math.sin(ang + 0.4));
+        pCtx.closePath();
+        pCtx.fillStyle = inCondensate
+          ? `rgba(155,114,207,${alpha})`
+          : `rgba(78,205,196,${alpha})`;
+        pCtx.fill();
+      }
+    }
+  }
+
+  // Fixed points
+  const wf = toScreen(0.1, 0.1);
+  const ir = toScreen(0.85, 0.8);
+
+  // WF attractor
+  pCtx.beginPath();
+  pCtx.arc(wf.x, wf.y, 8, 0, Math.PI * 2);
+  pCtx.fillStyle = 'rgba(78,205,196,0.8)';
+  pCtx.fill();
+  pCtx.font = '10px Space Mono, monospace';
+  pCtx.fillStyle = '#4ecdc4';
+  pCtx.textAlign = 'left';
+  pCtx.fillText('★ Wilson-Fisher', wf.x + 12, wf.y + 4);
+  pCtx.fillStyle = 'rgba(78,205,196,0.3)';
+  pCtx.fillText('faza relacyjna', wf.x + 12, wf.y + 16);
+
+  // IR attractor
+  pCtx.beginPath();
+  pCtx.arc(ir.x, ir.y, 8, 0, Math.PI * 2);
+  pCtx.fillStyle = 'rgba(155,114,207,0.8)';
+  pCtx.fill();
+  pCtx.fillStyle = '#9b72cf';
+  pCtx.textAlign = 'right';
+  pCtx.fillText('★ atraktor IR', ir.x - 12, ir.y + 4);
+  pCtx.fillStyle = 'rgba(155,114,207,0.3)';
+  pCtx.fillText('kondensat φ₀', ir.x - 12, ir.y + 16);
+
+  // Separatrix label
+  const midSep = toScreen(kSep + 0.07, 0.5);
+  pCtx.save();
+  pCtx.translate(midSep.x, midSep.y);
+  pCtx.rotate(-Math.PI / 4);
+  pCtx.font = '9px Space Mono, monospace';
+  pCtx.fillStyle = 'rgba(201,168,76,0.6)';
+  pCtx.textAlign = 'center';
+  pCtx.fillText('SEPARATRISA', 0, 0);
+  pCtx.restore();
+
+  // Phase labels
+  pCtx.font = '11px Space Mono, monospace';
+  pCtx.fillStyle = 'rgba(78,205,196,0.25)';
+  pCtx.textAlign = 'center';
+  pCtx.fillText('FAZA RELACYJNA', pad.l + iW * 0.2, pad.t + iH * 0.5);
+  pCtx.fillStyle = 'rgba(155,114,207,0.25)';
+  pCtx.fillText('FAZA NARRACYJNA', pad.l + iW * 0.75, pad.t + iH * 0.5);
+  pCtx.fillText('(kondensat)', pad.l + iW * 0.75, pad.t + iH * 0.5 + 16);
+
+  // User trajectories
+  trajectories.forEach(traj => {
+    const pts = computePhaseTraj(traj.k0, traj.m0, 120);
+    if (pts.length < 2) return;
+    const kc0 = 0.42 + traj.m0 * 0.15;
+    const condensing = traj.k0 > kc0;
+    pCtx.beginPath();
+    pts.forEach((p, i) => {
+      const s = toScreen(p.k, p.m);
+      i === 0 ? pCtx.moveTo(s.x, s.y) : pCtx.lineTo(s.x, s.y);
+    });
+    pCtx.strokeStyle = condensing ? '#e07560' : '#4ecdc4';
+    pCtx.lineWidth = 2;
+    pCtx.stroke();
+    // start dot
+    const s0 = toScreen(pts[0].k, pts[0].m);
+    pCtx.beginPath();
+    pCtx.arc(s0.x, s0.y, 5, 0, Math.PI * 2);
+    pCtx.fillStyle = condensing ? '#e07560' : '#4ecdc4';
+    pCtx.fill();
+  });
+
+  // Axes
+  pCtx.strokeStyle = 'rgba(160,160,220,0.3)';
+  pCtx.lineWidth = 1;
+  pCtx.beginPath(); pCtx.moveTo(pad.l, pad.t); pCtx.lineTo(pad.l, pad.t + iH); pCtx.stroke();
+  pCtx.beginPath(); pCtx.moveTo(pad.l, pad.t + iH); pCtx.lineTo(pad.l + iW, pad.t + iH); pCtx.stroke();
+
+  pCtx.font = '10px Space Mono, monospace';
+  pCtx.fillStyle = 'rgba(160,160,220,0.4)';
+  pCtx.textAlign = 'center';
+  pCtx.fillText('κ (sprzężenie narracyjne)', pad.l + iW / 2, pad.t + iH + 46);
+  pCtx.save();
+  pCtx.translate(16, pad.t + iH / 2);
+  pCtx.rotate(-Math.PI / 2);
+  pCtx.textAlign = 'center';
+  pCtx.fillText('m²_φ (masa narracji)', 0, 0);
+  pCtx.restore();
+
+  document.getElementById('pd-mu2').addEventListener('input', e => {
+    document.getElementById('pd-mu2-val').textContent = e.target.value;
+  });
+
+  phaseAnimFrame = requestAnimationFrame(drawPhase);
+}
+drawPhase();
+
+// ═══════════════════════════════════════════════════════════
+// III. BETA FUNCTION ANIMATION
+// ═══════════════════════════════════════════════════════════
+const betaCanvas = document.getElementById('betaCanvas');
+const bCtx = betaCanvas.getContext('2d');
+let betaParam = 'all';
+let betaT = 0;
+
+function setBetaParam(p) {
+  betaParam = p;
+  betaT = 0;
+  ['all','mu','kappa','mphi','ew'].forEach(id => {
+    document.getElementById('bf-btn-' + id).classList.toggle('active', id === p);
+  });
+}
+
+function drawBeta() {
+  const { W, H } = resize(betaCanvas);
+  bCtx.clearRect(0, 0, W, H);
+  bCtx.fillStyle = '#0a0a0f';
+  bCtx.fillRect(0, 0, W, H);
+
+  const pad = { l: 60, r: 30, t: 30, b: 50 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const N = 200;
+
+  // Grid
+  bCtx.strokeStyle = 'rgba(160,160,220,0.06)';
+  bCtx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const x = pad.l + (i / 4) * iW;
+    bCtx.beginPath(); bCtx.moveTo(x, pad.t); bCtx.lineTo(x, pad.t + iH); bCtx.stroke();
+  }
+  for (let j = 0; j <= 4; j++) {
+    const y = pad.t + (j / 4) * iH;
+    bCtx.beginPath(); bCtx.moveTo(pad.l, y); bCtx.lineTo(pad.l + iW, y); bCtx.stroke();
+  }
+
+  // Zero line
+  const zeroY = pad.t + iH * 0.5;
+  bCtx.strokeStyle = 'rgba(160,160,220,0.2)';
+  bCtx.lineWidth = 1;
+  bCtx.setLineDash([4, 4]);
+  bCtx.beginPath(); bCtx.moveTo(pad.l, zeroY); bCtx.lineTo(pad.l + iW, zeroY); bCtx.stroke();
+  bCtx.setLineDash([]);
+
+  // Beta function curves — parameterised by κ (x axis)
+  const defs = [
+    {
+      id: 'mu',
+      color: '#e07560',
+      label: 'β(μ²)',
+      fn: (k, mp, mu) => -2 * mu + 0.002 - k * k * 0.3
+    },
+    {
+      id: 'kappa',
+      color: '#4ecdc4',
+      label: 'β(κ)',
+      fn: (k, mp, mu) => k * (0.015 - mp * 0.04)
+    },
+    {
+      id: 'mphi',
+      color: '#9b72cf',
+      label: 'β(m²_φ)',
+      fn: (k, mp, mu) => 2 * mp - k * k * mu * mu * 0.4 + 0.01
+    },
+    {
+      id: 'ew',
+      color: '#5b9bd5',
+      label: 'β(ε_w)',
+      fn: (k, mp, mu) => 0.02 + k * k * 0.08 / Math.max(mp, 0.01)
+    }
+  ];
+
+  const mp0 = 0.4, mu0 = 0.6;
+  const scale = iH * 0.4;
+
+  betaT += 0.5;
+  const visN = Math.min(Math.floor(betaT), N);
+
+  defs.forEach(d => {
+    if (betaParam !== 'all' && betaParam !== d.id) return;
+    bCtx.beginPath();
+    bCtx.strokeStyle = d.color;
+    bCtx.lineWidth = 2;
+    bCtx.globalAlpha = 0.85;
+    for (let i = 0; i <= visN; i++) {
+      const k = i / N;
+      const beta = d.fn(k, mp0, mu0);
+      const x = pad.l + k * iW;
+      const y = zeroY - beta * scale;
+      i === 0 ? bCtx.moveTo(x, y) : bCtx.lineTo(x, y);
+    }
+    bCtx.stroke();
+    bCtx.globalAlpha = 1;
+
+    // label at end
+    if (visN === N) {
+      const k = visN / N;
+      const beta = d.fn(k, mp0, mu0);
+      const lx = pad.l + k * iW + 4;
+      const ly = zeroY - beta * scale;
+      bCtx.font = '10px Space Mono, monospace';
+      bCtx.fillStyle = d.color;
+      bCtx.textAlign = 'left';
+      bCtx.fillText(d.label, Math.min(lx, pad.l + iW - 60), ly);
+    }
+  });
+
+  // Zero cross markers
+  if (visN === N) {
+    defs.forEach(d => {
+      if (betaParam !== 'all' && betaParam !== d.id) return;
+      for (let i = 1; i <= N; i++) {
+        const k1 = (i - 1) / N, k2 = i / N;
+        const b1 = d.fn(k1, mp0, mu0), b2 = d.fn(k2, mp0, mu0);
+        if (b1 * b2 < 0) {
+          const kz = k1 + (k2 - k1) * (-b1 / (b2 - b1));
+          const xz = pad.l + kz * iW;
+          bCtx.beginPath();
+          bCtx.arc(xz, zeroY, 4, 0, Math.PI * 2);
+          bCtx.fillStyle = d.color;
+          bCtx.fill();
+          bCtx.font = '9px Space Mono, monospace';
+          bCtx.fillStyle = d.color;
+          bCtx.textAlign = 'center';
+          bCtx.fillText('κ_c', xz, zeroY + 14);
+        }
+      }
+    });
+  }
+
+  // axes
+  bCtx.strokeStyle = 'rgba(160,160,220,0.3)';
+  bCtx.lineWidth = 1;
+  bCtx.beginPath(); bCtx.moveTo(pad.l, pad.t); bCtx.lineTo(pad.l, pad.t + iH); bCtx.stroke();
+  bCtx.beginPath(); bCtx.moveTo(pad.l, pad.t + iH); bCtx.lineTo(pad.l + iW, pad.t + iH); bCtx.stroke();
+  bCtx.font = '10px Space Mono, monospace';
+  bCtx.fillStyle = 'rgba(160,160,220,0.4)';
+  bCtx.textAlign = 'center';
+  bCtx.fillText('κ →', pad.l + iW, pad.t + iH + 20);
+  bCtx.textAlign = 'right';
+  bCtx.fillText('dg/dt', pad.l - 4, pad.t + 8);
+  bCtx.fillText('β > 0', pad.l - 4, zeroY - 8);
+  bCtx.fillText('β < 0', pad.l - 4, zeroY + 18);
+
+  if (betaT > N + 40) betaT = 0;
+
+  document.getElementById('beta-readout').innerHTML = `
+    <span style="color:var(--coral)">β(μ²) < 0 dla κ > κ_c: pojemność relacyjna eroduje</span>
+    <span style="color:var(--teal)">β(κ) > 0 gdy zasłona aktywna: sprzężenie rośnie</span>
+    <span style="color:var(--purple)">β(m²_φ) > 0: narracja sztywnieje ze skalą</span>
+    <span style="color:var(--blue)">β(ε_w) > 0 zawsze: zasłona perturbacyjnie rozbieżna</span>
+  `;
+
+  requestAnimationFrame(drawBeta);
+}
+drawBeta();
+
+// ═══════════════════════════════════════════════════════════
+// IV. TRAJECTORY DETAIL
+// ═══════════════════════════════════════════════════════════
+const trajCanvas = document.getElementById('trajCanvas');
+const tCtx = trajCanvas.getContext('2d');
+let currentTraj = 'A';
+let trajT = 0;
+
+const trajDefs = {
+  A: {
+    params: { k: 0.18, mp: 0.35, mu: 0.75, ew: 0.08, phi0: 0 },
+    label: 'Trajektoria A — silna relacyjność, słabe κ',
+    color: '#4ecdc4'
+  },
+  B: {
+    params: { k: 0.68, mp: 0.45, mu: 0.45, ew: 0.15, phi0: 0.1 },
+    label: 'Trajektoria B — instytucja, wysoke κ',
+    color: '#e07560'
+  },
+  C: {
+    params: { k: 0.42, mp: 0.5, mu: 0.6, ew: 0.1, phi0: 0 },
+    label: 'Trajektoria C — na separatrisie, stan krytyczny',
+    color: '#c9a84c'
+  }
+};
+
+function showTraj(id, el) {
+  currentTraj = id;
+  trajT = 0;
+  document.querySelectorAll('.traj-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('traj-canvas-title').textContent = trajDefs[id].label;
+}
+
+function simulateTraj(params, steps) {
+  let { k, mp, mu, ew, phi0 } = { ...params };
+  const history = [{ t: 0, k, mp, mu, ew, phi0 }];
+  const dt = 0.12;
+  for (let i = 1; i <= steps; i++) {
+    const kc = 0.4 * mu / Math.max(mp, 0.05);
+    if (k > kc * 0.9) phi0 = Math.min(phi0 + 0.003 * (k - kc * 0.9), 0.95);
+    const beta_k  = k * (0.012 - mp * 0.015 + (k > kc ? 0.025 : 0));
+    const beta_mu = -2 * mu * 0.05 - k * k * phi0 * phi0 * 0.08 + 0.001;
+    const beta_mp = 2 * mp * 0.05 - k * k * mu * mu * 0.1 + ew * 0.01;
+    const beta_ew = 2 * ew * 0.04 + k * k * phi0 * phi0 * 0.05 / Math.max(mp, 0.01);
+    k  = Math.max(0.01, Math.min(0.99, k  + beta_k  * dt));
+    mu = Math.max(0.01, Math.min(0.99, mu + beta_mu * dt));
+    mp = Math.max(0.01, Math.min(0.99, mp + beta_mp * dt));
+    ew = Math.max(0.01, Math.min(0.99, ew + beta_ew * dt));
+    history.push({ t: i * dt, k, mp, mu, ew, phi0 });
+  }
+  return history;
+}
+
+function drawTraj() {
+  const { W, H } = resize(trajCanvas);
+  tCtx.clearRect(0, 0, W, H);
+  tCtx.fillStyle = '#0a0a0f';
+  tCtx.fillRect(0, 0, W, H);
+
+  const pad = { l: 55, r: 20, t: 25, b: 45 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+  const def = trajDefs[currentTraj];
+  const steps = 100;
+  const hist = simulateTraj(def.params, steps);
+
+  tCtx.strokeStyle = 'rgba(160,160,220,0.06)';
+  tCtx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const x = pad.l + (i / 5) * iW;
+    tCtx.beginPath(); tCtx.moveTo(x, pad.t); tCtx.lineTo(x, pad.t + iH); tCtx.stroke();
+  }
+
+  const speed = parseFloat(document.getElementById('traj-speed').value);
+  trajT = Math.min(trajT + speed * 0.5, steps);
+  const vis = Math.floor(trajT);
+
+  const series = [
+    { key: 'k',    color: '#4ecdc4', label: 'κ' },
+    { key: 'mu',   color: '#e07560', label: 'μ²' },
+    { key: 'mp',   color: '#9b72cf', label: 'm²_φ' },
+    { key: 'ew',   color: '#5b9bd5', label: 'ε_w' },
+    { key: 'phi0', color: '#c9a84c', label: 'φ₀' }
+  ];
+
+  series.forEach(s => {
+    tCtx.beginPath();
+    tCtx.strokeStyle = s.color;
+    tCtx.lineWidth = 1.8;
+    tCtx.globalAlpha = 0.85;
+    for (let i = 0; i <= Math.min(vis, hist.length - 1); i++) {
+      const x = pad.l + (hist[i].t / hist[steps].t) * iW;
+      const y = pad.t + iH - hist[i][s.key] * iH;
+      i === 0 ? tCtx.moveTo(x, y) : tCtx.lineTo(x, y);
+    }
+    tCtx.stroke();
+    tCtx.globalAlpha = 1;
+  });
+
+  // Condensate threshold line
+  tCtx.strokeStyle = 'rgba(201,168,76,0.3)';
+  tCtx.setLineDash([4, 6]);
+  tCtx.lineWidth = 1;
+  const condY = pad.t + iH - 0.3 * iH;
+  tCtx.beginPath(); tCtx.moveTo(pad.l, condY); tCtx.lineTo(pad.l + iW, condY); tCtx.stroke();
+  tCtx.setLineDash([]);
+  tCtx.font = '9px Space Mono, monospace';
+  tCtx.fillStyle = 'rgba(201,168,76,0.5)';
+  tCtx.textAlign = 'right';
+  tCtx.fillText('próg kondensatu φ₀', pad.l + iW - 4, condY - 4);
+
+  // Scale axis labels
+  const scLabels = ['l~1', 'l~10²', 'l~10⁴', 'l~10⁶', 'l~10⁸'];
+  scLabels.forEach((lb, i) => {
+    const x = pad.l + (i / (scLabels.length - 1)) * iW;
+    tCtx.fillStyle = 'rgba(160,160,220,0.3)';
+    tCtx.font = '9px Space Mono, monospace';
+    tCtx.textAlign = 'center';
+    tCtx.fillText(lb, x, pad.t + iH + 20);
+  });
+
+  // axes
+  tCtx.strokeStyle = 'rgba(160,160,220,0.25)';
+  tCtx.lineWidth = 1;
+  tCtx.beginPath(); tCtx.moveTo(pad.l, pad.t); tCtx.lineTo(pad.l, pad.t + iH); tCtx.stroke();
+  tCtx.beginPath(); tCtx.moveTo(pad.l, pad.t + iH); tCtx.lineTo(pad.l + iW, pad.t + iH); tCtx.stroke();
+
+  // legend
+  tCtx.font = '9px Space Mono, monospace';
+  series.forEach((s, i) => {
+    const lx = pad.l + 8 + i * 90;
+    tCtx.fillStyle = s.color;
+    tCtx.fillRect(lx, pad.t + 6, 10, 2);
+    tCtx.fillStyle = 'rgba(160,160,220,0.5)';
+    tCtx.textAlign = 'left';
+    tCtx.fillText(s.label, lx + 14, pad.t + 12);
+  });
+
+  const last = hist[Math.min(vis, hist.length - 1)];
+  const condensed = last.phi0 > 0.25;
+  document.getElementById('traj-readout').innerHTML = `
+    <span>Skala: l ~ ${Math.round(Math.exp(last.t * 2))}</span>
+    <span style="color:${def.color}">Trajektoria ${currentTraj}</span>
+    <span style="color:var(--gold)">φ₀ = ${last.phi0.toFixed(3)}</span>
+    <span style="color:var(--coral)">μ² = ${last.mu.toFixed(3)}</span>
+    <span style="color:${condensed ? '#e07560' : '#7ec8a0'}">${condensed ? '⊗ KONDENSAT' : '◯ Faza relacyjna'}</span>
+  `;
+
+  if (trajT >= steps) setTimeout(() => { trajT = 0; }, 1500);
+  requestAnimationFrame(drawTraj);
+}
+drawTraj();
+
+document.getElementById('traj-speed').addEventListener('input', e => {
+  document.getElementById('traj-speed-val').textContent = e.target.value;
+});
+
+// ═══════════════════════════════════════════════════════════
+// V. CONDENSATION TIME CANVAS
+// ═══════════════════════════════════════════════════════════
+const condCanvas = document.getElementById('condCanvas');
+const cCtx = condCanvas.getContext('2d');
+
+function drawCond() {
+  const { W, H } = resize(condCanvas);
+  cCtx.clearRect(0, 0, W, H);
+  cCtx.fillStyle = '#0a0a0f';
+  cCtx.fillRect(0, 0, W, H);
+
+  const ratio = parseFloat(document.getElementById('kappa-ratio').value) / 100;
+  const mp = parseFloat(document.getElementById('cond-mphi').value) / 100;
+  const pad = { l: 70, r: 30, t: 30, b: 50 };
+  const iW = W - pad.l - pad.r, iH = H - pad.t - pad.b;
+
+  // grid
+  cCtx.strokeStyle = 'rgba(160,160,220,0.06)';
+  cCtx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.t + (i / 5) * iH;
+    cCtx.beginPath(); cCtx.moveTo(pad.l, y); cCtx.lineTo(pad.l + iW, y); cCtx.stroke();
+  }
+
+  // l_c as function of κ/κ_c
+  const N = 200;
+  const kMin = 1.01, kMax = 4.0;
+
+  cCtx.beginPath();
+  let maxLc = 0;
+  for (let i = 0; i <= N; i++) {
+    const kr = kMin + (kMax - kMin) * i / N;
+    const lc = Math.exp(8 * Math.PI * Math.PI * mp / ((kr * kr - 1) * Math.max(0.01, mp)));
+    if (lc > maxLc) maxLc = lc;
+  }
+  maxLc = Math.min(maxLc, 1e6);
+
+  cCtx.strokeStyle = 'rgba(201,168,76,0.8)';
+  cCtx.lineWidth = 2.5;
+  let started = false;
+  for (let i = 0; i <= N; i++) {
+    const kr = kMin + (kMax - kMin) * i / N;
+    const lc = Math.min(Math.exp(8 * Math.PI * Math.PI * mp / ((kr * kr - 1) * Math.max(0.01, mp))), maxLc * 1.05);
+    const x = pad.l + ((kr - kMin) / (kMax - kMin)) * iW;
+    const y = pad.t + iH - (Math.log10(Math.max(1, lc)) / Math.log10(maxLc)) * iH;
+    if (!started) { cCtx.moveTo(x, y); started = true; }
+    else cCtx.lineTo(x, y);
+  }
+  cCtx.stroke();
+
+  // Current ratio marker
+  const curLc = Math.min(Math.exp(8 * Math.PI * Math.PI * mp / ((ratio * ratio - 1) * Math.max(0.01, mp))), maxLc);
+  const cx = pad.l + ((ratio - kMin) / (kMax - kMin)) * iW;
+  const cy = pad.t + iH - (Math.log10(Math.max(1, curLc)) / Math.log10(maxLc)) * iH;
+
+  cCtx.strokeStyle = 'rgba(224,117,96,0.4)';
+  cCtx.setLineDash([4, 4]);
+  cCtx.lineWidth = 1;
+  cCtx.beginPath(); cCtx.moveTo(cx, pad.t); cCtx.lineTo(cx, pad.t + iH); cCtx.stroke();
+  cCtx.beginPath(); cCtx.moveTo(pad.l, cy); cCtx.lineTo(pad.l + iW, cy); cCtx.stroke();
+  cCtx.setLineDash([]);
+
+  cCtx.beginPath();
+  cCtx.arc(cx, Math.max(pad.t + 5, cy), 6, 0, Math.PI * 2);
+  cCtx.fillStyle = '#e07560';
+  cCtx.fill();
+  const gr = cCtx.createRadialGradient(cx, cy, 0, cx, cy, 16);
+  gr.addColorStop(0, 'rgba(224,117,96,0.4)'); gr.addColorStop(1, 'transparent');
+  cCtx.beginPath(); cCtx.arc(cx, cy, 16, 0, Math.PI * 2);
+  cCtx.fillStyle = gr; cCtx.fill();
+
+  // x-axis labels
+  cCtx.font = '9px Space Mono, monospace';
+  cCtx.fillStyle = 'rgba(160,160,220,0.4)';
+  [1.0, 1.5, 2.0, 2.5, 3.0, 3.5].forEach(kr => {
+    const x = pad.l + ((kr - kMin) / (kMax - kMin)) * iW;
+    cCtx.textAlign = 'center';
+    cCtx.fillText(kr.toFixed(1) + '×κ_c', x, pad.t + iH + 18);
+  });
+
+  // y-axis label
+  cCtx.save();
+  cCtx.translate(18, pad.t + iH / 2);
+  cCtx.rotate(-Math.PI / 2);
+  cCtx.textAlign = 'center';
+  cCtx.fillText('l_c (skala kondensacji, log)', 0, 0);
+  cCtx.restore();
+
+  // axes
+  cCtx.strokeStyle = 'rgba(160,160,220,0.25)';
+  cCtx.lineWidth = 1;
+  cCtx.beginPath(); cCtx.moveTo(pad.l, pad.t); cCtx.lineTo(pad.l, pad.t + iH); cCtx.stroke();
+  cCtx.beginPath(); cCtx.moveTo(pad.l, pad.t + iH); cCtx.lineTo(pad.l + iW, pad.t + iH); cCtx.stroke();
+
+  const scaleName = curLc > 1e5 ? 'cywilizacja' : curLc > 1e3 ? 'kultura' : curLc > 100 ? 'instytucja' : 'grupa';
+  document.getElementById('cond-readout').innerHTML = `
+    <span>κ/κ_c = ${ratio.toFixed(2)}×</span>
+    <span style="color:var(--purple)">m²_φ = ${mp.toFixed(2)}</span>
+    <span style="color:var(--gold)">l_c ≈ ${curLc > 1e6 ? '> 10⁶' : curLc.toFixed(0)}</span>
+    <span style="color:var(--coral)">Kondensacja na skali: ${scaleName}</span>
+    <span style="color:var(--text-dim)">Im bliżej κ_c, tym później kondensacja</span>
+  `;
+
+  requestAnimationFrame(drawCond);
+}
+
+['kappa-ratio','cond-mphi'].forEach(id => {
+  document.getElementById(id).addEventListener('input', e => {
+    const sfx = id === 'kappa-ratio' ? (e.target.value / 100).toFixed(2) + '×' : e.target.value;
+    document.getElementById(id + '-val').textContent = sfx;
+  });
+});
+drawCond();
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERJ · Model Kognitywny · Pięć Warstw</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #10101a;
+  --bg3: #16162a;
+  --surface: #1e1e35;
+  --border: rgba(160,160,220,0.12);
+  --border-bright: rgba(160,160,220,0.3);
+  --text: #e8e8f0;
+  --text-muted: #8888aa;
+  --text-dim: #4a4a6a;
+  --gold: #c9a84c;
+  --gold-dim: rgba(201,168,76,0.15);
+  --teal: #4ecdc4;
+  --teal-dim: rgba(78,205,196,0.12);
+  --purple: #9b72cf;
+  --purple-dim: rgba(155,114,207,0.12);
+  --coral: #e07560;
+  --coral-dim: rgba(224,117,96,0.12);
+  --blue: #5b9bd5;
+  --blue-dim: rgba(91,155,213,0.12);
+  --green: #7ec8a0;
+  --green-dim: rgba(126,200,160,0.12);
+  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-body: 'Crimson Pro', Georgia, serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* ── NOISE OVERLAY ─────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ── NAV ────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1rem 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(12px);
+}
+.nav-logo {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+/* ── HERO ────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 3rem 4rem;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+.hero-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 2.5rem;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: var(--text);
+  max-width: 900px;
+  margin-bottom: 1.5rem;
+}
+.hero-title em {
+  color: var(--gold);
+  font-style: italic;
+}
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  max-width: 620px;
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+.hero-equations {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+  max-width: 900px;
+}
+.hero-equations span { color: var(--teal); }
+
+/* ── GRID BACKGROUND ─────────────────────────────── */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ── SECTIONS ──────────────────────────────────────── */
+section {
+  padding: 6rem 3rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.section-number {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.section-number::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  max-width: 200px;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 400;
+  margin-bottom: 1rem;
+  line-height: 1.15;
+}
+
+.section-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+}
+
+/* ── PROSE ──────────────────────────────────────────── */
+.prose {
+  max-width: 680px;
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #c8c8d8;
+}
+.prose + .prose { margin-top: 1.5rem; }
+
+.discovery-box {
+  border-left: 2px solid var(--gold);
+  padding: 1.5rem 2rem;
+  background: var(--gold-dim);
+  margin: 3rem 0;
+  max-width: 680px;
+}
+.discovery-box p {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  color: var(--text);
+  font-style: italic;
+  line-height: 1.75;
+}
+.discovery-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+/* ── LAYER DIAGRAM ──────────────────────────────────── */
+#layers-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 4rem;
+  align-items: start;
+}
+
+.layer-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  position: relative;
+}
+
+.layer-item {
+  border: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.layer-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  transition: opacity 0.3s;
+  opacity: 0.4;
+}
+.layer-item:hover { border-color: var(--border-bright); }
+.layer-item.active { border-color: var(--border-bright); }
+.layer-item.active::before { opacity: 1; }
+
+.layer-V::before { background: var(--purple); }
+.layer-IV::before { background: var(--gold); }
+.layer-III::before { background: var(--teal); }
+.layer-II::before { background: var(--coral); }
+.layer-I::before { background: var(--green); }
+
+.layer-V.active { background: var(--purple-dim); }
+.layer-IV.active { background: var(--gold-dim); }
+.layer-III.active { background: var(--teal-dim); }
+.layer-II.active { background: var(--coral-dim); }
+.layer-I.active { background: var(--green-dim); }
+
+.layer-roman {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+.layer-name {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.2rem;
+}
+.layer-V .layer-name { color: var(--purple); }
+.layer-IV .layer-name { color: var(--gold); }
+.layer-III .layer-name { color: var(--teal); }
+.layer-II .layer-name { color: var(--coral); }
+.layer-I .layer-name { color: var(--green); }
+
+.layer-formula {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.connector-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding: 4px;
+  border-left: 1px dashed var(--border);
+  border-right: 1px dashed var(--border);
+  margin: 0 2rem;
+  transition: color 0.2s;
+}
+
+/* ── DETAIL PANEL ──────────────────────────────────── */
+.layer-detail {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 2.5rem;
+  position: sticky;
+  top: 6rem;
+  min-height: 500px;
+}
+.detail-roman {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.detail-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  margin-bottom: 0.3rem;
+}
+.detail-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.detail-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #b0b0c8;
+}
+.detail-formula {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  color: var(--text-muted);
+  line-height: 1.9;
+}
+.detail-formula .highlight { color: var(--teal); }
+.detail-formula .label { color: var(--gold); }
+
+/* ── COUPLING LOOPS ──────────────────────────────── */
+#loops-section {
+  background: var(--bg2);
+}
+.loops-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.loop-card {
+  border: 1px solid var(--border);
+  padding: 2rem;
+  position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.loop-card:hover {
+  border-color: var(--border-bright);
+  transform: translateY(-3px);
+}
+.loop-number {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+.loop-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+.loop-formula {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.9;
+  padding: 0.75rem;
+  background: var(--bg3);
+  border-left: 2px solid;
+}
+.loop-I .loop-title { color: var(--coral); }
+.loop-II .loop-title { color: var(--gold); }
+.loop-III .loop-title { color: var(--purple); }
+.loop-I .loop-formula { border-color: var(--coral); }
+.loop-II .loop-formula { border-color: var(--gold); }
+.loop-III .loop-formula { border-color: var(--purple); }
+
+/* ── INTERACTIVE CANVAS ─────────────────────────── */
+#flow-canvas-container {
+  margin-top: 4rem;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 2rem;
+}
+.canvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.canvas-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.canvas-controls {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.ctrl-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.ctrl-btn:hover, .ctrl-btn.active {
+  color: var(--text);
+  border-color: var(--border-bright);
+  background: rgba(255,255,255,0.04);
+}
+#flowCanvas {
+  width: 100%;
+  display: block;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* ── KEY FINDING ─────────────────────────────────── */
+.key-finding {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 4rem;
+  align-items: center;
+}
+.finding-text {
+  max-width: 520px;
+}
+.finding-formula-block {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 2rem;
+}
+.finding-formula-block h4 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--gold);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+.big-formula {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  line-height: 2;
+}
+.big-formula .var { color: var(--teal); }
+.big-formula .op { color: var(--gold); }
+.big-formula .comment { color: var(--text-dim); font-size: 11px; }
+
+/* ── PARADOX BOX ─────────────────────────────────── */
+.paradox-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 3rem 0;
+  border: 1px solid var(--border);
+  max-width: 680px;
+}
+.paradox-cell {
+  padding: 1.5rem 2rem;
+  background: var(--bg2);
+}
+.paradox-cell + .paradox-cell { border-left: 1px solid var(--border); }
+.paradox-cell h4 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.paradox-cell.expand h4 { color: var(--teal); }
+.paradox-cell.narrow h4 { color: var(--coral); }
+.paradox-cell p {
+  font-size: 0.95rem;
+  color: #9898b0;
+  line-height: 1.7;
+}
+
+/* ── FOOTNOTES ─────────────────────────────────────── */
+.footnotes {
+  max-width: 680px;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.footnotes h5 {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.footnote {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
+}
+.fn-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--gold);
+  min-width: 24px;
+}
+
+/* ── QUOTE ─────────────────────────────────────────── */
+blockquote {
+  border-left: 2px solid var(--teal);
+  padding: 1.25rem 2rem;
+  margin: 2.5rem 0;
+  max-width: 680px;
+}
+blockquote p {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+blockquote cite {
+  display: block;
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  font-style: normal;
+}
+
+/* ── DIVIDER ────────────────────────────────────────── */
+.diamond-divider {
+  text-align: center;
+  padding: 2rem;
+  color: var(--gold);
+  font-size: 0.8rem;
+  letter-spacing: 0.3em;
+}
+
+/* ── TABLE ──────────────────────────────────────────── */
+.data-table {
+  width: 100%;
+  max-width: 900px;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  font-size: 0.88rem;
+}
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.data-table td {
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: #9898b0;
+  line-height: 1.5;
+  vertical-align: top;
+}
+.data-table td:first-child {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--gold);
+}
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* ── SCROLL REVEAL ──────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .hero { padding: 6rem 1.5rem 3rem; }
+  section { padding: 4rem 1.5rem; }
+  #layers-container { grid-template-columns: 1fr; }
+  .layer-detail { position: static; }
+  .loops-grid { grid-template-columns: 1fr; }
+  .key-finding { grid-template-columns: 1fr; }
+  .paradox-grid { grid-template-columns: 1fr; }
+  .paradox-cell + .paradox-cell { border-left: none; border-top: 1px solid var(--border); }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">TERJ · Model Kognitywny</div>
+  <ul class="nav-links">
+    <li><a href="#model">Model</a></li>
+    <li><a href="#petlesprzezhenia">Pętle</a></li>
+    <li><a href="#jezyk">Język</a></li>
+    <li><a href="#narracja">Narracja</a></li>
+    <li><a href="komentarz.html">↗ TERJ</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div style="position:relative;z-index:1;">
+    <div class="hero-label">TERJ Working Paper · Kwiecień 2026 · Model Kognitywny</div>
+    <h1 class="hero-title">Pięć warstw<br>i ich <em>relacje</em></h1>
+    <p class="hero-sub">Model poznawczy: od rzeczywistości fizycznej S(t) przez percepcję, predykcję, język — do narracji społecznych N(t). Żadna warstwa nie jest jednostronnym odbiorcą — każda jest jednocześnie wejściem i wyjściem dla warstw sąsiednich.</p>
+    <div class="hero-equations">
+      <div>Ŝ(t) <span>= model wewnętrzny</span></div>
+      <div>ε = Y − Ŷ <span>= błąd predykcji</span></div>
+      <div>L(t) ≡ ∂Ŝ/∂ε <span>= metryka języka</span></div>
+      <div>g(L) → g(L + δL) <span>= perturbacja metryki</span></div>
+      <div>δφ_c = m_φ · m_σ / κ <span>= próg krytyczny narracji</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MODEL SECTION -->
+<section id="model">
+  <div class="section-number">I — Model Warstw</div>
+  <h2 class="section-title">Model poznawczy:<br>pięć warstw rzeczywistości</h2>
+  <div class="section-sub">Strukturalna mapa od ontologii do narracji</div>
+
+  <p class="prose reveal">Kluczowe założenie: żadna warstwa nie jest jednostronnym „odbiorcą" — każda jest jednocześnie wejściem i wyjściem dla warstw sąsiednich. Rzeczywistość fizyczna S(t) istnieje niezależnie od obserwatora. Nie zawiera intencji ani sensu — tylko własną przyczynowość. Trajektoria S(t) nie daje się cofnąć przez narrację.</p>
+
+  <div id="layers-container">
+    <!-- Layer Stack -->
+    <div>
+      <div class="layer-stack" id="layerStack">
+
+        <div class="layer-item layer-V active" data-layer="V" onclick="selectLayer('V')">
+          <div class="layer-roman">Warstwa V</div>
+          <div class="layer-name">Narracyjno-społeczna · N(t)</div>
+          <div class="layer-formula">Narracje / modele zbiorowe</div>
+        </div>
+
+        <div class="connector-label" id="conn-IV-V">↕ propagacja · walidacja społeczna · rywalizacja narracji</div>
+
+        <div class="layer-item layer-IV" data-layer="IV" onclick="selectLayer('IV')">
+          <div class="layer-roman">Warstwa IV</div>
+          <div class="layer-name">Językowa / poznawcza · L(t)</div>
+          <div class="layer-formula">Język poznawczy — warstwa kluczowa</div>
+        </div>
+
+        <div class="connector-label" id="conn-III-IV">↕ kompresja → kategoryzacja → symbolizacja</div>
+
+        <div class="layer-item layer-III" data-layer="III" onclick="selectLayer('III')">
+          <div class="layer-roman">Warstwa III</div>
+          <div class="layer-name">Modelowo-predykcyjna · Ŝ(t)</div>
+          <div class="layer-formula">Model wewnętrzny / symulacja</div>
+        </div>
+
+        <div class="connector-label" id="conn-II-III">↕ błąd predykcji ε = Y − Ŷ</div>
+
+        <div class="layer-item layer-II" data-layer="II" onclick="selectLayer('II')">
+          <div class="layer-roman">Warstwa II</div>
+          <div class="layer-name">Percepcyjno-biologiczna · Y(t) = h(S(t))</div>
+          <div class="layer-formula">Sygnał / obserwacja</div>
+        </div>
+
+        <div class="connector-label" id="conn-I-II">↕ projekcja sensoryczna</div>
+
+        <div class="layer-item layer-I" data-layer="I" onclick="selectLayer('I')">
+          <div class="layer-roman">Warstwa I</div>
+          <div class="layer-name">Ontyczna · S(t)</div>
+          <div class="layer-formula">Rzeczywistość fizyczna</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Detail Panel -->
+    <div class="layer-detail" id="layerDetail">
+      <div class="detail-roman" id="d-roman">Warstwa V</div>
+      <h3 class="detail-title" id="d-title" style="color:var(--purple)">Narracyjno-społeczna</h3>
+      <div class="detail-subtitle" id="d-sub">N(t) · Narracje / modele zbiorowe</div>
+      <div class="detail-body" id="d-body">
+        <p>Narracje konkurują jak atraktory w przestrzeni modeli. Silna narracja — wysoka spójność, autorytet, powtarzalność — staje się filtrem przed warstwą II: sygnały fizyczne są interpretowane zanim dotrą do modelu.</p>
+        <div class="detail-formula">
+          <span class="label">// Mechanizm zasłony</span><br>
+          <span class="highlight">N(t)</span> ≠ S(t) — narracja nie zmienia rzeczywistości<br>
+          <span class="highlight">N(t)</span> → filtr przed warstwą II<br>
+          ε odcięte od ontologii = zawłaszczenie rzeczywistości<br><br>
+          <span class="label">// Ekstremalny atraktor</span><br>
+          System totalitarny: max centralizacja kanałów IV + V<br>
+          przy odcięciu sprzężeń z warstwą II<br>
+          koszt utrzymania spójności ↑ → kolaps
+        </div>
+        <p>To właśnie „zawłaszczenie rzeczywistości": narracja nie zmienia S(t), ale odcina ε od ontologii. Zdarzenie zostaje, ale jego ślad poznawczy zastępuje stabilna narracja.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnotes reveal">
+    <h5>Uwagi</h5>
+    <div class="footnote"><span class="fn-num">¹</span><span>Realizm przyczynowy jako fundament: trajektoria S(t) nie daje się cofnąć przez narrację. Krew Kaina woła z ziemi właśnie dlatego, że jest śladem fizycznym zanim stanie się narracją.</span></div>
+    <div class="footnote"><span class="fn-num">²</span><span>Friston, K. (2010): The free-energy principle: a unified brain theory? <em>Nature Reviews Neuroscience</em> 11. — Błąd predykcji jako silnik aktualizacji modelu.</span></div>
+    <div class="footnote"><span class="fn-num">³</span><span>Intencja w ujęciu predykcyjnym: nie odrębny byt, lecz trajektoria systemu ku redukcji odchylenia ε w czasie.</span></div>
+  </div>
+</section>
+
+<!-- LOOPS SECTION -->
+<section id="petlesprzezhenia">
+  <div class="section-number">II — Pętle Sprzężeń</div>
+  <h2 class="section-title reveal">Trzy pętle<br>sprzężeń zwrotnych</h2>
+  <div class="section-sub">Dynamika między warstwami</div>
+
+  <p class="prose reveal">System nie jest jednostronny. Każda warstwa wysyła sygnały w obie strony. Trzy fundamentalne pętle opisują, jak informacja krąży przez model — i jak może się w nim zamknąć.</p>
+
+  <div class="loops-grid">
+    <div class="loop-card loop-I reveal">
+      <div class="loop-number">Pętla I</div>
+      <h3 class="loop-title">Percepcja</h3>
+      <p style="font-size:0.95rem;color:#9898b0;line-height:1.7;margin-bottom:1rem;">Podstawowa pętla rzeczywistości — działania A(t) zmieniają S(t), co zmienia Y(t). Żaden system nie ma dostępu do S(t) bezpośrednio: zawsze przez lokalną projekcję h(·), nigdy pełny rejestr.</p>
+      <div class="loop-formula">S → Y → Ŝ → A → S</div>
+    </div>
+    <div class="loop-card loop-II reveal">
+      <div class="loop-number">Pętla II</div>
+      <h3 class="loop-title">Kategoryzacja</h3>
+      <p style="font-size:0.95rem;color:#9898b0;line-height:1.7;margin-bottom:1rem;">Model aktualizuje język; język zmienia metrykę modelu. Pętla wewnętrzna — może wzmacniać lub tłumić sygnały z warstwy percepcji.</p>
+      <div class="loop-formula">Ŝ → L → Ŝ</div>
+    </div>
+    <div class="loop-card loop-III reveal">
+      <div class="loop-number">Pętla III</div>
+      <h3 class="loop-title">Narracja</h3>
+      <p style="font-size:0.95rem;color:#9898b0;line-height:1.7;margin-bottom:1rem;">Gdy pętla narracyjna dominuje, model „oddycha własnym powietrzem" — odcina się od Y(t). Narracja przemawia do modelu przez język; błąd predykcji nie dociera do ontologii.</p>
+      <div class="loop-formula">L → N → L → Ŝ → (odcięcie od) Y</div>
+    </div>
+  </div>
+
+  <!-- Interactive Canvas -->
+  <div id="flow-canvas-container" class="reveal">
+    <div class="canvas-header">
+      <div class="canvas-title">Symulacja przepływu ε przez warstwy</div>
+      <div class="canvas-controls">
+        <button class="ctrl-btn active" id="btn-normal" onclick="setMode('normal')">Normalny</button>
+        <button class="ctrl-btn" id="btn-closed" onclick="setMode('closed')">Zasłona</button>
+        <button class="ctrl-btn" id="btn-totalitarian" onclick="setMode('totalitarian')">Totalitarny</button>
+      </div>
+    </div>
+    <canvas id="flowCanvas" height="340"></canvas>
+    <div style="display:flex;gap:2rem;margin-top:1rem;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">
+        <div style="width:12px;height:12px;background:var(--teal);border-radius:50%;"></div> ε propaguje się swobodnie
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">
+        <div style="width:12px;height:12px;background:var(--coral);border-radius:50%;"></div> ε zablokowane przez zasłonę
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">
+        <div style="width:12px;height:12px;background:var(--purple);border-radius:50%;"></div> ε narracyjne (N → L)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGE SECTION -->
+<section id="jezyk">
+  <div class="section-number">III — Język jako Metryka</div>
+  <h2 class="section-title reveal">Gdzie język „kształtuje"<br>rzeczywistość poznawczą</h2>
+  <div class="section-sub">Precyzja formalna: L(t) ≡ ∂Ŝ/∂ε</div>
+
+  <p class="prose reveal">Język nie zmienia S(t) — zmienia metrykę przestrzeni predykcyjnej wewnątrz Ŝ(t). Decyduje o tym, które różnice w sygnale Y(t) system uzna za znaczące, a które przefiltruje jako szum. W tym sensie język jest selektorem rzeczywistości poznawczej, nie jej kreatorem w sensie ontycznym.</p>
+
+  <div class="key-finding reveal">
+    <div class="finding-text">
+      <div class="discovery-box">
+        <div class="discovery-label">Odkrycie strukturalne</div>
+        <p>Nowe pojęcie otwiera nowe przestrzenie predykcji — zmienia to, co system „może zobaczyć". Nowa kategoria semantyczna nie jest ozdobnikiem — jest realnym poszerzeniem przestrzeni predykcyjnej modelu.</p>
+      </div>
+    </div>
+    <div class="finding-formula-block">
+      <h4>Formalizacja</h4>
+      <div class="big-formula">
+        <span class="var">L(t)</span> <span class="op">≡</span> zbiór stabilnych wzorców w <span class="var">∂Ŝ/∂ε</span><br>
+        <br>
+        <span class="comment">// Język = stany modelu najbardziej</span><br>
+        <span class="comment">// reagujące na błąd predykcji</span><br>
+        <br>
+        Perturbacja metryki:<br>
+        <span class="var">g(L)</span> <span class="op">→</span> <span class="var">g(L + δL)</span><br>
+        <br>
+        <span class="comment">// Te same sygnały Y(t)</span><br>
+        <span class="comment">// generują inne ε</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="paradox-grid reveal" style="margin-top:3rem;">
+    <div class="paradox-cell expand">
+      <h4>Poszerzenie</h4>
+      <p>Nowe pojęcie otwiera nowy wymiar ε: system zaczyna dostrzegać różnice, których wcześniej nie rejestrował. Przyswojenie kategorii „dekoherencja" pozwala zobaczyć relację jako strukturalnie kosztowną — co bez tego pojęcia byłoby tylko intuicją.</p>
+    </div>
+    <div class="paradox-cell narrow">
+      <h4>Zawężenie</h4>
+      <p>Stabilna narracja w warstwie V produkuje pojęcia, które filtrują ε: system „widzi" tylko to, co narracja przewiduje. Dezinformacja: nie zmiana S(t), lecz wmontowanie stabilnego filtra językowego między Y(t) a Ŝ(t).</p>
+    </div>
+  </div>
+
+  <blockquote class="reveal">
+    <p>Język bez zakotwiczenia w śladach empirycznych generuje wzorce, które nie redukują błędu predykcji wobec S(t) — redukują tylko subiektywne poczucie błędu. To mechanizm dogmatu i ideologii.</p>
+    <cite>— Model poznawczy TERJ, Model predykcyjny warstwy IV</cite>
+  </blockquote>
+</section>
+
+<!-- NARRATIVE SECTION -->
+<section id="narracja">
+  <div class="section-number">IV — Narracja jako Atraktor</div>
+  <h2 class="section-title reveal">Narracja społeczna:<br>filtr, atraktor, zasłona</h2>
+  <div class="section-sub">N(t) i mechanizm zawłaszczenia rzeczywistości</div>
+
+  <p class="prose reveal">Narracje nie opisują rzeczywistości — wytwarzają przestrzenie poznawcze, w których rzeczywistość może być w ogóle rozpoznana. System totalitarny to ekstremalny atraktor: maksymalna centralizacja kanałów IV i V przy odcięciu sprzężeń z warstwą II.</p>
+
+  <table class="data-table reveal">
+    <thead>
+      <tr>
+        <th>Pojęcie TERJ</th>
+        <th>Funkcja w modelu</th>
+        <th>Warstwa</th>
+        <th>Skutek dla ε</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Masah (מָשַׁח)</td>
+        <td>Pojemność relacyjna systemu — zdolność wejścia w relację bez utraty własnej struktury</td>
+        <td>III–IV</td>
+        <td>Definiuje nowy wymiar kosztu; system zaczyna generować ε wobec potencjału relacyjnego</td>
+      </tr>
+      <tr>
+        <td>Dekoherencja</td>
+        <td>Koszt wejścia w sprzężenie; entropia von Neumanna C_dek = −Tr(ρ log ρ)</td>
+        <td>II–III</td>
+        <td>Mierzy koszt sprzężenia; unikanie relacji jest lokalnie optymalne, globalnie destrukcyjne</td>
+      </tr>
+      <tr>
+        <td>Or / transformacja</td>
+        <td>Zmiana globalnej metryki g(L) — nie lokalnej korekty stanu</td>
+        <td>IV</td>
+        <td>System widzi, że poprzednie minima F były na złej metryce; gwałtowność poznawcza</td>
+      </tr>
+      <tr>
+        <td>Tohu wa-bohu</td>
+        <td>Stan zerowej różnicy: g(L) = 0 → ∂Ŝ/∂t = 0 mimo obecności sygnałów</td>
+        <td>I→II</td>
+        <td>Brak metryki = brak ε; materia jest, ale nie ma jeszcze „oka" mierzącego różnicę</td>
+      </tr>
+      <tr>
+        <td>Zasłona (Welon)</td>
+        <td>Trwała perturbacja metryki g(L) w warstwie IV przez pole narracyjne φ</td>
+        <td>IV–V</td>
+        <td>Zakrzywiona metryka renderuje pewne różnice niewidzialnymi; zasłona ≠ brak danych</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="discovery-box reveal" style="max-width:680px;margin-top:3rem;">
+    <div class="discovery-label">Wniosek strukturalny</div>
+    <p>Narracja sprzęga się z systemem tym silniej, im bardziej pole relacyjne jest w ruchu i im bardziej model jest „czysty". Czyste, aktywne relacyjnie systemy są najbardziej podatne na narrację — w obie strony: na prawdę i na zasłonę. Paradoks: intensywne poszukiwanie prawdy przy obecnym φ generuje maksymalną dyssypację J_Masah.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="diamond-divider">◈</div>
+
+<section style="padding:3rem;border-bottom:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:2rem;">
+    <div>
+      <div class="nav-logo" style="margin-bottom:0.5rem;">TERJ · Model Kognitywny</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);">Kwiecień 2026 · Część I z IV</div>
+    </div>
+    <div style="display:flex;gap:1.5rem;flex-wrap:wrap;">
+      <a href="komentarz.html" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;">↗ TERJ Komentarz I–IV</a>
+      <a href="teoria.html" style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-decoration:none;letter-spacing:0.1em;text-transform:uppercase;">↗ TEREJ IX</a>
+    </div>
+  </div>
+</section>
+
+<script>
+// ── LAYER DATA ──────────────────────────────────────────────────────────
+const layerData = {
+  V: {
+    color: 'var(--purple)',
+    roman: 'Warstwa V',
+    title: 'Narracyjno-społeczna',
+    sub: 'N(t) · Narracje / modele zbiorowe',
+    body: `<p>Narracje konkurują jak atraktory w przestrzeni modeli. Silna narracja — wysoka spójność, autorytet, powtarzalność — staje się filtrem przed warstwą II: sygnały fizyczne są interpretowane zanim dotrą do modelu.</p>
+    <div class="detail-formula">
+<span class="label">// Mechanizm zasłony</span><br>
+<span class="highlight">φ(t)</span> — pole narracyjne (miara dominacji N_i)<br>
+ε propaguje się przez φ² zanim dotrze do Ŝ<br>
+przy φ → ∞ : model ρ przestaje ewoluować<br><br>
+<span class="label">// System totalitarny</span><br>
+max centralizacja kanałów IV + V<br>
+odcięcie sprzężeń z warstwą II<br>
+koszt utrzymania spójności ↑↑↑ → kolaps
+    </div>
+    <p>„Zawłaszczenie rzeczywistości": narracja nie zmienia S(t), ale odcina ε od ontologii. Zdarzenie zostaje, ale jego ślad poznawczy zastępuje stabilna narracja.</p>`
+  },
+  IV: {
+    color: 'var(--gold)',
+    roman: 'Warstwa IV',
+    title: 'Językowa / poznawcza',
+    sub: 'L(t) · Język poznawczy — warstwa kluczowa',
+    body: `<p>Język nie opisuje modelu — strukturyzuje przestrzeń, w której model może w ogóle istnieć. Każde pojęcie to stabilny wzorzec kategoryzacji w przestrzeni predykcyjnej: określa, jakie ε są „możliwe do odczucia".</p>
+    <div class="detail-formula">
+<span class="label">// Formalizacja</span><br>
+<span class="highlight">L(t)</span> ≡ zbiór stabilnych wzorców w ∂Ŝ/∂ε<br><br>
+<span class="label">// Perturbacja metryki przez nowe pojęcie</span><br>
+g(L) → g(L + δL)<br>
+te same sygnały Y(t) → inne ε<br>
+„płaska" przestrzeń zyskuje krzywiznę<br><br>
+<span class="label">// Dwa kierunki kształtowania</span><br>
+Poszerzenie: nowe ε otwierają nowe wymiary<br>
+Zawężenie: filtr narracyjny → ε niewidzialne
+    </div>
+    <p>Nowe pojęcie semantyczne nie jest ozdobnikiem — jest realnym poszerzeniem przestrzeni predykcyjnej. To jest kierunek pojęć TERJ: Masah, dekoherencja, Or jako operatory na modelu predykcyjnym.</p>`
+  },
+  III: {
+    color: 'var(--teal)',
+    roman: 'Warstwa III',
+    title: 'Modelowo-predykcyjna',
+    sub: 'Ŝ(t) · Model wewnętrzny / symulacja',
+    body: `<p>Mózg nie rejestruje — generuje predykcje i minimalizuje napięcie między tym, czego oczekuje, a tym, co dostaje. Błąd predykcji ε jest silnikiem aktualizacji.</p>
+    <div class="detail-formula">
+<span class="label">// Free Energy Principle (Friston)</span><br>
+∂Ŝ/∂t = −k · ∇_Ŝ F<br><br>
+F = błąd predykcji + koszt złożoności<br><br>
+<span class="label">// Intencja jako trajektoria</span><br>
+Intencja = stabilny kierunek minimalizacji ε<br>
+= trajektoria ku redukcji odchylenia, nie odrębny byt<br><br>
+<span class="label">// Ryzyko oderwania</span><br>
+Gdy warstw. V dominuje → model „oddycha własnym powietrzem"<br>
+ε nie dociera z warstwy II → dryfuje od S(t)
+    </div>
+    <p>Model może oderwać się od S(t): gdy sprzężenie z warstwą II zostaje zdominowane przez warstwę V, model generuje predykcje, które nie są weryfikowalne przez rzeczywistość.</p>`
+  },
+  II: {
+    color: 'var(--coral)',
+    roman: 'Warstwa II',
+    title: 'Percepcyjno-biologiczna',
+    sub: 'Y(t) = h(S(t)) · Sygnał / obserwacja',
+    body: `<p>Nie ma tu biernej percepcji. Sygnał sensoryczny jest sprzężeniem — ciało generuje działania A(t), które zmieniają S(t), co zmienia Y(t). Żaden system nie ma dostępu do S(t) bezpośrednio.</p>
+    <div class="detail-formula">
+<span class="label">// Projekcja sensoryczna</span><br>
+Y(t) = h(S(t))<br>
+h(·) = lokalna projekcja — nigdy pełny rejestr<br><br>
+<span class="label">// Strukturalna luka</span><br>
+Gdy liczba obserwatorów jest ograniczona:<br>
+reprezentacja tańsza niż weryfikacja<br>
+→ narracja wypełnia lukę między Y a S<br><br>
+<span class="label">// Aktywna percepcja</span><br>
+A(t) → S(t) → Y(t) → Ŝ → A(t+1)<br>
+ciało działa, nie tylko obserwuje
+    </div>
+    <p>To jest strukturalna luka, którą wypełnia narracja — gdy liczba obserwatorów jest ograniczona, reprezentacja staje się tańsza w produkcji niż weryfikacja.</p>`
+  },
+  I: {
+    color: 'var(--green)',
+    roman: 'Warstwa I',
+    title: 'Ontyczna',
+    sub: 'S(t) · Rzeczywistość fizyczna',
+    body: `<p>Zdarzenia, stany materii, dynamika przyczynowa. Istnieje niezależnie od obserwatora. Nie zawiera intencji ani sensu — tylko własną przyczynowość.</p>
+    <div class="detail-formula">
+<span class="label">// Realizm przyczynowy</span><br>
+S(t) istnieje niezależnie od każdej warstwy wyższej<br>
+Narracja N(t) ≠ S(t)<br>
+Percepcja Y(t) ≠ S(t)<br><br>
+<span class="label">// Kluczowa asymetria</span><br>
+Trajektoria S(t) NIE daje się cofnąć przez narrację<br>
+Krew Kaina woła z ziemi — jest śladem fizycznym<br>
+zanim stanie się narracją<br><br>
+<span class="label">// Fundament</span><br>
+Realizm przyczynowy: zmiany S(t) są nieodwracalne<br>
+Niezależność od obserwatora to nie dogmat — to fundament
+    </div>
+    <p>Twój realizm przyczynowy jest tu fundamentem: trajektoria S(t) nie daje się cofnąć przez narrację. To jest warunek możliwości całej struktury — bez tego warstwy wyższe nie mają zakotwiczenia.</p>`
+  }
+};
+
+function selectLayer(id) {
+  // Update stack
+  document.querySelectorAll('.layer-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.layer === id);
+  });
+  // Update detail
+  const d = layerData[id];
+  document.getElementById('d-roman').textContent = d.roman;
+  document.getElementById('d-title').textContent = d.title;
+  document.getElementById('d-title').style.color = d.color;
+  document.getElementById('d-sub').textContent = d.sub;
+  document.getElementById('d-body').innerHTML = d.body;
+}
+
+// ── FLOW CANVAS ────────────────────────────────────────────────────────
+const canvas = document.getElementById('flowCanvas');
+const ctx = canvas.getContext('2d');
+let mode = 'normal';
+let animFrame;
+let particles = [];
+let tick = 0;
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + m).classList.add('active');
+  particles = [];
+}
+
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+}
+
+const LAYERS = [
+  { label: 'N(t) — Narracje społeczne', color: '#9b72cf', y: 0 },
+  { label: 'L(t) — Język / metryka', color: '#c9a84c', y: 1 },
+  { label: 'Ŝ(t) — Model predykcyjny', color: '#4ecdc4', y: 2 },
+  { label: 'Y(t) — Percepcja', color: '#e07560', y: 3 },
+  { label: 'S(t) — Rzeczywistość', color: '#7ec8a0', y: 4 }
+];
+
+function spawnParticle() {
+  const fromBottom = Math.random() > 0.3;
+  particles.push({
+    x: 80 + Math.random() * (canvas.width - 160),
+    layer: fromBottom ? 4 : 0,
+    targetLayer: fromBottom ? 0 : 4,
+    progress: 0,
+    speed: 0.004 + Math.random() * 0.003,
+    blocked: false,
+    blockAt: -1,
+    type: fromBottom ? 'epsilon' : 'narrative',
+    alpha: 1
+  });
+}
+
+function drawCanvas() {
+  resizeCanvas();
+  const W = canvas.width;
+  const H = canvas.height;
+  const lh = H / 5;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#0a0a0f';
+  ctx.fillRect(0, 0, W, H);
+
+  // Draw layers
+  LAYERS.forEach((l, i) => {
+    const y = i * lh;
+    ctx.fillStyle = l.color + '08';
+    ctx.fillRect(0, y, W, lh);
+    ctx.strokeStyle = l.color + '22';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(0.5, y + 0.5, W - 1, lh - 1);
+
+    // Label
+    ctx.font = '10px Space Mono, monospace';
+    ctx.fillStyle = l.color + 'aa';
+    ctx.textAlign = 'left';
+    ctx.fillText(l.label, 16, y + lh / 2 + 4);
+  });
+
+  // Veil indicator
+  if (mode === 'closed' || mode === 'totalitarian') {
+    const veilY = (mode === 'totalitarian') ? lh * 1 : lh * 1.5;
+    ctx.fillStyle = '#9b72cf18';
+    ctx.fillRect(0, veilY - 4, W, 8);
+    ctx.strokeStyle = '#9b72cf66';
+    ctx.setLineDash([6, 4]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(0, veilY);
+    ctx.lineTo(W, veilY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = '9px Space Mono, monospace';
+    ctx.fillStyle = '#9b72cfcc';
+    ctx.textAlign = 'right';
+    ctx.fillText('⊗ ZASŁONA φ', W - 16, veilY - 8);
+  }
+
+  // Spawn
+  if (tick % 40 === 0) spawnParticle();
+  tick++;
+
+  // Update & draw particles
+  particles = particles.filter(p => {
+    p.progress += p.speed;
+
+    // Check blocking
+    if (!p.blocked) {
+      const layerPos = p.progress * 4; // 0-4
+      const currentLayer = p.type === 'epsilon' ? 4 - layerPos : layerPos;
+
+      if (mode === 'totalitarian' && p.type === 'epsilon' && currentLayer < 2) {
+        p.blocked = true; p.blockAt = currentLayer;
+      }
+      if (mode === 'closed' && p.type === 'epsilon' && currentLayer < 1.5) {
+        p.blocked = true; p.blockAt = currentLayer;
+      }
+    }
+
+    // Compute visual position
+    let visualProgress = p.progress;
+    if (p.blocked) {
+      visualProgress = Math.min(p.progress, p.blockAt / 4 + 0.05);
+      p.alpha = Math.max(0, p.alpha - 0.01);
+    }
+
+    const layerIndex = p.type === 'epsilon'
+      ? (4 - visualProgress * 4)
+      : (visualProgress * 4);
+    const cy = layerIndex * lh + lh / 2;
+
+    // Color
+    let color;
+    if (p.blocked) color = '#e07560';
+    else if (p.type === 'narrative') color = '#9b72cf';
+    else color = '#4ecdc4';
+
+    const radius = 4;
+    ctx.globalAlpha = p.alpha;
+    ctx.beginPath();
+    ctx.arc(p.x, cy, radius, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Glow
+    ctx.beginPath();
+    ctx.arc(p.x, cy, radius * 2.5, 0, Math.PI * 2);
+    const grad = ctx.createRadialGradient(p.x, cy, 0, p.x, cy, radius * 2.5);
+    grad.addColorStop(0, color + '44');
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    return p.progress < 1.1 && p.alpha > 0.01;
+  });
+
+  animFrame = requestAnimationFrame(drawCanvas);
+}
+
+drawCanvas();
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Select V by default
+selectLayer('V');
+</script>
+
+</body>
+</html>

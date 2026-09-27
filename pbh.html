@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TERJ · PBH · Stany Zerowego Zakaru</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg:        #070d1a;
+    --bg2:       #0d1526;
+    --bg3:       #111e35;
+    --gold:      #c9a84c;
+    --gold-dim:  #8a7035;
+    --gold-glow: rgba(201,168,76,.18);
+    --violet:    #8b5cf6;
+    --violet-dim:#5b3ba6;
+    --teal:      #22d3ee;
+    --teal-dim:  #0e7490;
+    --text:      #d4cfc8;
+    --text-dim:  #7a7570;
+    --border:    rgba(201,168,76,.18);
+    --sep:       rgba(201,168,76,.35);
+    --red:       #f87171;
+    --amber:     #fb923c;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(7,13,26,.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 2rem;
+    height: 52px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: .06em;
+  }
+  nav .brand {
+    color: var(--gold);
+    font-weight: 500;
+    margin-right: 2rem;
+    text-transform: uppercase;
+    letter-spacing: .18em;
+    white-space: nowrap;
+  }
+  nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 0 1rem;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+    white-space: nowrap;
+  }
+  nav a:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 5rem 2rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(201,168,76,.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .22em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4.5vw, 3.4rem);
+    font-weight: 300;
+    color: #f0ead8;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -.01em;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: 1.05rem;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 2.5rem;
+    letter-spacing: .03em;
+  }
+  .hero-meta {
+    display: inline-flex;
+    gap: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .75rem 2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .08em;
+  }
+  .hero-meta span { color: var(--gold); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 820px; margin: 0 auto; padding: 0 2rem; }
+
+  /* ── CHAPTER ── */
+  .chapter { padding: 4rem 0 2rem; }
+  .chapter-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  .chapter-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--gold-dim);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    padding-top: 6px;
+    white-space: nowrap;
+  }
+  .chapter h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.85rem;
+    font-weight: 400;
+    color: #f0ead8;
+    line-height: 1.25;
+  }
+  .chapter h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin: 2.5rem 0 1rem;
+    letter-spacing: .03em;
+  }
+  .chapter p { margin-bottom: 1.2rem; }
+
+  /* ── FORMULA ── */
+  .formula-block {
+    background: var(--bg2);
+    border-left: 3px solid var(--gold);
+    padding: 1rem 1.5rem;
+    margin: 1.8rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .85rem;
+    color: #e8dfc0;
+    line-height: 1.9;
+    overflow-x: auto;
+    position: relative;
+  }
+  .formula-block::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(201,168,76,.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .formula-block .eq-label {
+    display: block;
+    font-size: .75rem;
+    color: var(--gold-dim);
+    letter-spacing: .1em;
+    margin-bottom: .5rem;
+  }
+
+  /* ── DISCOVERY BOX ── */
+  .discovery {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    padding: 1.5rem 1.75rem;
+    margin: 2.5rem 0;
+    position: relative;
+  }
+  .discovery::before {
+    content: 'Odkrycie strukturalne';
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .discovery p { margin-bottom: .8rem; }
+  .discovery p:last-child { margin-bottom: 0; }
+
+  /* ── PREDICTION BOX ── */
+  .prediction {
+    background: linear-gradient(135deg, rgba(139,92,246,.08) 0%, rgba(34,211,238,.05) 100%);
+    border: 1px solid rgba(139,92,246,.3);
+    border-left: 4px solid var(--violet);
+    padding: 1.75rem;
+    margin: 2.5rem 0;
+  }
+  .prediction-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 1rem;
+  }
+  .prediction strong {
+    color: #d4bbff;
+    font-weight: 500;
+  }
+
+  /* ── COMPARISON TABLE ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    margin: 2rem 0;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .compare-cell {
+    background: var(--bg2);
+    padding: 1.25rem 1.5rem;
+  }
+  .compare-cell.header {
+    background: var(--bg3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .compare-cell.alt { background: rgba(13,21,38,.6); }
+  .compare-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+
+  /* ── CANVAS VIZ ── */
+  .viz-block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+  .viz-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .viz-tabs {
+    display: flex;
+    gap: .5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .viz-tab {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    background: none;
+    padding: .3rem .75rem;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .viz-tab.active, .viz-tab:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: var(--gold-glow);
+  }
+  canvas { display: block; width: 100%; }
+  .viz-caption {
+    font-size: .85rem;
+    color: var(--text-dim);
+    margin-top: 1rem;
+    font-style: italic;
+    line-height: 1.6;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: .75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .slider-row label { min-width: 120px; }
+  .slider-row input[type=range] {
+    flex: 1;
+    accent-color: var(--gold);
+    height: 3px;
+  }
+  .slider-row .val { color: var(--gold); min-width: 36px; text-align: right; }
+
+  /* ── SEPARATOR ── */
+  .sep {
+    text-align: center;
+    color: var(--sep);
+    font-size: 1.5rem;
+    padding: 3rem 0 1rem;
+    letter-spacing: .5rem;
+  }
+
+  /* ── QUOTE ── */
+  blockquote {
+    border-left: 2px solid var(--gold-dim);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  blockquote cite {
+    display: block;
+    font-style: normal;
+    font-size: .85rem;
+    margin-top: .75rem;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .06em;
+    color: var(--gold-dim);
+  }
+
+  /* ── FOOTNOTES ── */
+  .footnotes {
+    border-top: 1px solid var(--border);
+    padding: 2rem 0 1rem;
+    margin-top: 3rem;
+    font-size: .82rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .footnotes::before {
+    content: 'ŹRÓDŁA · PREDYKCJE';
+    display: block;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 1rem;
+    font-size: 10px;
+  }
+  .fn { margin-bottom: .4rem; }
+
+  /* ── HIGHLIGHT ── */
+  .hl-gold { color: var(--gold); }
+  .hl-violet { color: var(--violet); }
+  .hl-teal { color: var(--teal); }
+  .hl-red { color: var(--red); }
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: .88em; }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .bottom-nav a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: .6rem 1.2rem;
+    transition: all .2s;
+  }
+  .bottom-nav a:hover { color: var(--gold); border-color: var(--gold); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="brand">TERJ · PBH</div>
+  <a href="#s1">§1 · Geneza</a>
+  <a href="#s2">§2 · Funktor</a>
+  <a href="#s3">§3 · Metaliczność</a>
+  <a href="#s4">§4 · Chandrasekara</a>
+  <a href="#s5">§5 · Referencja</a>
+  <a href="#s6">§6 · Predykcja</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">TERJ Working Paper · Maj 2026</div>
+  <h1>Pierwotne czarne dziury jako<br><em>stany zerowego zakaru</em></h1>
+  <div class="hero-sub">Formalna charakteryzacja w języku operatorów TERJ</div>
+  <div class="hero-meta">
+    <div>Δω<span style="font-size:.7em">zakar</span><sup>PBH</sup> = <span>0</span></div>
+    <div>M<sub>PBH</sub> &lt; <span>1.4 M☉</span></div>
+    <div>Predykcja · <span>JWST + LIGO + LISA</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══ SEKCJA 1 ═══ -->
+<div class="chapter" id="s1">
+  <div class="chapter-head">
+    <div class="chapter-num">Sekcja 01</div>
+    <h2>Rozróżnienie strukturalne:<br>BH gwiazdowa vs BH pierwotna</h2>
+  </div>
+
+  <p>Standardowa <strong>czarna dziura gwiazdowa</strong> jest końcowym stanem ewolucji układu o wysokim indeksie Assembly. Jej masa minimalna <span class="hl-gold">~1.4 M☉</span> (granica Chandrasekara) wyznacza próg hamiltoniana koncentracji dla materii barionowej po nukleosynteze — jest progiem w macierzy <span class="mono">K</span> dla układu fermionów zdegenerowanych. Jej powstanie zakłada przejście przez co najmniej dwie fazy kaskady progów: nukleosyntezy pierwotnej i nukleosyntezy gwiazdowej. Niesie w sobie historię zamrożeń — jej metaliczność jest bezpośrednią miarą <span class="hl-gold">Δω<sub>zakar</sub></span> zakodowanego przez poprzednie generacje gwiazdowe.</p>
+
+  <div class="compare">
+    <div class="compare-cell header">BH Gwiazdowa</div>
+    <div class="compare-cell header">BH Pierwotna (PBH)</div>
+    <div class="compare-cell">
+      <div class="compare-label">Geneza</div>
+      Kolaps gwiazdy po nukleosynteze gwiazdowej
+    </div>
+    <div class="compare-cell alt">
+      <div class="compare-label">Geneza</div>
+      Bezpośredni kolaps perturbacji gęstości, t &lt; 1 s po BB
+    </div>
+    <div class="compare-cell">
+      <div class="compare-label">Masa minimalna</div>
+      <span class="hl-gold">~1.4 M☉</span> — granica Chandrasekara
+    </div>
+    <div class="compare-cell alt">
+      <div class="compare-label">Masa</div>
+      <span class="hl-violet">0.01 M☉ – 10⁵ M☉</span> — zależy od horyzontu
+    </div>
+    <div class="compare-cell">
+      <div class="compare-label">Kaskada progów</div>
+      ≥ 2 fazy: nukleosynteza pierwotna + gwiazdowa
+    </div>
+    <div class="compare-cell alt">
+      <div class="compare-label">Kaskada progów</div>
+      <span class="hl-teal">Żadna</span> — formowanie przed alfabetem barionowym
+    </div>
+    <div class="compare-cell">
+      <div class="compare-label">Δω<sub>zakar</sub></div>
+      <span class="hl-gold">&gt; 0</span> — historia zamrożeń zakodowana
+    </div>
+    <div class="compare-cell alt">
+      <div class="compare-label">Δω<sub>zakar</sub></div>
+      <span class="hl-violet">= 0</span> — brak historii rozróżnień
+    </div>
+  </div>
+
+  <p>Pierwotna czarna dziura (PBH) o masie <span class="hl-violet">M &lt; 1.4 M☉</span> ma strukturalnie inną genezę. Powstaje przez bezpośredni kolaps perturbacji gęstości w epoce radiacyjnej, przy <span class="mono">t &lt; 1 s</span> po Wielkim Wybuchu, zanim alfabet barionowy zostaje ustalony przez nukleosyntezy. Formalnie:</p>
+
+  <div class="formula-block">
+    <span class="eq-label">PBH — operator wyłaniania alfabetu</span>
+    PBH:  Ω̂(x, t<sub>form</sub>) = Ω̂(x, t₀) = |*⟩⟨*|
+    <br><br>
+    <span style="color:var(--text-dim); font-size:.8em">Operator wyłaniania alfabetu w miejscu formowania PBH<br>
+    nie przeszedł przez żadną nietrywialną kaskadę progów.<br>
+    Jest identyczny ze stanem wyjściowym — jednoelementowym alfabetem epoki Plancka.</span>
+  </div>
+
+  <!-- VISUALIZATION 1 -->
+  <div class="viz-block">
+    <div class="viz-title">
+      <span>Kaskada progów Assembly</span>
+    </div>
+    <div class="viz-tabs">
+      <button class="viz-tab active" onclick="setCascadeMode('bh')">BH Gwiazdowa</button>
+      <button class="viz-tab" onclick="setCascadeMode('pbh')">BH Pierwotna</button>
+    </div>
+    <canvas id="cascadeCanvas" height="220"></canvas>
+    <div class="viz-caption" id="cascadeCaption">
+      BH gwiazdowa przechodzi przez kaskadę zamrożeń: Planck → Kwarki → Nukleosynetza pierwotna → Nukleosynetza gwiazdowa → BH. Każdy próg dodaje Δω<sub>zakar</sub> &gt; 0.
+    </div>
+  </div>
+
+</div>
+
+<div class="sep">◈</div>
+
+<!-- ═══ SEKCJA 2 ═══ -->
+<div class="chapter" id="s2">
+  <div class="chapter-head">
+    <div class="chapter-num">Sekcja 02</div>
+    <h2>PBH jako lokalny punkt stały<br>funktora Φ ∘ Π</h2>
+  </div>
+
+  <p>W formalizmie Rozdziału 8 stan relacyjny po ewolucji przez kaskadę progów jest:</p>
+
+  <div class="formula-block">
+    <span class="eq-label">Stan relacyjny po kaskadzie</span>
+    ω<sub>po</sub> = ω₀ + Δω<sub>zakar</sub>
+    <br><br>
+    gdzie: Δω<sub>zakar</sub> ≠ 0  dla każdego układu, który przeszedł przez ≥ 1 próg
+    <br><br>
+    Dla PBH:  Δω<sub>zakar</sub><sup>PBH</sup> = 0
+  </div>
+
+  <p>Co oznacza, że <span class="mono">(Φ ∘ Π)(ω₀<sup>PBH</sup>) = ω₀<sup>PBH</sup></span> — kompozycja funktorów jest identycznością lokalnie w punkcie formowania PBH. Jest to jedyny fizycznie realizowalny stan, w którym pętla <span class="mono">Φ ∘ Π</span> domyka się trywialnie.</p>
+
+  <div class="discovery">
+    <p>Konsekwencja operatorowa jest natychmiastowa. Komutator ZUG:</p>
+    <div class="formula-block" style="margin: 1rem 0;">
+      Ẑ<sup>PBH</sup> = Φ*([Ĝ<sub>QFT</sub>, Ĥ<sub>konc</sub>])|<sub>PBH</sub>
+               = P̂<sub>δH</sub> · Ĥ<sub>konc</sub> · P̂<sub>Im(Ω̂)</sub>|<sub>PBH</sub>
+               = <span class="hl-gold">0</span>
+    </div>
+    <p>ponieważ <span class="mono">δH<sup>PBH</sup> = ∅</span> — nie istnieją wzbudzenia poza jednoelementowym alfabetem, które mogłyby być sprzężone przez hamiltonian koncentracji.</p>
+    <p><strong>PBH jest lokalnym zerem operatora ZUG</strong> nie przez równowagę termodynamiczną — jak standardowa BH gwiazdowa — ale przez <em>brak historii rozróżnień</em>.</p>
+  </div>
+
+  <!-- VISUALIZATION 2 -->
+  <div class="viz-block">
+    <div class="viz-title"><span>Funktor Φ ∘ Π — pętla zamknięcia</span></div>
+    <canvas id="functorCanvas" height="240"></canvas>
+    <div class="viz-caption">
+      Dla BH gwiazdowej pętla Φ ∘ Π otwiera się — każdy próg dodaje nowe zamrożenia. Dla PBH pętla domyka się trywialnie: (Φ ∘ Π)(ω₀) = ω₀. Punkt stały.
+    </div>
+  </div>
+
+</div>
+
+<div class="sep">◈</div>
+
+<!-- ═══ SEKCJA 3 ═══ -->
+<div class="chapter" id="s3">
+  <div class="chapter-head">
+    <div class="chapter-num">Sekcja 03</div>
+    <h2>Metaliczność jako bezpośredni<br>pomiar Δω<sub>zakar</sub></h2>
+  </div>
+
+  <p>Metaliczność astronomiczna <span class="hl-gold">Z</span> (ułamek masowy pierwiastków cięższych od helu) jest operacyjnie mierzalną wielkością, która w języku modelu jest proporcjonalna do skumulowanego <span class="hl-gold">Δω<sub>zakar</sub></span> przez kolejne generacje gwiazdowe:</p>
+
+  <div class="formula-block">
+    <span class="eq-label">Metaliczność jako miara historii zamrożeń</span>
+    Z ∝ Σ<sub>n=1</sub><sup>N<sub>gen</sub></sup> Δω<sub>zakar</sub><sup>(n)</sup>
+    <br><br>
+    <span style="color:var(--text-dim);font-size:.8em">Suma po generacjach gwiazdowych które wzbogaciły środowisko<br>
+    przez nukleosyntezy i supernowe.<br>
+    Każda generacja = przejście przez nowe progi w macierzy K.</span>
+  </div>
+
+  <div class="discovery">
+    <p>Obserwacja JWST dla <strong>Abell 2744-QSO1</strong> — masa BH <span class="hl-gold">~5 × 10⁷ M☉</span> przy metaliczności <span class="hl-violet">Z ≲ 0.01 Z☉</span> — jest bezpośrednim pomiarem, który model przewiduje jako konieczność strukturalną.</p>
+    <p>Obiekt o zerowym <span class="mono">Δω<sub>zakar</sub></span> nie może mieć metaliczności, bo metaliczność jest miarą historii zamrożeń, której ten obiekt nie posiada.</p>
+    <p>Anomalia jest <strong>nie ilościowa</strong> — że metaliczność jest niska — ale <strong>jakościowa</strong>: że obiekt tak masywny może mieć <span class="mono">Δω<sub>zakar</sub> ≈ 0</span>.</p>
+  </div>
+
+  <!-- VISUALIZATION 3 -->
+  <div class="viz-block">
+    <div class="viz-title">
+      <span>Metaliczność Z vs Δω<sub>zakar</sub></span>
+    </div>
+    <div class="viz-tabs">
+      <button class="viz-tab active" onclick="setMetMode('scatter')">Diagram obserwacyjny</button>
+      <button class="viz-tab" onclick="setMetMode('accum')">Akumulacja Δω</button>
+    </div>
+    <canvas id="metalCanvas" height="240"></canvas>
+    <div class="slider-row">
+      <label>Generacji gwiazdowych</label>
+      <input type="range" min="0" max="5" value="3" step="1" id="genSlider" oninput="updateGen(this.value)">
+      <span class="val" id="genVal">3</span>
+    </div>
+    <div class="viz-caption">
+      BH gwiazdowe (złote): metaliczność rośnie z liczbą przebytych generacji. PBH (fioletowe): brak historii — Z ≈ 0 niezależnie od masy. Abell 2744-QSO1 (czerwone ✕) jest anomalią dla modeli konwencjonalnych — naturalna predykcja TERJ.
+    </div>
+  </div>
+
+</div>
+
+<div class="sep">◈</div>
+
+<!-- ═══ SEKCJA 4 ═══ -->
+<div class="chapter" id="s4">
+  <div class="chapter-head">
+    <div class="chapter-num">Sekcja 04</div>
+    <h2>Masa sub-chandrasekara<br>jako predykcja kaskady</h2>
+  </div>
+
+  <p>Sygnał <strong>LIGO S251112cm</strong> z listopada 2025 — obiekty o masach <span class="hl-teal">0.10–0.87 M☉</span> — jest predykcją modelu w następującym sensie. Masa Chandrasekara <span class="hl-gold">M<sub>Ch</sub> ≈ 1.4 M☉</span> jest progiem hamiltoniana koncentracji dla materii barionowej po kaskadzie nukleosyntez:</p>
+
+  <div class="formula-block">
+    <span class="eq-label">Próg Chandrasekara — hamiltonian koncentracji</span>
+    ⟨Ĥ<sub>konc</sub>⟩<sub>M<sub>Ch</sub></sub> = Γ<sub>degen</sub>(T) · ℏ
+    <br><br>
+    Γ<sub>degen</sub> — szerokość termiczna zdegenerowanego gazu elektronowego
+    <br><br>
+    Poniżej tej masy: żaden mechanizm gwiazdowy nie może wytworzyć BH.
+  </div>
+
+  <p>PBH o masie <span class="hl-violet">M &lt; M<sub>Ch</sub></span> formuje się w epoce, gdzie efektywny próg jest wyznaczony przez hamiltonian koncentracji dla perturbacji gęstości promieniowania, nie dla materii barionowej:</p>
+
+  <div class="formula-block">
+    <span class="eq-label">Próg radiacyjny — niezależny od Chandrasekara</span>
+    ⟨Ĥ<sub>konc</sub>⟩<sub>rad</sub> = (c²/G) · (δρ/ρ) · R<sub>H</sub>
+    <br><br>
+    R<sub>H</sub> — horyzont Hubblea w chwili formowania
+    <br><br>
+    M<sub>PBH</sub> ~ M<sub>H</sub>(t<sub>form</sub>) ∝ t<sub>form</sub>
+    <br><br>
+    Dowolne wartości poniżej M☉ dla t<sub>form</sub> &lt; 10⁻⁵ s
+  </div>
+
+  <!-- VISUALIZATION 4 -->
+  <div class="viz-block">
+    <div class="viz-title"><span>Spektrum mas — bariera Chandrasekara</span></div>
+    <canvas id="massCanvas" height="200"></canvas>
+    <div class="viz-caption">
+      Linia przerywana: granica Chandrasekara M<sub>Ch</sub> = 1.4 M☉. BH gwiazdowe (złote): wszystkie powyżej. Obiekty LIGO S251112cm (fioletowe, 0.10–0.87 M☉): predykcja PBH — poniżej bariery barionowej, wyznaczone przez horyzont Hubblea.
+    </div>
+  </div>
+
+</div>
+
+<div class="sep">◈</div>
+
+<!-- ═══ SEKCJA 5 ═══ -->
+<div class="chapter" id="s5">
+  <div class="chapter-head">
+    <div class="chapter-num">Sekcja 05</div>
+    <h2>PBH jako absolutna referencja<br>masach-capacity</h2>
+  </div>
+
+  <p>Indeks Assembly w modelu jest mierzony jako odległość logarytmiczna od referencyjnego stanu zerowego zakaru:</p>
+
+  <div class="formula-block">
+    <span class="eq-label">Indeks Assembly — odległość od referencji</span>
+    𝒜<sub>AT</sub>(f) ∝ log [ M<sub>c</sub>(f) / M<sub>c</sub>(f<sub>BH</sub>) ]
+    <br><br>
+    M<sub>c</sub><sup>PBH</sup> = ‖ψ‖²<sub>R</sub> · I(ψ:E)  przy  I(ψ:E) → 0
+    <br><br>
+    |𝒜<sub>lok</sub><sup>PBH</sup>| = 1  →  dolna granica masach-capacity
+  </div>
+
+  <p>Dla standardowej BH gwiazdowej <span class="mono">M<sub>c</sub>(f<sub>BH</sub>)</span> zawiera wkład od historii kolapsującej gwiazdy — od jej metaliczności, od zamrożeń nuklearnych przez które przeszła. Nie jest ona referencją absolutną — jest referencją lokalną dla obiektów o podobnej historii Assembly.</p>
+
+  <p><strong>PBH jest referencją absolutną</strong> w precyzyjnym sensie: informacja wzajemna ze środowiskiem jest minimalna, ponieważ <span class="mono">|𝒜<sub>lok</sub><sup>PBH</sup>| = 1</span>. Jest to dolna granica masach-capacity dla dowolnego fizycznie realizowalnego stanu w architekturze <span class="mono">Î</span> naszego Wszechświata.</p>
+
+  <div class="discovery">
+    <p>Jeśli PBH są rozmieszczone kosmologicznie jako relikty epoki Plancka i radiacyjnej, stanowią <strong>sieć punktów</strong> gdzie <span class="mono">Δω<sub>zakar</sub> = 0</span> — sieć absolutnych referencji dla pomiaru złożoności Assembly w skali kosmicznej.</p>
+    <p>Kosmologiczna mapa PBH byłaby mapą gdzie <span class="hl-gold">𝒲 = 0 lokalnie</span>, i gradient tej mapy względem rozkładu metaliczności byłby bezpośrednim pomiarem tempa akumulacji <span class="mono">Δω<sub>zakar</sub></span> przez historię kosmiczną.</p>
+  </div>
+
+  <!-- VISUALIZATION 5 -->
+  <div class="viz-block">
+    <div class="viz-title"><span>Sieć referencji kosmologicznej — PBH jako punkty zerowego zakaru</span></div>
+    <canvas id="netCanvas" height="240"></canvas>
+    <div class="viz-caption">
+      Złote punkty: PBH — Δω<sub>zakar</sub> = 0, absolutne referencje. Gradient koloru tła koduje akumulację zakaru przez historię kosmiczną. Im jaśniejszy gradient, tym wyższy 𝒜<sub>AT</sub> — wyższy indeks Assembly lokalnego środowiska.
+    </div>
+  </div>
+
+</div>
+
+<div class="sep">◈</div>
+
+<!-- ═══ SEKCJA 6 ═══ -->
+<div class="chapter" id="s6">
+  <div class="chapter-head">
+    <div class="chapter-num">Sekcja 06</div>
+    <h2>Otwarta predykcja testowalna</h2>
+  </div>
+
+  <p>Z powyższego wynika <strong>predykcja siódma</strong> modelu, testowalna przez JWST i przyszłe obserwacje LISA:</p>
+
+  <div class="prediction">
+    <div class="prediction-label">Predykcja 7 · TERJ · PBH · Maj 2026</div>
+    <p>Korelacja między masą BH a metalicznością środowiska powinna wykazywać <strong>dwumodalny rozkład</strong>:</p>
+    <p><strong>Reżim I:</strong> <span class="hl-gold">Z ∝ M<sub>BH</sub><sup>α</sup></span> z α &gt; 0 dla BH gwiazdowych — historia Assembly skaluje się z masą.</p>
+    <p><strong>Reżim II:</strong> korelacja zanika lub <em>odwraca się</em> dla M<sub>BH</sub> przy <span class="hl-violet">Z ≲ 0.01 Z☉</span> — dla PBH, gdzie masa jest wyznaczona przez horyzont Hubblea, nie przez historię nukleosyntezi.</p>
+    <p>Przejście między reżimami wyznacza granicę między obiektami z <span class="hl-gold">Δω<sub>zakar</sub> &gt; 0</span> a obiektami z <span class="hl-violet">Δω<sub>zakar</sub> = 0</span>.</p>
+  </div>
+
+  <!-- VISUALIZATION 6 -->
+  <div class="viz-block">
+    <div class="viz-title"><span>Predykcja 7 — rozkład dwumodalny Z vs M<sub>BH</sub></span></div>
+    <div class="viz-tabs">
+      <button class="viz-tab active" onclick="setPredMode('scatter')">Diagram obserwacyjny</button>
+      <button class="viz-tab" onclick="setPredMode('hist')">Histogram Z</button>
+    </div>
+    <canvas id="predCanvas" height="260"></canvas>
+    <div class="viz-caption">
+      Złote: BH gwiazdowe — metaliczność rośnie z masą (reżim I). Fioletowe: PBH — metaliczność bliska zeru niezależnie od masy (reżim II). Linia przerywana: granica przejścia między reżimami. Czerwone ✕: Abell 2744-QSO1 (JWST).
+    </div>
+  </div>
+
+  <blockquote>
+    Anomalia JWST nie jest ilościowa. Jest jakościowa: że obiekt o masie ~5 × 10⁷ M☉ może mieć Z ≲ 0.01 Z☉. Konwencjonalne modele wymagają co najmniej jednej generacji gwiazdowej żeby wytworzyć ziarno supermasywnej BH. TERJ przewiduje, że PBH omija tę sekwencję, ponieważ jej Ω̂ nigdy nie przeszło przez kaskadę — nie ma wymogu minimalnej metaliczności środowiska formowania.
+    <cite>— P. Majsterek, TERJ Working Paper · Maj 2026</cite>
+  </blockquote>
+
+  <div class="footnotes">
+    <div class="fn">¹ LIGO Scientific Collaboration (2025): S251112cm — sub-solar mass compact binary merger candidate. GraceDB.</div>
+    <div class="fn">² Harikane Y. et al. (2023): JWST observations of Abell 2744-QSO1 — supermassive BH at z~7.1 with anomalously low metallicity. ApJ.</div>
+    <div class="fn">³ Carr B., Kühnel F. (2020): Primordial Black Holes as Dark Matter: Recent Developments. Annual Review of Nuclear and Particle Science.</div>
+    <div class="fn">⁴ Hartle J.B., Hawking S.W. (1983): Wave Function of the Universe. Physical Review D 28.</div>
+    <div class="fn">⁵ Majsterek P. (2026): TEREJ IX — Fraktal, Kryształ Czasu i Niezmienniczość Skalowania Ĝ. pawcio99.github.io/TEREJ_IX/</div>
+  </div>
+
+</div>
+
+</div><!-- /container -->
+
+<div class="bottom-nav">
+  <a href="komentarz.html">← Komentarz TERJ I–IV</a>
+  <a href="teoria.html">TEREJ IX — Fraktal ↗</a>
+  <a href="yhwh-entropia.html">YHWH i Entropia ↗</a>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// UTILITY
+// ═══════════════════════════════════════════
+function resizeCanvas(canvas) {
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const w = Math.floor(rect.width) || 760;
+  const h = parseInt(canvas.getAttribute('height')) || 200;
+  canvas.width = w * ratio;
+  canvas.height = h * ratio;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+  return { ctx, w, h };
+}
+
+const GOLD = '#c9a84c';
+const GOLD_DIM = '#6a5830';
+const VIOLET = '#8b5cf6';
+const TEAL = '#22d3ee';
+const RED = '#f87171';
+const AMBER = '#fb923c';
+const BG2 = '#0d1526';
+const TEXT_DIM = '#7a7570';
+
+// ═══════════════════════════════════════════
+// VIZ 1 — CASCADE
+// ═══════════════════════════════════════════
+let cascadeMode = 'bh';
+let cascadeAnim = 0;
+
+function setCascadeMode(mode) {
+  cascadeMode = mode;
+  document.querySelectorAll('#cascadeCanvas ~ * .viz-tab, .viz-tabs .viz-tab').forEach((t,i) => {
+    if (t.closest('.viz-block') === document.getElementById('cascadeCanvas').closest('.viz-block')) {
+      t.classList.toggle('active', (i === 0 && mode === 'bh') || (i === 1 && mode === 'pbh'));
+    }
+  });
+  document.getElementById('cascadeCaption').textContent = mode === 'bh'
+    ? 'BH gwiazdowa przechodzi przez kaskadę zamrożeń: Planck → Kwarki → Nukleosynteza pierwotna → Nukleosynteza gwiazdowa → BH. Każdy próg dodaje Δωzakar > 0.'
+    : 'PBH nie przechodzi przez żadną kaskadę. Operator Ω̂ jest identyczny ze stanem wyjściowym epoki Plancka. Δωzakar = 0 — punkt stały funktora Φ ∘ Π.';
+  cascadeAnim = 0;
+}
+
+function drawCascade() {
+  const canvas = document.getElementById('cascadeCanvas');
+  const { ctx, w, h } = resizeCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+
+  const isBH = cascadeMode === 'bh';
+  const stages = isBH
+    ? ['Planck', 'Kwarki\nQCD', 'Nukl.\npierwotna', 'Nukl.\ngwiazdowa', 'BH\ngwiazdowa']
+    : ['Planck', 'BH\npierwotna'];
+
+  const n = stages.length;
+  const margin = 40;
+  const usable = w - margin * 2;
+  const spacing = usable / (n - 1);
+
+  // background gradient
+  const bg = ctx.createLinearGradient(0, 0, w, 0);
+  bg.addColorStop(0, 'rgba(201,168,76,.03)');
+  bg.addColorStop(1, isBH ? 'rgba(251,146,60,.06)' : 'rgba(139,92,246,.06)');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  // timeline line
+  ctx.beginPath();
+  ctx.moveTo(margin, h/2);
+  ctx.lineTo(w - margin, h/2);
+  ctx.strokeStyle = isBH ? GOLD_DIM : 'rgba(139,92,246,.4)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // animated progress
+  cascadeAnim = Math.min(cascadeAnim + 0.015, 1);
+  const progressX = margin + cascadeAnim * usable;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, progressX, h);
+  ctx.clip();
+
+  for (let i = 0; i < n; i++) {
+    const x = margin + i * spacing;
+    const isLast = i === n - 1;
+    const color = isBH ? (isLast ? AMBER : GOLD) : (i === 0 ? GOLD : VIOLET);
+
+    // connector arrow
+    if (i < n - 1) {
+      const x2 = margin + (i+1)*spacing;
+      ctx.beginPath();
+      ctx.moveTo(x + 18, h/2);
+      ctx.lineTo(x2 - 18, h/2);
+      ctx.strokeStyle = isBH ? 'rgba(201,168,76,.5)' : 'rgba(139,92,246,.5)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // arrowhead
+      ctx.beginPath();
+      ctx.moveTo(x2-18, h/2-5);
+      ctx.lineTo(x2-8, h/2);
+      ctx.lineTo(x2-18, h/2+5);
+      ctx.fillStyle = isBH ? 'rgba(201,168,76,.5)' : 'rgba(139,92,246,.5)';
+      ctx.fill();
+
+      // Δω label
+      if (isBH) {
+        ctx.font = '10px JetBrains Mono, monospace';
+        ctx.fillStyle = GOLD_DIM;
+        ctx.textAlign = 'center';
+        ctx.fillText('+Δω', (x + x2) / 2, h/2 - 12);
+      }
+    }
+
+    // node circle
+    ctx.beginPath();
+    ctx.arc(x, h/2, 14, 0, Math.PI*2);
+    ctx.fillStyle = isLast ? (isBH ? 'rgba(251,146,60,.25)' : 'rgba(139,92,246,.3)') : 'rgba(201,168,76,.15)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x, h/2, 14, 0, Math.PI*2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // label
+    const lines = stages[i].split('\n');
+    ctx.font = '11px JetBrains Mono, monospace';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    const labelY = i % 2 === 0 ? h/2 - 30 : h/2 + 38;
+    lines.forEach((line, li) => {
+      ctx.fillText(line, x, labelY + li * 14);
+    });
+  }
+
+  ctx.restore();
+
+  // if PBH, show "= ω₀" annotation
+  if (!isBH) {
+    ctx.font = '12px JetBrains Mono, monospace';
+    ctx.fillStyle = VIOLET;
+    ctx.textAlign = 'center';
+    ctx.fillText('Δωzakar = 0', w/2, h - 20);
+    ctx.font = '11px EB Garamond, serif';
+    ctx.fillStyle = TEXT_DIM;
+    ctx.fillText('(Φ ∘ Π)(ω₀) = ω₀ — punkt stały', w/2, h - 6);
+  }
+
+  if (cascadeAnim < 1) requestAnimationFrame(drawCascade);
+}
+
+// ═══════════════════════════════════════════
+// VIZ 2 — FUNCTOR
+// ═══════════════════════════════════════════
+let functorAngle = 0;
+
+function drawFunctor() {
+  const canvas = document.getElementById('functorCanvas');
+  const { ctx, w, h } = resizeCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+  functorAngle += 0.005;
+
+  const cx1 = w * 0.28, cy = h / 2;
+  const cx2 = w * 0.72;
+  const r = Math.min(w * 0.14, 60);
+
+  // draw Φ ∘ Π for BH (left, open spiral)
+  ctx.save();
+  ctx.translate(cx1, cy);
+  // spiral — open loop
+  ctx.beginPath();
+  for (let a = 0; a < Math.PI * 3.2; a += 0.05) {
+    const rad = r * 0.35 + a * 4.5;
+    const x2 = Math.cos(a + functorAngle) * rad;
+    const y2 = Math.sin(a + functorAngle) * rad;
+    a === 0 ? ctx.moveTo(x2, y2) : ctx.lineTo(x2, y2);
+  }
+  ctx.strokeStyle = GOLD;
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.7;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  // label
+  ctx.font = 'bold 12px JetBrains Mono, monospace';
+  ctx.fillStyle = GOLD;
+  ctx.textAlign = 'center';
+  ctx.fillText('BH Gwiazdowa', 0, r + 22);
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillStyle = TEXT_DIM;
+  ctx.fillText('Δωzakar > 0', 0, r + 36);
+  ctx.fillText('pętla otwarta', 0, r + 48);
+  ctx.restore();
+
+  // PBH (right, closed circle)
+  ctx.save();
+  ctx.translate(cx2, cy);
+  // spinning closed loop
+  ctx.beginPath();
+  ctx.arc(0, 0, r * 0.7, 0, Math.PI * 2);
+  ctx.strokeStyle = VIOLET;
+  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.85;
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  // spinning dot on circle
+  const dotX = Math.cos(functorAngle * 2) * r * 0.7;
+  const dotY = Math.sin(functorAngle * 2) * r * 0.7;
+  ctx.beginPath();
+  ctx.arc(dotX, dotY, 5, 0, Math.PI * 2);
+  ctx.fillStyle = VIOLET;
+  ctx.fill();
+  // arrow indicating closure
+  ctx.font = '18px serif';
+  ctx.fillStyle = VIOLET;
+  ctx.textAlign = 'center';
+  ctx.fillText('↺', 0, 7);
+  // label
+  ctx.font = 'bold 12px JetBrains Mono, monospace';
+  ctx.fillStyle = VIOLET;
+  ctx.textAlign = 'center';
+  ctx.fillText('PBH', 0, r * 0.7 + 22);
+  ctx.font = '10px JetBrains Mono, monospace';
+  ctx.fillStyle = TEXT_DIM;
+  ctx.fillText('Δωzakar = 0', 0, r * 0.7 + 36);
+  ctx.fillText('punkt stały', 0, r * 0.7 + 48);
+  ctx.restore();
+
+  // middle arrow + equation
+  ctx.font = '13px JetBrains Mono, monospace';
+  ctx.fillStyle = TEXT_DIM;
+  ctx.textAlign = 'center';
+  ctx.fillText('vs', w/2, cy);
+  ctx.font = '11px JetBrains Mono, monospace';
+  ctx.fillStyle = VIOLET;
+  ctx.fillText('(Φ∘Π)(ω₀) = ω₀', w/2, cy + 55);
+
+  requestAnimationFrame(drawFunctor);
+}
+
+// ═══════════════════════════════════════════
+// VIZ 3 — METALLICITY
+// ═══════════════════════════════════════════
+let metMode = 'scatter';
+let genCount = 3;
+
+function setMetMode(mode) {
+  metMode = mode;
+  document.querySelectorAll('#metalCanvas').forEach(c => {
+    c.closest('.viz-block').querySelectorAll('.viz-tab').forEach((t,i) => {
+      t.classList.toggle('active', (i===0 && mode==='scatter') || (i===1 && mode==='accum'));
+    });
+  });
+  drawMetal();
+}
+
+function updateGen(v) {
+  genCount = parseInt(v);
+  document.getElementById('genVal').textContent = v;
+  drawMetal();
+}
+
+function drawMetal() {
+  const canvas = document.getElementById('metalCanvas');
+  const { ctx, w, h } = resizeCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+
+  const mx = 55, my = 20, mw = w - mx - 20, mh = h - my - 40;
+
+  if (metMode === 'scatter') {
+    // axes
+    ctx.strokeStyle = 'rgba(255,255,255,.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(mx, my); ctx.lineTo(mx, my+mh); ctx.lineTo(mx+mw, my+mh); ctx.stroke();
+
+    // axis labels
+    ctx.font = '10px JetBrains Mono, monospace';
+    ctx.fillStyle = TEXT_DIM;
+    ctx.textAlign = 'center';
+    ctx.fillText('log(M_BH / M☉)', mx + mw/2, my + mh + 30);
+    ctx.save(); ctx.translate(14, my + mh/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Metaliczność Z / Z☉', 0, 0); ctx.restore();
+
+    // grid
+    [0, .25, .5, .75, 1].forEach(t => {
+      const y = my + mh - t * mh;
+      ctx.beginPath(); ctx.moveTo(mx, y); ctx.lineTo(mx+mw, y);
+      ctx.strokeStyle = 'rgba(255,255,255,.05)'; ctx.lineWidth = 1; ctx.stroke();
+      ctx.fillStyle = TEXT_DIM; ctx.font = '9px JetBrains Mono, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText((t * 1.2).toFixed(1), mx - 6, y + 3);
+    });
+    [5,6,7,8,9].forEach((v, i) => {
+      const x = mx + (i/4) * mw;
+      ctx.fillStyle = TEXT_DIM; ctx.font = '9px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('10^'+v, x, my + mh + 14);
+    });
+
+    // BH gwiazdowe — positive correlation
+    const seed = 42;
+    function rnd(s) { let x = Math.sin(s) * 10000; return x - Math.floor(x); }
+    for (let i = 0; i < 25; i++) {
+      const logM = 5 + rnd(i*7+seed) * 4.5;
+      const Z = 0.2 + logM/9 * 0.7 + (rnd(i*3+1) - 0.5) * 0.15;
+      const x = mx + ((logM - 5)/4) * mw;
+      const y = my + mh - Math.min(Z, 1.1) / 1.2 * mh;
+      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(201,168,76,.75)'; ctx.fill();
+    }
+    // trend line BH
+    ctx.beginPath(); ctx.moveTo(mx, my + mh * 0.85); ctx.lineTo(mx + mw, my + mh * 0.1);
+    ctx.strokeStyle = 'rgba(201,168,76,.35)'; ctx.lineWidth = 1.5; ctx.setLineDash([5,4]); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // PBH — flat near zero
+    for (let i = 0; i < 15; i++) {
+      const logM = 5 + rnd(i*11+200) * 4.5;
+      const Z = 0.005 + rnd(i*5+300) * 0.018;
+      const x = mx + ((logM - 5)/4) * mw;
+      const y = my + mh - (Z / 1.2) * mh;
+      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(139,92,246,.75)'; ctx.fill();
+    }
+
+    // Abell 2744-QSO1 — anomaly
+    const ax = mx + ((7.7-5)/4) * mw;
+    const ay = my + mh - (0.01/1.2) * mh;
+    ctx.strokeStyle = RED; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(ax-7,ay-7); ctx.lineTo(ax+7,ay+7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ax+7,ay-7); ctx.lineTo(ax-7,ay+7); ctx.stroke();
+    ctx.font = '10px JetBrains Mono, monospace'; ctx.fillStyle = RED;
+    ctx.textAlign = 'left'; ctx.fillText('Abell 2744-QSO1', ax+10, ay+4);
+
+    // legend
+    ctx.font = '10px JetBrains Mono, monospace';
+    [[GOLD,'BH gwiazdowe','circle'],[VIOLET,'PBH','circle'],[RED,'JWST anomalia','cross']].forEach(([c,l,t],i) => {
+      const lx = mx + 8, ly = my + 12 + i*16;
+      if (t === 'circle') { ctx.beginPath(); ctx.arc(lx+5,ly,4,0,Math.PI*2); ctx.fillStyle=c; ctx.fill(); }
+      else { ctx.strokeStyle=c; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(lx,ly-4); ctx.lineTo(lx+10,ly+4); ctx.stroke(); ctx.beginPath(); ctx.moveTo(lx+10,ly-4); ctx.lineTo(lx,ly+4); ctx.stroke(); }
+      ctx.fillStyle=TEXT_DIM; ctx.textAlign='left'; ctx.fillText(l, lx+14, ly+4);
+    });
+
+  } else {
+    // accumulation mode
+    const stages = ['Planck','Kwarki','Nukl. P','Nukl. G.' , 'BH',''];
+    const n = Math.min(genCount + 2, 5);
+    const bw = mw / 6;
+
+    ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(mx, my); ctx.lineTo(mx, my+mh); ctx.lineTo(mx+mw, my+mh); ctx.stroke();
+
+    for (let i = 0; i < 5; i++) {
+      const barH = i < n ? (i+1)/5 * mh : 0;
+      const x = mx + i * (mw/5) + bw*0.1;
+      const w2 = bw * 0.8;
+      const active = i < n;
+      const grad = ctx.createLinearGradient(0, my+mh-barH, 0, my+mh);
+      grad.addColorStop(0, active ? 'rgba(201,168,76,.8)' : 'rgba(100,100,100,.2)');
+      grad.addColorStop(1, active ? 'rgba(201,168,76,.15)' : 'rgba(60,60,60,.1)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, my+mh-barH, w2, barH);
+
+      ctx.font = '9px JetBrains Mono, monospace';
+      ctx.fillStyle = active ? GOLD : TEXT_DIM;
+      ctx.textAlign = 'center';
+      ctx.fillText(stages[i], x + w2/2, my+mh+14);
+      if (active && i > 0) {
+        ctx.fillStyle = GOLD; ctx.font = '10px JetBrains Mono, monospace';
+        ctx.fillText('+Δω', x + w2/2, my+mh-barH-6);
+      }
+    }
+
+    // PBH flat line
+    ctx.beginPath(); ctx.moveTo(mx, my+mh-2); ctx.lineTo(mx+mw, my+mh-2);
+    ctx.strokeStyle = VIOLET; ctx.lineWidth = 2; ctx.setLineDash([6,3]); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font = '10px JetBrains Mono, monospace'; ctx.fillStyle = VIOLET;
+    ctx.textAlign = 'right';
+    ctx.fillText('PBH: Δωzakar = 0', mx+mw, my+mh-8);
+  }
+}
+
+// ═══════════════════════════════════════════
+// VIZ 4 — MASS SPECTRUM
+// ═══════════════════════════════════════════
+function drawMass() {
+  const canvas = document.getElementById('massCanvas');
+  const { ctx, w, h } = resizeCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+
+  const mx = 60, my = 20, mw = w-mx-20, mh = h-my-40;
+  const logMin = -1.5, logMax = 3;
+  const range = logMax - logMin;
+
+  // background
+  const bg = ctx.createLinearGradient(0, my, 0, my+mh);
+  bg.addColorStop(0, 'rgba(201,168,76,.03)');
+  bg.addColorStop(1, 'transparent');
+  ctx.fillStyle = bg; ctx.fillRect(mx, my, mw, mh);
+
+  // axes
+  ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(mx,my+mh); ctx.lineTo(mx+mw,my+mh); ctx.stroke();
+
+  // x axis ticks
+  [-1,0,1,2,3].forEach(v => {
+    const x = mx + ((v - logMin)/range)*mw;
+    ctx.fillStyle = TEXT_DIM; ctx.font='9px JetBrains Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText('10^'+v+' M☉', x, my+mh+14);
+    ctx.beginPath(); ctx.moveTo(x,my+mh); ctx.lineTo(x,my+mh+4); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x,my); ctx.lineTo(x,my+mh); ctx.strokeStyle='rgba(255,255,255,.04)'; ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.15)';
+  });
+
+  ctx.fillStyle=TEXT_DIM; ctx.font='10px JetBrains Mono,monospace'; ctx.textAlign='center';
+  ctx.fillText('Masa kompaktu', mx+mw/2, my+mh+30);
+
+  // Chandrasekhar line
+  const chX = mx + ((Math.log10(1.4) - logMin)/range)*mw;
+  ctx.beginPath(); ctx.moveTo(chX, my); ctx.lineTo(chX, my+mh);
+  ctx.strokeStyle = 'rgba(251,146,60,.6)'; ctx.lineWidth=2; ctx.setLineDash([6,4]); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='10px JetBrains Mono,monospace'; ctx.fillStyle=AMBER; ctx.textAlign='left';
+  ctx.fillText('M_Ch = 1.4 M☉', chX+6, my+14);
+
+  // PBH band (sub-Chandrasekhar)
+  const pbhFill = ctx.createLinearGradient(mx, 0, chX, 0);
+  pbhFill.addColorStop(0,'rgba(139,92,246,.05)');
+  pbhFill.addColorStop(1,'rgba(139,92,246,.12)');
+  ctx.fillStyle=pbhFill; ctx.fillRect(mx, my, chX-mx, mh);
+
+  // LIGO masses: 0.10–0.87 M☉
+  [0.10,0.14,0.19,0.26,0.38,0.52,0.63,0.71,0.87].forEach(m => {
+    const x = mx + ((Math.log10(m)-logMin)/range)*mw;
+    const y = my + mh * 0.5 + (Math.random()*0.1-0.05)*mh;
+    ctx.beginPath(); ctx.arc(x, my+mh*0.45, 6, 0, Math.PI*2);
+    ctx.fillStyle='rgba(139,92,246,.8)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(x, my+mh*0.45, 6, 0, Math.PI*2);
+    ctx.strokeStyle=VIOLET; ctx.lineWidth=1.5; ctx.stroke();
+  });
+
+  // BH stellar
+  [1.5,2.0,3.4,7.8,15,40,85].forEach(m => {
+    const x = mx + ((Math.log10(m)-logMin)/range)*mw;
+    ctx.beginPath(); ctx.arc(x, my+mh*0.45, 7, 0, Math.PI*2);
+    ctx.fillStyle='rgba(201,168,76,.8)'; ctx.fill();
+    ctx.strokeStyle=GOLD; ctx.lineWidth=1.5; ctx.stroke();
+  });
+
+  // labels
+  ctx.font='10px JetBrains Mono,monospace';
+  ctx.fillStyle=VIOLET; ctx.textAlign='center';
+  ctx.fillText('LIGO S251112cm · PBH', (mx + chX)/2, my+mh*0.72);
+  ctx.fillText('0.10 – 0.87 M☉', (mx + chX)/2, my+mh*0.84);
+  ctx.fillStyle=GOLD; ctx.textAlign='center';
+  ctx.fillText('BH gwiazdowe', chX + (mx+mw-chX)/2, my+mh*0.72);
+
+  // legend
+  [[GOLD,'BH gwiazdowe'],[VIOLET,'PBH (sub-Ch.)'],[AMBER,'M_Ch granica']].forEach(([c,l],i)=>{
+    const lx=mx+8, ly=my+12+i*16;
+    ctx.beginPath(); ctx.arc(lx+5,ly,4,0,Math.PI*2); ctx.fillStyle=c; ctx.fill();
+    ctx.fillStyle=TEXT_DIM; ctx.font='9px JetBrains Mono,monospace'; ctx.textAlign='left';
+    ctx.fillText(l, lx+13, ly+4);
+  });
+}
+
+// ═══════════════════════════════════════════
+// VIZ 5 — COSMIC NETWORK
+// ═══════════════════════════════════════════
+let netTime = 0;
+const netNodes = [];
+
+function initNet(w, h) {
+  netNodes.length = 0;
+  // PBH nodes (gold, delta-omega=0)
+  for (let i = 0; i < 12; i++) {
+    netNodes.push({
+      x: 40 + Math.random()*(w-80),
+      y: 30 + Math.random()*(h-60),
+      isPBH: true,
+      vx: (Math.random()-.5)*0.2,
+      vy: (Math.random()-.5)*0.2
+    });
+  }
+  // Stellar BH (amber/dim)
+  for (let i = 0; i < 20; i++) {
+    netNodes.push({
+      x: 40 + Math.random()*(w-80),
+      y: 30 + Math.random()*(h-60),
+      isPBH: false,
+      metal: 0.1 + Math.random()*0.8,
+      vx: (Math.random()-.5)*0.15,
+      vy: (Math.random()-.5)*0.15
+    });
+  }
+}
+
+function drawNet() {
+  const canvas = document.getElementById('netCanvas');
+  const { ctx, w, h } = resizeCanvas(canvas);
+  netTime += 0.008;
+
+  if (netNodes.length === 0) initNet(w, h);
+
+  ctx.clearRect(0, 0, w, h);
+
+  // background glow — zakar gradient
+  const grd = ctx.createRadialGradient(w*0.6, h*0.4, 10, w*0.6, h*0.4, w*0.7);
+  grd.addColorStop(0, 'rgba(201,168,76,.06)');
+  grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd; ctx.fillRect(0,0,w,h);
+
+  // move nodes
+  netNodes.forEach(n => {
+    n.x += n.vx + Math.sin(netTime + n.y*.01) * 0.1;
+    n.y += n.vy + Math.cos(netTime + n.x*.01) * 0.1;
+    if (n.x < 30) n.vx = Math.abs(n.vx);
+    if (n.x > w-30) n.vx = -Math.abs(n.vx);
+    if (n.y < 20) n.vy = Math.abs(n.vy);
+    if (n.y > h-20) n.vy = -Math.abs(n.vy);
+  });
+
+  // connections: PBH to nearby stellar BH
+  netNodes.filter(n=>n.isPBH).forEach(p => {
+    netNodes.filter(n=>!n.isPBH).forEach(s => {
+      const d = Math.hypot(p.x-s.x, p.y-s.y);
+      if (d < 120) {
+        ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(s.x,s.y);
+        ctx.strokeStyle = `rgba(201,168,76,${(1-d/120)*.18})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    });
+  });
+
+  // draw stellar BH
+  netNodes.filter(n=>!n.isPBH).forEach(n => {
+    const a = 0.3 + n.metal * 0.5;
+    ctx.beginPath(); ctx.arc(n.x, n.y, 4, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(251,146,60,${a})`; ctx.fill();
+  });
+
+  // draw PBH nodes with pulse
+  netNodes.filter(n=>n.isPBH).forEach((n,i) => {
+    const pulse = Math.sin(netTime * 1.5 + i * 0.8) * 3;
+    // glow
+    const g = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,14+pulse);
+    g.addColorStop(0,'rgba(201,168,76,.35)');
+    g.addColorStop(1,'transparent');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(n.x,n.y,14+pulse,0,Math.PI*2); ctx.fill();
+    // core
+    ctx.beginPath(); ctx.arc(n.x,n.y,5,0,Math.PI*2);
+    ctx.fillStyle=GOLD; ctx.fill();
+    ctx.beginPath(); ctx.arc(n.x,n.y,5,0,Math.PI*2);
+    ctx.strokeStyle='rgba(201,168,76,.6)'; ctx.lineWidth=1.5; ctx.stroke();
+  });
+
+  // legend
+  ctx.font='9px JetBrains Mono,monospace';
+  [[GOLD,'PBH · Δωzakar = 0'],[AMBER,'BH gwiazdowe · Δω > 0']].forEach(([c,l],i)=>{
+    ctx.beginPath(); ctx.arc(14,14+i*16,4,0,Math.PI*2); ctx.fillStyle=c; ctx.fill();
+    ctx.fillStyle=TEXT_DIM; ctx.textAlign='left'; ctx.fillText(l, 24, 18+i*16);
+  });
+
+  requestAnimationFrame(drawNet);
+}
+
+// ═══════════════════════════════════════════
+// VIZ 6 — PREDICTION
+// ═══════════════════════════════════════════
+let predMode = 'scatter';
+
+function setPredMode(mode) {
+  predMode = mode;
+  document.querySelectorAll('#predCanvas').forEach(c => {
+    c.closest('.viz-block').querySelectorAll('.viz-tab').forEach((t,i) => {
+      t.classList.toggle('active', (i===0 && mode==='scatter') || (i===1 && mode==='hist'));
+    });
+  });
+  drawPred();
+}
+
+function drawPred() {
+  const canvas = document.getElementById('predCanvas');
+  const { ctx, w, h } = resizeCanvas(canvas);
+  ctx.clearRect(0, 0, w, h);
+
+  const mx=60, my=20, mw=w-mx-20, mh=h-my-45;
+  const logMin=5, logMax=10, range=logMax-logMin;
+
+  if (predMode === 'scatter') {
+    // axes
+    ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(mx,my+mh); ctx.lineTo(mx+mw,my+mh); ctx.stroke();
+    ctx.fillStyle=TEXT_DIM; ctx.font='10px JetBrains Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText('log(M_BH / M☉)', mx+mw/2, my+mh+32);
+    ctx.save(); ctx.translate(14, my+mh/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Metaliczność Z / Z☉', 0, 0); ctx.restore();
+
+    // grid
+    [0,.2,.4,.6,.8,1].forEach(t=>{
+      const y=my+mh-t*mh;
+      ctx.beginPath(); ctx.moveTo(mx,y); ctx.lineTo(mx+mw,y);
+      ctx.strokeStyle='rgba(255,255,255,.04)'; ctx.lineWidth=1; ctx.stroke();
+      ctx.fillStyle=TEXT_DIM; ctx.font='9px JetBrains Mono,monospace'; ctx.textAlign='right';
+      ctx.fillText((t*1.2).toFixed(2), mx-5, y+3);
+    });
+    [5,6,7,8,9,10].forEach(v=>{
+      const x=mx+((v-logMin)/range)*mw;
+      ctx.fillStyle=TEXT_DIM; ctx.font='9px JetBrains Mono,monospace'; ctx.textAlign='center';
+      ctx.fillText('10^'+v, x, my+mh+14);
+    });
+
+    // Regime boundary line
+    const boundX = mx + ((7.5-logMin)/range)*mw;
+    ctx.beginPath(); ctx.moveTo(boundX,my); ctx.lineTo(boundX,my+mh);
+    ctx.strokeStyle='rgba(34,211,238,.4)'; ctx.lineWidth=1.5; ctx.setLineDash([5,3]); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font='9px JetBrains Mono,monospace'; ctx.fillStyle=TEAL; ctx.textAlign='center';
+    ctx.fillText('Granica reżimów', boundX, my+8);
+
+    // Regime labels
+    ctx.font='10px JetBrains Mono,monospace';
+    ctx.fillStyle='rgba(201,168,76,.5)'; ctx.textAlign='center';
+    ctx.fillText('Reżim I · BH gwiazdowe', mx+(boundX-mx)/2, my+mh-12);
+    ctx.fillText('Z ∝ M^α (α > 0)', mx+(boundX-mx)/2, my+mh-26);
+    ctx.fillStyle='rgba(139,92,246,.5)'; ctx.textAlign='center';
+    ctx.fillText('Reżim II · PBH', boundX+(mx+mw-boundX)/2, my+mh-12);
+    ctx.fillText('Z ≈ 0, niezal. od M', boundX+(mx+mw-boundX)/2, my+mh-26);
+
+    // stellar BH points (Regime I)
+    function rnd2(s){let x=Math.sin(s)*9999;return x-Math.floor(x);}
+    for(let i=0;i<30;i++){
+      const logM=5.2+rnd2(i*7+10)*2;
+      const Z=0.15+(logM-5)/5*0.7+(rnd2(i*3+20)-.5)*.12;
+      const x=mx+((logM-logMin)/range)*mw;
+      const y=my+mh-(Math.min(Z,1.15)/1.2)*mh;
+      ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+      ctx.fillStyle='rgba(201,168,76,.7)'; ctx.fill();
+    }
+
+    // PBH points (Regime II) — flat
+    for(let i=0;i<20;i++){
+      const logM=7.6+rnd2(i*11+100)*2.2;
+      const Z=0.003+rnd2(i*5+200)*0.01;
+      const x=mx+((logM-logMin)/range)*mw;
+      const y=my+mh-(Z/1.2)*mh;
+      ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2);
+      ctx.fillStyle='rgba(139,92,246,.7)'; ctx.fill();
+    }
+
+    // Abell 2744-QSO1
+    const ax=mx+((7.7-logMin)/range)*mw;
+    const ay=my+mh-(0.01/1.2)*mh;
+    ctx.strokeStyle=RED; ctx.lineWidth=2.5;
+    [[-1,-1],[1,1],[-1,1],[1,-1]].forEach(([dx,dy])=>{
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(ax+dx*7,ay+dy*7); ctx.stroke();
+    });
+    ctx.font='10px JetBrains Mono,monospace'; ctx.fillStyle=RED; ctx.textAlign='left';
+    ctx.fillText('Abell 2744-QSO1 (JWST)', ax+10, ay+4);
+
+    // trend lines
+    ctx.beginPath(); ctx.moveTo(mx, my+mh*0.88); ctx.lineTo(boundX, my+mh*0.22);
+    ctx.strokeStyle='rgba(201,168,76,.3)'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(boundX, my+mh*0.97); ctx.lineTo(mx+mw, my+mh*0.96);
+    ctx.strokeStyle='rgba(139,92,246,.3)'; ctx.stroke();
+    ctx.setLineDash([]);
+
+  } else {
+    // Histogram of Z
+    ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(mx,my); ctx.lineTo(mx,my+mh); ctx.lineTo(mx+mw,my+mh); ctx.stroke();
+    ctx.fillStyle=TEXT_DIM; ctx.font='10px JetBrains Mono,monospace'; ctx.textAlign='center';
+    ctx.fillText('Metaliczność Z / Z☉', mx+mw/2, my+mh+32);
+    ctx.save(); ctx.translate(14,my+mh/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText('Liczba obiektów (N)', 0, 0); ctx.restore();
+
+    // PBH peak at Z~0
+    const bw = mw/20;
+    // stellar BH distribution — broad, centered ~0.5
+    for(let i=0;i<20;i++){
+      const x = mx + i*(mw/20);
+      const Z = (i+.5)/20;
+      const gauss = Math.exp(-(Z-.5)**2/(2*0.18**2));
+      const H = gauss * mh * 0.7;
+      const grad2 = ctx.createLinearGradient(0,my+mh-H,0,my+mh);
+      grad2.addColorStop(0,'rgba(201,168,76,.7)'); grad2.addColorStop(1,'rgba(201,168,76,.1)');
+      ctx.fillStyle=grad2; ctx.fillRect(x,my+mh-H,bw-2,H);
+    }
+    // PBH peak at Z~0
+    for(let i=0;i<2;i++){
+      const H = mh*(i===0?.9:.5);
+      const grad2 = ctx.createLinearGradient(0,my+mh-H,0,my+mh);
+      grad2.addColorStop(0,'rgba(139,92,246,.85)'); grad2.addColorStop(1,'rgba(139,92,246,.1)');
+      ctx.fillStyle=grad2; ctx.fillRect(mx+i*bw,my+mh-H,bw-2,H);
+    }
+
+    // labels
+    ctx.font='10px JetBrains Mono,monospace';
+    ctx.fillStyle=VIOLET; ctx.textAlign='left'; ctx.fillText('PBH', mx+4, my+20);
+    ctx.fillStyle=GOLD; ctx.textAlign='center'; ctx.fillText('BH gwiazdowe', mx+mw*0.6, my+20);
+    ctx.fillStyle=TEXT_DIM; ctx.font='9px JetBrains Mono,monospace';
+    ctx.textAlign='center'; ctx.fillText('Rozkład dwumodalny · Predykcja 7 TERJ', mx+mw/2, my+mh+44);
+  }
+}
+
+// ═══════════════════════════════════════════
+// INIT & RESIZE
+// ═══════════════════════════════════════════
+function initAll() {
+  drawCascade();
+  drawFunctor();
+  drawMetal();
+  drawMass();
+  initNet(760,240);
+  drawNet();
+  drawPred();
+}
+
+window.addEventListener('load', () => {
+  setTimeout(initAll, 100);
+});
+window.addEventListener('resize', () => {
+  drawMetal();
+  drawMass();
+  drawPred();
+});
+
+// Tab helpers
+document.querySelectorAll('.viz-tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    this.closest('.viz-tabs').querySelectorAll('.viz-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

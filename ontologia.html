@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEREJ — Ontologia Relacyjna · Rozdziały XX–XXV</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Josefin+Sans:wght@100;300;400&family=Syncopate:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #05080f;
+  --bg2: #070c18;
+  --surface: #0d1525;
+  --panel: #111e38;
+  --border: rgba(255,255,255,0.06);
+  --border-amber: rgba(255,180,60,0.18);
+  --amber: #ffb43c;
+  --amber-dim: #b07a1a;
+  --amber-glow: rgba(255,180,60,0.12);
+  --teal: #2ee8c8;
+  --teal-dim: #0d6b5a;
+  --teal-glow: rgba(46,232,200,0.08);
+  --cyan: #60d4f8;
+  --violet: #b088f8;
+  --rose: #f86060;
+  --green: #7ae86e;
+  --text: #d0ddf0;
+  --text-mid: #7a90b8;
+  --text-mute: #3a4a68;
+  --hebrew: #ffd48a;
+  --font-body: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Josefin Sans', sans-serif;
+  --font-title: 'Syncopate', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-serif: 'Libre Baskerville', Georgia, serif;
+}
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:17px; }
+body { background:var(--bg); color:var(--text); font-family:var(--font-body); line-height:1.9; overflow-x:hidden; }
+
+#progress { position:fixed; top:0; left:0; height:2px; width:0%; background:linear-gradient(90deg,var(--teal-dim),var(--teal),var(--amber)); z-index:9999; transition:width 0.1s linear; }
+#cosmos { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:500;
+  display:flex; align-items:center;
+  background:rgba(5,8,15,0.92); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  height:48px; padding:0 1.2rem;
+  font-family:var(--font-ui); font-size:0.5rem; letter-spacing:0.2em; text-transform:uppercase;
+}
+.nav-brand { color:var(--amber); margin-right:auto; font-family:var(--font-title); font-size:0.54rem; letter-spacing:0.26em; }
+nav a { color:var(--text-mute); text-decoration:none; padding:0 0.65rem; height:48px; display:flex; align-items:center; border-right:1px solid var(--border); transition:all 0.2s; white-space:nowrap; }
+nav a:first-of-type { border-left:1px solid var(--border); }
+nav a:hover { color:var(--teal); background:var(--teal-glow); }
+nav a.active { color:var(--amber); }
+
+/* ═══ HERO ═══ */
+#hero {
+  position:relative; z-index:1;
+  min-height:100vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:5rem 2rem 4rem; overflow:hidden;
+}
+#heroBg { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+.hero-content { position:relative; z-index:2; max-width:840px; }
+.hero-eyebrow {
+  font-family:var(--font-mono); font-size:0.58rem; letter-spacing:0.35em;
+  color:var(--teal-dim); text-transform:uppercase; margin-bottom:2rem;
+  border:1px solid rgba(46,232,200,0.15); display:inline-block;
+  padding:0.3rem 1rem; border-radius:2px;
+}
+.hero-title {
+  font-family:var(--font-title); font-size:clamp(1.1rem,3.2vw,2.4rem);
+  font-weight:700; color:#fff; line-height:1.2; margin-bottom:1.2rem;
+  text-shadow:0 0 100px rgba(46,232,200,0.18);
+}
+.hero-sub {
+  font-family:var(--font-body); font-size:1.08rem; font-style:italic;
+  color:var(--text-mid); max-width:600px; margin:0 auto 2.8rem; line-height:1.85;
+}
+.hero-formula {
+  font-family:var(--font-mono); font-size:0.75rem; color:rgba(46,232,200,0.7);
+  background:rgba(46,232,200,0.06); border:1px solid rgba(46,232,200,0.18);
+  padding:0.9rem 2rem; border-radius:6px; display:inline-block;
+  letter-spacing:0.05em; margin-bottom:2.5rem;
+}
+.scroll-hint { font-family:var(--font-ui); font-size:0.5rem; letter-spacing:0.35em; color:var(--text-mute); animation:breathe 3s ease-in-out infinite; }
+.scroll-hint span { display:block; font-size:1.1rem; margin-top:0.3rem; }
+@keyframes breathe { 0%,100%{opacity:.3} 50%{opacity:.85} }
+
+/* ═══ MAIN ═══ */
+main { position:relative; z-index:1; max-width:880px; margin:0 auto; padding:0 1.8rem 8rem; }
+
+/* ═══ CHAPTERS ═══ */
+.chapter { margin-top:5rem; scroll-margin-top:60px; opacity:0; transform:translateY(24px); transition:opacity 0.75s ease, transform 0.75s ease; }
+.chapter.visible { opacity:1; transform:none; }
+.ch-meta { display:flex; align-items:center; gap:0.9rem; margin-bottom:0.7rem; }
+.ch-num { font-family:var(--font-mono); font-size:0.52rem; letter-spacing:0.28em; color:var(--teal-dim); border:1px solid rgba(46,232,200,0.2); padding:0.18rem 0.7rem; border-radius:2px; white-space:nowrap; }
+.ch-tag { font-family:var(--font-ui); font-size:0.48rem; letter-spacing:0.2em; color:var(--text-mute); }
+.ch-title { font-family:var(--font-title); font-size:clamp(1.05rem,2.8vw,1.85rem); font-weight:700; color:#e8f0ff; line-height:1.25; margin-bottom:0.3rem; }
+.ch-sub { font-family:var(--font-body); font-size:0.88rem; font-style:italic; color:var(--text-mute); padding-bottom:1.6rem; border-bottom:1px solid var(--border); margin-bottom:1.8rem; }
+.sec-title { font-family:var(--font-ui); font-size:0.66rem; letter-spacing:0.2em; color:var(--amber); margin:3rem 0 1.2rem; padding-left:1rem; border-left:2px solid var(--amber-dim); line-height:1.5; text-transform:uppercase; }
+
+/* ═══ TYPOGRAPHY ═══ */
+p { margin-bottom:1.4rem; }
+.lead { font-size:1.18rem; line-height:2; color:#b8cae8; }
+em { color:var(--amber); font-style:italic; }
+.hl-teal { color:var(--teal); }
+.hl-violet { color:var(--violet); }
+.hl-rose { color:var(--rose); }
+strong.hl { color:var(--amber); }
+
+blockquote { margin:2.5rem 0; padding:1.8rem 2.2rem; background:rgba(46,232,200,0.04); border-left:2px solid var(--teal-dim); border-radius:0 8px 8px 0; position:relative; }
+blockquote p { font-size:1.05rem; font-style:italic; color:#99b8d0; margin:0; line-height:1.85; }
+blockquote cite { display:block; margin-top:0.8rem; font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.1em; color:var(--text-mute); font-style:normal; }
+blockquote.amber { background:rgba(255,180,60,0.04); border-left-color:var(--amber-dim); }
+blockquote.amber p { color:#d8c09a; }
+blockquote.violet { background:rgba(176,136,248,0.05); border-left-color:rgba(176,136,248,0.4); }
+blockquote.violet p { color:#c0aae8; }
+
+/* ═══ FORMULA BOX ═══ */
+.formula { margin:2rem 0; padding:1.2rem 1.8rem; background:rgba(7,12,24,0.9); border:1px solid rgba(96,212,248,0.18); border-radius:6px; text-align:center; font-family:var(--font-mono); font-size:0.88rem; color:#a8cce8; letter-spacing:0.04em; position:relative; line-height:1.9; }
+.formula-lbl { position:absolute; top:-0.6rem; left:1.4rem; font-size:0.5rem; letter-spacing:0.22em; background:var(--bg); padding:0 0.6rem; color:var(--teal-dim); font-family:var(--font-ui); text-transform:uppercase; }
+.fbox { margin:2rem 0; padding:1.2rem 1.8rem; background:rgba(7,12,24,0.9); border:1px solid rgba(96,212,248,0.18); border-radius:6px; text-align:center; position:relative; line-height:1.9; }
+.fbox::before { content:attr(data-label); position:absolute; top:-1px; right:1rem; font-family:var(--font-mono); font-size:0.5rem; letter-spacing:0.2em; color:var(--amber-dim); text-transform:uppercase; background:rgba(12,20,42,0.95); padding:0 0.5rem; }
+.fbox .fcomment { display:block; margin-top:0.8rem; font-size:0.84rem; color:var(--text-mid); font-style:italic; line-height:1.55; }
+.fbox .feq { font-family:var(--font-mono); font-size:0.88rem; color:#a8cce8; }
+
+/* ═══ DISCOVERY CARD ═══ */
+.discovery { margin:2.2rem 0; padding:1.6rem 1.8rem; background:rgba(176,136,248,0.05); border:1px solid rgba(176,136,248,0.2); border-radius:10px; position:relative; overflow:hidden; }
+.discovery::before { content:'odkrycie strukturalne'; position:absolute; top:-1px; left:1.4rem; font-family:var(--font-mono); font-size:0.48rem; letter-spacing:0.2em; color:rgba(176,136,248,0.65); text-transform:uppercase; background:var(--bg); padding:0 0.5rem; }
+.discovery::after { content:''; position:absolute; top:0; left:0; right:0; height:1px; background:linear-gradient(90deg,transparent,var(--violet),transparent); }
+.disc-title { font-family:var(--font-ui); font-size:0.72rem; letter-spacing:0.14em; color:var(--violet); margin-bottom:0.8rem; display:block; }
+.disc-body { font-size:0.9rem; color:var(--text-mid); line-height:1.7; }
+.disc-formula { font-family:var(--font-mono); font-size:0.78rem; color:#c0b0f8; text-align:center; margin:0.8rem 0; padding:0.7rem; background:rgba(10,18,45,0.8); border-radius:5px; border:1px solid rgba(176,136,248,0.15); }
+
+/* ═══ SNOTE ═══ */
+.snote { background:rgba(46,232,200,0.04); border:1px solid rgba(46,232,200,0.15); padding:1rem 1.4rem; margin:1.8rem 0; border-radius:4px; }
+.snote::before { content:'nota naukowa'; font-family:var(--font-mono); font-size:0.48rem; letter-spacing:0.2em; color:var(--teal); text-transform:uppercase; display:block; margin-bottom:0.4rem; }
+.snote p { font-size:0.9rem; color:var(--text-mid); margin:0; }
+
+/* ═══ VIS SECTION ═══ */
+.vis-section { margin:2.5rem 0; background:rgba(7,12,24,0.85); border:1px solid rgba(46,232,200,0.12); border-radius:14px; overflow:hidden; }
+.vis-header { padding:0.8rem 1.5rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:1rem; font-family:var(--font-ui); font-size:0.54rem; letter-spacing:0.22em; color:var(--teal-dim); text-transform:uppercase; }
+.vis-dot { width:7px; height:7px; border-radius:50%; background:var(--teal); animation:vis-pulse 2s ease-in-out infinite; }
+@keyframes vis-pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+.vis-tabs { display:flex; border-bottom:1px solid var(--border); background:rgba(5,8,15,0.6); }
+.vis-tab { font-family:var(--font-mono); font-size:0.52rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-mute); background:none; border:none; padding:0.65rem 1rem; cursor:pointer; border-bottom:2px solid transparent; position:relative; top:1px; transition:color 0.2s; }
+.vis-tab:hover { color:var(--amber); }
+.vis-tab.on { color:var(--teal); border-bottom-color:var(--teal); }
+.vis-body { padding:0; position:relative; }
+.vis-panel { display:none; }
+.vis-panel.on { display:block; }
+canvas.vis-canvas { display:block; width:100%; }
+.vis-desc { font-family:var(--font-body); font-style:italic; font-size:0.84rem; color:var(--text-mid); background:rgba(5,8,15,0.7); padding:0.8rem 1.4rem; border-top:1px solid var(--border); line-height:1.6; }
+.vis-controls { display:flex; flex-wrap:wrap; gap:1.2rem; padding:1rem 1.4rem; background:rgba(7,12,24,0.7); border-top:1px solid var(--border); }
+.vc { display:flex; flex-direction:column; gap:0.35rem; min-width:100px; flex:1; }
+.vc-lbl { font-family:var(--font-mono); font-size:0.5rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-mute); }
+.vc-val { font-family:var(--font-mono); font-size:0.65rem; color:var(--amber); }
+input[type=range] { -webkit-appearance:none; width:100%; height:2px; background:rgba(255,255,255,0.1); cursor:pointer; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:12px; height:12px; background:var(--amber); border-radius:50%; }
+
+/* ═══ CONCEPT GRID ═══ */
+.concept-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin:2rem 0; }
+.ccard { border-radius:10px; padding:1.4rem 1.2rem; border:1px solid var(--border); background:rgba(13,21,37,0.7); position:relative; overflow:hidden; transition:transform 0.2s, background 0.2s; }
+.ccard:hover { transform:translateY(-2px); background:rgba(20,32,56,0.8); }
+.ccard::before { content:''; position:absolute; top:0; left:0; right:0; height:1px; }
+.ccard.c-teal { border-color:rgba(46,232,200,0.25); }
+.ccard.c-teal::before { background:linear-gradient(90deg,transparent,var(--teal),transparent); }
+.ccard.c-amber { border-color:rgba(255,180,60,0.25); }
+.ccard.c-amber::before { background:linear-gradient(90deg,transparent,var(--amber),transparent); }
+.ccard.c-violet { border-color:rgba(176,136,248,0.25); }
+.ccard.c-violet::before { background:linear-gradient(90deg,transparent,var(--violet),transparent); }
+.ccard.c-rose { border-color:rgba(248,96,96,0.25); }
+.ccard.c-rose::before { background:linear-gradient(90deg,transparent,var(--rose),transparent); }
+.ccard.c-cyan { border-color:rgba(96,212,248,0.25); }
+.ccard.c-cyan::before { background:linear-gradient(90deg,transparent,var(--cyan),transparent); }
+.ccard-label { font-family:var(--font-mono); font-size:0.52rem; letter-spacing:0.2em; display:block; margin-bottom:0.6rem; text-transform:uppercase; }
+.ccard.c-teal .ccard-label { color:var(--teal); }
+.ccard.c-amber .ccard-label { color:var(--amber-dim); }
+.ccard.c-violet .ccard-label { color:var(--violet); }
+.ccard.c-rose .ccard-label { color:var(--rose); }
+.ccard.c-cyan .ccard-label { color:var(--cyan); }
+.ccard-title { font-family:var(--font-title); font-size:0.72rem; display:block; margin-bottom:0.5rem; line-height:1.4; }
+.ccard.c-teal .ccard-title { color:var(--teal); }
+.ccard.c-amber .ccard-title { color:var(--amber); }
+.ccard.c-violet .ccard-title { color:var(--violet); }
+.ccard.c-rose .ccard-title { color:var(--rose); }
+.ccard.c-cyan .ccard-title { color:var(--cyan); }
+.ccard-body { font-size:0.84rem; color:var(--text-mid); line-height:1.6; }
+
+/* ═══ OPERATOR TABLE ═══ */
+.op-table { width:100%; border-collapse:collapse; margin:2.5rem 0; font-size:0.83rem; }
+.op-table th { font-family:var(--font-mono); font-size:0.52rem; letter-spacing:0.18em; color:var(--amber); text-align:left; padding:0.6rem 0.9rem; border-bottom:1px solid var(--border-amber); background:rgba(255,180,60,0.03); }
+.op-table td { padding:0.75rem 0.9rem; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.5; }
+.op-table tr:hover td { background:rgba(46,232,200,0.02); }
+.ot-op { font-family:var(--font-mono); font-size:0.85rem; color:var(--amber); }
+.ot-phys { color:var(--teal); font-size:0.82rem; }
+.ot-onto { color:var(--violet); font-size:0.82rem; }
+.ot-info { color:var(--cyan); font-size:0.82rem; }
+
+/* ═══ DIVIDER ═══ */
+.div-rune { text-align:center; margin:4rem 0; position:relative; }
+.div-rune::before,.div-rune::after { content:''; position:absolute; top:50%; height:1px; background:linear-gradient(to right,transparent,var(--border)); width:40%; }
+.div-rune::before { right:53%; }
+.div-rune::after { left:53%; background:linear-gradient(to left,transparent,var(--border)); }
+.div-rune span { font-family:var(--font-title); font-size:0.9rem; color:var(--teal-dim); opacity:.5; position:relative; z-index:1; }
+
+/* ═══ PULL QUOTE ═══ */
+.pull-dark { margin:3rem 0; padding:1.8rem 2.5rem; background:rgba(10,18,45,0.9); border:1px solid var(--border); border-radius:10px; }
+.pull-dark p { font-family:var(--font-title); font-size:0.95rem; font-style:italic; line-height:1.7; text-align:center; color:rgba(200,220,200,0.9); margin:0; }
+
+/* ═══ POSTULATE ═══ */
+.postulate { margin:3rem 0; padding:2rem 2.5rem; background:linear-gradient(135deg,rgba(12,20,42,0.97),rgba(20,12,45,0.97)); border:1px solid rgba(255,180,60,0.25); border-radius:14px; position:relative; overflow:hidden; text-align:center; }
+.postulate::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--amber),var(--teal),transparent); }
+.postulate::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--teal),var(--amber),transparent); }
+.postulate-label { font-family:var(--font-mono); font-size:0.52rem; letter-spacing:0.3em; color:var(--amber-dim); text-transform:uppercase; display:block; margin-bottom:1.2rem; }
+.postulate-formula { font-family:var(--font-mono); font-size:0.9rem; color:#e8f0ff; line-height:2; margin-bottom:1.2rem; }
+.postulate-text { font-size:0.92rem; color:var(--text-mid); font-style:italic; line-height:1.7; max-width:620px; margin:0 auto; }
+
+/* ═══ FOOTNOTES ═══ */
+.fn-section { margin-top:2rem; padding-top:1.2rem; border-top:1px solid rgba(46,232,200,0.15); }
+.fn-label { font-family:var(--font-mono); font-size:0.5rem; letter-spacing:0.25em; color:var(--teal-dim); text-transform:uppercase; display:block; margin-bottom:0.6rem; }
+.fn-item { display:flex; gap:0.7rem; align-items:baseline; margin-bottom:0.45rem; }
+.fn-n { font-family:var(--font-mono); font-size:0.62rem; color:var(--teal); min-width:1.5rem; flex-shrink:0; }
+.fn-text { font-size:0.8rem; color:var(--text-mute); font-style:italic; line-height:1.55; }
+
+/* ═══ PART NAV ═══ */
+.part-nav { display:flex; justify-content:center; gap:0.8rem; margin-top:5rem; flex-wrap:wrap; }
+.part-nav a { font-family:var(--font-mono); font-size:0.56rem; letter-spacing:0.18em; text-decoration:none; color:var(--text-mute); border:1px solid var(--border); padding:0.5rem 1.2rem; border-radius:3px; transition:all 0.2s; text-transform:uppercase; }
+.part-nav a:hover { color:var(--teal); border-color:rgba(46,232,200,0.3); }
+.part-nav a.current { color:var(--amber); border-color:rgba(255,180,60,0.3); }
+
+/* ═══ BIB ═══ */
+.bib { margin-top:4rem; padding-top:2rem; border-top:1px solid rgba(46,232,200,0.12); }
+.bib-title { font-family:var(--font-mono); font-size:0.6rem; letter-spacing:0.3em; color:var(--teal-dim); text-transform:uppercase; display:block; margin-bottom:1.4rem; }
+.bib-item { display:flex; gap:0.8rem; align-items:baseline; margin-bottom:0.7rem; }
+.bib-n { font-family:var(--font-mono); font-size:0.6rem; color:var(--amber); min-width:2rem; flex-shrink:0; }
+.bib-text { font-size:0.82rem; color:var(--text-mid); line-height:1.6; }
+
+/* ═══ TWO-COL ═══ */
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin:2rem 0; }
+@media(max-width:560px){ .two-col{grid-template-columns:1fr;} }
+.tc-card { border-radius:10px; padding:1.5rem 1.4rem; }
+.tc-card.plus { background:rgba(46,232,200,0.06); border:1px solid rgba(46,232,200,0.22); }
+.tc-card.minus { background:rgba(248,96,96,0.06); border:1px solid rgba(248,96,96,0.22); }
+.tc-sym { font-family:var(--font-title); font-size:2rem; font-weight:700; display:block; margin-bottom:0.4rem; }
+.tc-card.plus .tc-sym { color:var(--teal); }
+.tc-card.minus .tc-sym { color:var(--rose); }
+.tc-nm { font-family:var(--font-ui); font-size:0.6rem; letter-spacing:0.15em; display:block; margin-bottom:0.8rem; text-transform:uppercase; }
+.tc-card.plus .tc-nm { color:var(--teal); }
+.tc-card.minus .tc-nm { color:var(--rose); }
+.tc-body { font-size:0.86rem; color:var(--text-mid); line-height:1.65; }
+
+/* ═══ HIERARCHY CHAIN ═══ */
+.hier-chain { margin:2.5rem 0; display:flex; flex-direction:column; gap:0; }
+.hier-arrow { text-align:center; padding:0.35rem 0; font-size:0.9rem; color:var(--text-mute); font-family:var(--font-mono); font-size:0.7rem; }
+.hier-box { padding:1rem 1.3rem; border:1px solid; border-radius:6px; position:relative; }
+.hb-label { font-family:var(--font-mono); font-size:0.52rem; letter-spacing:0.18em; text-transform:uppercase; display:block; margin-bottom:0.3rem; }
+.hb-desc { font-size:0.82rem; color:var(--text-mid); line-height:1.5; }
+.hb-eq { font-family:var(--font-mono); font-size:0.7rem; margin-top:0.35rem; display:block; }
+.hb-obj { background:rgba(255,180,60,0.05); border-color:rgba(255,180,60,0.2); }
+.hb-obj .hb-label { color:var(--amber); } .hb-obj .hb-eq { color:rgba(255,180,60,0.6); }
+.hb-rel { background:rgba(46,232,200,0.05); border-color:rgba(46,232,200,0.2); }
+.hb-rel .hb-label { color:var(--teal); } .hb-rel .hb-eq { color:rgba(46,232,200,0.6); }
+.hb-info { background:rgba(96,212,248,0.05); border-color:rgba(96,212,248,0.2); }
+.hb-info .hb-label { color:var(--cyan); } .hb-info .hb-eq { color:rgba(96,212,248,0.6); }
+.hb-qm { background:rgba(176,136,248,0.05); border-color:rgba(176,136,248,0.2); }
+.hb-qm .hb-label { color:var(--violet); } .hb-qm .hb-eq { color:rgba(176,136,248,0.6); }
+.hb-cat { background:rgba(122,232,110,0.05); border-color:rgba(122,232,110,0.2); }
+.hb-cat .hb-label { color:var(--green); } .hb-cat .hb-eq { color:rgba(122,232,110,0.6); }
+.hb-em { background:rgba(248,96,96,0.05); border-color:rgba(248,96,96,0.2); }
+.hb-em .hb-label { color:var(--rose); } .hb-em .hb-eq { color:rgba(248,96,96,0.6); }
+
+/* ═══ FOOTER ═══ */
+footer { position:relative; z-index:1; max-width:880px; margin:0 auto; padding:4rem 1.8rem 6rem; border-top:1px solid rgba(46,232,200,0.15); margin-top:6rem; }
+
+@media(max-width:700px){
+  nav a { padding:0 0.45rem; font-size:0.42rem; }
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<canvas id="cosmos"></canvas>
+
+<nav>
+  <span class="nav-brand">TEREJ · XX–XXV</span>
+  <a href="#rozdXX">Rozdz. XX</a>
+  <a href="#rozdXXI">XXI</a>
+  <a href="#rozdXXII">XXII</a>
+  <a href="#rozdXXIII">XXIII</a>
+  <a href="#rozdXXIV">XXIV</a>
+  <a href="#rozdXXV">XXV</a>
+</nav>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section id="hero">
+  <canvas id="heroBg"></canvas>
+  <div class="hero-content">
+    <div class="hero-eyebrow">TEREJ · Część V · Marzec 2026 · Ontologia Relacyjna</div>
+    <h1 class="hero-title">Jedność jako akt —<br>od arytmetyki obiektów<br>do ontologii relacji</h1>
+    <p class="hero-sub">Dlaczego „1" nie jest cegłą lecz wydarzeniem. Jak informacja, mechanika kwantowa, teoria kategorii i kanał SOFAR mówią o tym samym: relacja jest pierwotna wobec substancji.</p>
+    <div class="hero-formula">
+      ∄ obiekt bez relacji · informacja = różnica · A ≅ Hom(−, A) · Ĝ ⊕ Ĥ = ℛ
+    </div>
+    <div class="scroll-hint">czytaj dalej<span>↓</span></div>
+  </div>
+</section>
+
+<main>
+
+<!-- ═══════════════════════════════════════════
+     ROZDZIAŁ XX — JEDNOŚĆ JAKO AKT
+═══════════════════════════════════════════ -->
+<section class="chapter" id="rozdXX">
+  <div class="ch-meta">
+    <span class="ch-num">ROZDZIAŁ XX</span>
+    <span class="ch-tag">JEDNOŚĆ · ONTOLOGIA SUBSTANCJALNA · FREGE · PEANO · AKT ROZRÓŻNIENIA</span>
+  </div>
+  <h2 class="ch-title">Jedność jako akt rozróżnienia</h2>
+  <p class="ch-sub">Krytyka pierwotności obiektu · „1" jako relacja graniczna · Tło różnicy jako warunek tożsamości</p>
+
+  <p class="lead">Intuicja potoczna traktuje jedność jako coś oczywistego i pierwotnego — przedmiot można wskazać, policzyć, dodać do innych. Cała arytmetyka zdaje się opierać na tej pewności. Jednak głębsza analiza logiczna i matematyczna ujawnia, że „jeden" jest definiowalne wyłącznie poprzez relację: poprzez akt wyróżnienia elementu z tła, które nim nie jest. Bez tła nie ma jedności. Jedność jest nie obiektem, lecz zdarzeniem.</p>
+
+  <p>Gottlob Frege w <em>Grundlagen der Arithmetik</em> (1884) jako pierwszy z precyzją logiczną postawił pytanie: co to znaczy, że coś jest jedno? Odpowiedź Fregego jest radykalna — liczba nie jest własnością rzeczy samej w sobie, lecz własnością pojęcia, przez które rzecz jest ujmowana. „Jeden" orzekamy nie o obiekcie w izolacji, lecz o obiekcie jako instancji pojęcia. Tożsamość jest zawsze tożsamością-pod-opisem, tożsamością-w-kontekście-kategoryzacji. Bez pojęcia, czyli bez relacyjnej ramy interpretacyjnej, nie ma jedności.</p>
+
+  <p>Giuseppe Peano w aksjomatach arytmetyki (1889) ujął to samo w języku formalnym: liczba naturalna jest definiowana przez relację następnika — przez strukturę porządkową, nie przez substancję. „1" to następnik „0", a „0" jest wyróżnione nie przez wewnętrzną własność lecz przez to, że żadna liczba naturalna nie jest jego następnikiem. Jedność jest węzłem w relacji, nie atomem bytowym.</p>
+
+  <div class="concept-grid">
+    <div class="ccard c-amber">
+      <span class="ccard-label">Arytmetyka naiwna</span>
+      <span class="ccard-title">Jedność jako obiekt</span>
+      <p class="ccard-body">„1" jest cegłą. Nieskończoność jest ogromnym murem z cegieł. Matematyka to liczenie rzeczy. Substancja jest pierwotna, relacja wtórna.</p>
+    </div>
+    <div class="ccard c-teal">
+      <span class="ccard-label">Logika · Frege · Peano</span>
+      <span class="ccard-title">Jedność jako akt różnicy</span>
+      <p class="ccard-body">„1" jest aktem wyróżnienia. Tożsamość wymaga tła. Liczba jest własnością pojęcia, nie obiektu. Relacja jest pierwotna wobec substancji.</p>
+    </div>
+    <div class="ccard c-violet">
+      <span class="ccard-label">Ontologia relacyjna · TERJ</span>
+      <span class="ccard-title">Jedność jako węzeł morfizmów</span>
+      <p class="ccard-body">Obiekt istnieje wyłącznie jako pozycja w sieci relacji. Lemat Yonedy: A ≅ Hom(−, A). Ĝ/Ĥ jako dwa bieguny tego samego aktu relacyjnego.</p>
+    </div>
+  </div>
+
+  <div class="sec-title">§1 · Problem granicy: jedność wymaga tła</div>
+
+  <p>Rozważmy najprostszy możliwy przypadek: biała kartka i narysowana na niej kropka. Czy kropka jest „jedna"? Wydaje się oczywiste. Ale to, co czyni ją jedną — wyróżnioną, policzalną, identyfikowalną — jest <strong class="hl">granica między kroplą a tłem</strong>. Usuń tło, umieść kroplę w jednorodnej przestrzeni bez odniesień, a jej indywidualność staje się nieoperacjonalna. Jest, ale nie można powiedzieć, że jest jedną, bo nie ma kontekstu pozwalającego ją wyróżnić.</p>
+
+  <p>To nie jest paradoks estetyczny lecz twierdzenie ontologiczne: tożsamość — bycie-jednym, bycie-tym-a-nie-innym — jest zawsze relacją do tego, czym coś nie jest. Jedność jest lokalnym zakłóceniem jednorodności. Jest złamaniem symetrii w przestrzeni możliwości. <span class="hl-teal">Jedność jest zdarzeniem, nie substancją.</span></p>
+
+  <div class="hier-chain">
+    <div class="hier-box hb-obj">
+      <span class="hb-label">Poziom 1 · Myślenie substancjalne</span>
+      <span class="hb-desc">„1" istnieje przed relacją. Obiekty są pierwotne. Przestrzeń jest tłem dla bytów. Materia konstytuuje tożsamość.</span>
+      <span class="hb-eq">ontologia: substancja → relacja (relacja wtórna)</span>
+    </div>
+    <div class="hier-arrow">↓ krytyka Fregego / Peano / lemat Yonedy</div>
+    <div class="hier-box hb-rel">
+      <span class="hb-label">Poziom 2 · Myślenie relacyjne</span>
+      <span class="hb-desc">„1" wyłania się z aktu rozróżnienia. Tożsamość wymaga tła różnicy. Liczba jest własnością pojęcia, nie rzeczy. Relacja jest pierwotna.</span>
+      <span class="hb-eq">ontologia: relacja → obiekt (obiekt wtórny)</span>
+    </div>
+    <div class="hier-arrow">↓ Shannon / teoria informacji / mechanika kwantowa</div>
+    <div class="hier-box hb-info">
+      <span class="hb-label">Poziom 3 · Informacja jako różnica</span>
+      <span class="hb-desc">Jedynka w systemie binarnym jest informacją wyłącznie poprzez relację do zera i do pozycji. Informacja = redukcja nieokreśloności = akt relacyjny.</span>
+      <span class="hb-eq">H = −Σ pᵢ log₂ pᵢ · różnica między stanami, nie treść stanu</span>
+    </div>
+    <div class="hier-arrow">↓ teoria kategorii / TERJ</div>
+    <div class="hier-box hb-cat">
+      <span class="hb-label">Poziom 4 · Obiekt jako węzeł morfizmów</span>
+      <span class="hb-desc">A ≅ Hom(−, A): obiekt jest całkowicie opisany przez swoje relacje do innych obiektów. Żadna własność wewnętrzna nie jest dostępna bez morfizmów.</span>
+      <span class="hb-eq">Ĝ/Ĥ = akt relacyjny będący podstawą emergencji formy i potencjalności</span>
+    </div>
+  </div>
+
+  <div class="sec-title">§2 · Granica między „1" a nieskończonością: nie akumulacja lecz struktura</div>
+
+  <p>Naiwna odpowiedź na pytanie o relację jedności i nieskończoności brzmi: nieskończoność to „dużo jedynek". Ale jeśli jedność jest aktem rozróżnienia, a nie obiektem, to nieskończoność jest przestrzenią możliwych aktów rozróżnienia — nieograniczoną pojemnością relacyjną, nie stosem cegieł. Dwa obrazy prowadzą do zupełnie różnych ontologii.</p>
+
+  <blockquote class="amber">
+    <p>Nieskończoność nie wynika z akumulacji jednostek, lecz z nieograniczonej możliwości generowania relacji pomiędzy aktami rozróżnienia. „1" jest punktem stabilizacji w oceanie potencjalności — nie istnieje jednak sama dla siebie, lecz wyłącznie jako węzeł relacyjny wewnątrz większej struktury różnic.</p>
+  </blockquote>
+
+  <div class="vis-section">
+    <div class="vis-header"><div class="vis-dot"></div>Akt rozróżnienia — wizualizacja interaktywna</div>
+    <div class="vis-tabs">
+      <button class="vis-tab on" data-panel="distVis">Przestrzeń rozróżnień</button>
+      <button class="vis-tab" data-panel="symBreak">Złamanie symetrii</button>
+      <button class="vis-tab" data-panel="binaryRel">Relacja binarna</button>
+    </div>
+    <div class="vis-body">
+      <div class="vis-panel on" id="distVis">
+        <canvas class="vis-canvas" id="distCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Akty rozróżnienia</span><input type="range" id="dN" min="1" max="50" value="12"><span class="vc-val" id="dNv">12</span></div>
+          <div class="vc"><span class="vc-lbl">Entropia tła</span><input type="range" id="dE" min="0" max="100" value="40"><span class="vc-val" id="dEv">40</span></div>
+        </div>
+        <div class="vis-desc">Każdy węzeł to jeden akt rozróżnienia — lokalny kolaps potencjalności. Linie łączące węzły to relacje konstytuujące ich tożsamość. Węzeł bez połączeń istnieje — ale nie jest jeszcze „jednym" w sensie operacjonalnym. Zwiększ liczbę aktów: sieć rośnie, każdy nowy węzeł wzbogaca tożsamość wszystkich poprzednich przez nowe morfizmy.</div>
+      </div>
+      <div class="vis-panel" id="symBreak">
+        <canvas class="vis-canvas" id="symCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Stopień złamania</span><input type="range" id="sbDeg" min="0" max="100" value="60"><span class="vc-val" id="sbDegV">60</span></div>
+        </div>
+        <div class="vis-desc">Pole jednorodne (szlemut, maksymalne Ω, brak aktów rozróżnienia) — po lewej. Po prawej: narastające złamanie symetrii generuje lokalną jedność. Dokładnie ten mechanizm opisuje pole Higgsa i pierwszą „jedynkę" w systemie binarnym: wyłonienie się z tła różnicy.</div>
+      </div>
+      <div class="vis-panel" id="binaryRel">
+        <canvas class="vis-canvas" id="binCanvas" height="360"></canvas>
+        <div class="vis-desc">Jedynka w systemie binarnym bez kontekstu. Animacja pokazuje jak ta sama sekwencja bitów niesie różne znaczenie w różnych kontekstach kodowania — demonstracja tezy Shannona, że informacja jest strukturą relacyjną, nie treścią substancjalną.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fn-section">
+    <span class="fn-label">Przypisy — Rozdział XX</span>
+    <div class="fn-item"><span class="fn-n">¹</span><span class="fn-text">Frege, G. (1884): <em>Die Grundlagen der Arithmetik</em>. Breslau. Analiza liczby jako własności pojęcia: „Satz (§46): die Angabe einer Zahl enthält eine Aussage von einem Begriffe."</span></div>
+    <div class="fn-item"><span class="fn-n">²</span><span class="fn-text">Peano, G. (1889): <em>Arithmetices principia, nova methodo exposita</em>. Turyn. Aksjomaty arytmetyki przez relację następnika: liczba jako węzeł struktury porządkowej.</span></div>
+    <div class="fn-item"><span class="fn-n">³</span><span class="fn-text">Bateson, G. (1979): <em>Mind and Nature</em>. Dutton. „The elementary unit of information is a difference that makes a difference." Różnica jako fundament informacji i tożsamości.</span></div>
+  </div>
+</section>
+
+<div class="div-rune"><span>◈</span></div>
+
+<!-- ═══════════════════════════════════════════
+     ROZDZIAŁ XXI — SHANNON: INFORMACJA JAKO RÓŻNICA
+═══════════════════════════════════════════ -->
+<section class="chapter" id="rozdXXI">
+  <div class="ch-meta">
+    <span class="ch-num">ROZDZIAŁ XXI</span>
+    <span class="ch-tag">SHANNON 1948 · INFORMACJA · ENTROPIA INFORMACYJNA · RÓŻNICA PROBABILISTYCZNA</span>
+  </div>
+  <h2 class="ch-title">Shannon: informacja jako redukcja nieokreśloności</h2>
+  <p class="ch-sub">H = −Σ pᵢ log₂ pᵢ · Jedynka jako zdarzenie w przestrzeni możliwości · Substancja vs relacja w teorii informacji</p>
+
+  <p class="lead">Claude Shannon w 1948 roku dokonał przesunięcia epistemologicznego o trudnej do przecenienia głębi: wykazał, że informacja nie jest treścią, nie jest substancją, nie jest tym co symbol „mówi" — lecz jest funkcją struktury prawdopodobieństwa nad przestrzenią możliwości. Informacja mierzy redukcję nieokreśloności. To jest precyzyjna matematyczna realizacja tezy, że jedność jest aktem, nie obiektem.</p>
+
+  <p>Rozważmy pojedynczą jedynkę w systemie binarnym. Sam symbol — sekwencja elektrycznych napięć, plama atramentu, wzbudzony elektron — nie niesie niczego. Niesie tyle informacji, ile wynosi logarytm odwrotności prawdopodobieństwa zajścia tego stanu: I = log₂(1/p). Przy równomiernym rozkładzie jedynka niesie jeden bit. Przy pewności (p = 1) niesie zero — nie ma żadnej informacji w tym co było nieuchronne. <span class="hl-teal">Informacja jest zaskoczeniem relacyjnym, nie treścią substancjalną.</span></p>
+
+  <div class="fbox" data-label="Shannon 1948 · A Mathematical Theory of Communication">
+    <div class="feq">H = −Σᵢ pᵢ log₂ pᵢ &nbsp;&nbsp;&nbsp; I(x) = log₂(1/p(x))</div>
+    <span class="fcomment">Entropia H mierzy średnią informację na symbol — czyli średnią redukcję nieokreśloności. Maksymalna przy rozkładzie jednostajnym (wszystkie stany równie możliwe — analogia do tohu wa-bohu i Ĝ: pole pełnej potencjalności). Zerowa przy rozkładzie degenerowanym (pewność = brak różnicy = brak informacji = brak aktu rozróżnienia).</span>
+  </div>
+
+  <div class="sec-title">§1 · Izolowana jedynka nie jest informacją</div>
+
+  <p>Twierdzenie Shannona można sformułować ontologicznie: symbol bez kontekstu jest niemy. Jedynka w izolacji — bez zera, bez pozycji, bez kanału, bez odbiorcy, bez kodu — jest stanem fizycznym, ale nie jest informacją. Staje się informacją dokładnie w momencie wejścia w relację: relację z polem możliwych alternatyw. To przejście od stanu do informacji jest strukturalnie identyczne z przejściem od potencjalności (Ĝ) do zaktualizowanej formy (Ĥ).</p>
+
+  <p>Bateson ujął to lapidarnie: <em>„Podstawową jednostką informacji jest różnica, która robi różnicę."</em> Nie treść — różnica. Jedność jest informatycznie znacząca wyłącznie jako lokalne zaburzenie symetrii probabilistycznej. Jako przejście od stanu możliwości do stanu aktualności w przestrzeni stanów.</p>
+
+  <div class="two-col">
+    <div class="tc-card plus">
+      <span class="tc-sym">Ĝ</span>
+      <span class="tc-nm">Stan maksymalnej entropii informacyjnej</span>
+      <p class="tc-body">H → max: wszystkie stany równie prawdopodobne. Żadna różnica nie jest uprzywilejowana. Pole pełnej potencjalności — tohu wa-bohu. Analogia do próżni kwantowej i stanu pre-Higgsa: maksymalne Ω, zerowe złamanie symetrii.</p>
+    </div>
+    <div class="tc-card minus">
+      <span class="tc-sym">Ĥ</span>
+      <span class="tc-nm">Stan minimalnej entropii informacyjnej</span>
+      <p class="tc-body">H → 0: jeden stan pewny. Maksymalna informacja jednorazowa — ale potem kanał milknie. Forma bez potencjalności, zamknięte Ĥ. Analogia do masy w polu Higgsa: złamana symetria, konkretna wartość, utracona otwartość.</p>
+    </div>
+  </div>
+
+  <div class="sec-title">§2 · Kanał SOFAR jako struktura informacyjna</div>
+
+  <p>Kanał SOFAR — strefa minimów prędkości dźwięku w oceanach, gdzie sygnały akustyczne są skupiane i prowadzone przez gradienty temperatury i ciśnienia na dystansach tysięcy kilometrów — jest fizyczną realizacją informacyjnego kanału o minimalnych stratach. Fale akustyczne wewnątrz kanału doznają wielokrotnych odbić i refrakcji, których wzorzec jest wyznaczony wyłącznie przez pole gradientów fizycznych. Informacja w kanale SOFAR nie jest lokalna: jest strukturą relacyjną całego pola, wyłaniającą się własnością układu, której nie można przypisać żadnemu pojedynczemu elementowi wody.</p>
+
+  <p>To jest modelowy przykład ontologii informacyjno-relacyjnej: własność systemu (zdolność do przewodzenia sygnału) jest emergentna wobec własności elementów. Każda cząsteczka wody podlega tym samym prawom fizyki co każda inna — ale sieć ich wzajemnych oddziaływań, realizujących gradienty ciśnienia i temperatury, tworzy strukturę jakościowo nową: kanał informacyjny o własnościach nieposiadanych przez żaden element z osobna.</p>
+
+  <div class="discovery">
+    <span class="disc-title">Odkrycie strukturalne: SOFAR jako model emergencji informacyjnej</span>
+    <div class="disc-body">
+      <p>Dyssypatywne oddziaływania wewnątrz kanału SOFAR — straty energii, rozpraszanie, rezonanse, gradienty — są własnościami relacyjnymi pola, nie lokalnymi cechami cząsteczek. Kanał SOFAR jest więc fizyczną demonstracją trzech twierdzeń TERJ jednocześnie: (T1) relacja konstytuuje obiekty — kanał wyłania się z relacji gradientów, nie jest z góry zadany; (T2) architektura determinuje przepływ — geometria gradientów wyznacza ścieżki sygnałów; (T3) całość nie jest sumą elementów — żadna cząsteczka wody nie „jest kanałem SOFAR".</p>
+      <div class="disc-formula">SOFAR: ∂c/∂z = 0 przy z = z_min → lokalne minimum prędkości → kanał jako emergentna własność ∇c(z)<br>Informacja kanału ≠ Σ (informacja cząsteczek) · I_kanał = f(relacji między gradientami)</div>
+    </div>
+  </div>
+
+  <div class="vis-section">
+    <div class="vis-header"><div class="vis-dot"></div>Shannon · Entropia informacyjna · Kanał SOFAR</div>
+    <div class="vis-tabs">
+      <button class="vis-tab on" data-panel="shannonVis">Entropia H(p)</button>
+      <button class="vis-tab" data-panel="sofarVis">Kanał SOFAR</button>
+      <button class="vis-tab" data-panel="infoFlow">Przepływ informacji</button>
+    </div>
+    <div class="vis-body">
+      <div class="vis-panel on" id="shannonVis">
+        <canvas class="vis-canvas" id="shannonVisCanvas" height="340"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Prawdopodobieństwo p</span><input type="range" id="shVp" min="1" max="99" value="50"><span class="vc-val" id="shVpV">50%</span></div>
+          <div class="vc"><span class="vc-lbl">Liczba symboli N</span><input type="range" id="shVN" min="2" max="8" value="4"><span class="vc-val" id="shVNV">4</span></div>
+        </div>
+        <div class="vis-desc">Entropia Shannona H jako funkcja rozkładu prawdopodobieństwa. Złoty punkt: stan aktualny. Maksimum przy rozkładzie równomiernym = Ĝ. Minimum przy zdegenerowanym rozkładzie = Ĥ. Animowana trajektoria między stanami ilustruje ontologiczny koszt aktu rozróżnienia.</div>
+      </div>
+      <div class="vis-panel" id="sofarVis">
+        <canvas class="vis-canvas" id="sofarCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Głębokość kanału</span><input type="range" id="sfDepth" min="10" max="90" value="50"><span class="vc-val" id="sfDepthV">50%</span></div>
+          <div class="vc"><span class="vc-lbl">Moc sygnału</span><input type="range" id="sfPow" min="10" max="100" value="60"><span class="vc-val" id="sfPowV">60</span></div>
+        </div>
+        <div class="vis-desc">Przekrój pionowy oceanu z kanałem SOFAR. Kolor koduje prędkość dźwięku c(z). Promienie akustyczne uginają się ku minimum c — zostaną uwięzione w kanale. Informacja propaguje się jako struktura relacyjna całego gradientu, nie lokalna własność wody.</div>
+      </div>
+      <div class="vis-panel" id="infoFlow">
+        <canvas class="vis-canvas" id="infoFlowCanvas" height="340"></canvas>
+        <div class="vis-desc">Przepływ informacji przez medium relacyjne vs substancjalne. W modelu substancjalnym: każdy element niesie informację niezależnie. W modelu relacyjnym: informacja jest strukturą wzajemnych korelacji między elementami — emerguje z sieci, nie z węzłów. SOFAR, ocean, sieć neuronalna, język — wszystkie realizują drugi model.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fn-section">
+    <span class="fn-label">Przypisy — Rozdział XXI</span>
+    <div class="fn-item"><span class="fn-n">⁴</span><span class="fn-text">Shannon, C.E. (1948): A Mathematical Theory of Communication. <em>Bell System Technical Journal</em> 27. Fundamentalne twierdzenie: informacja jako redukcja nieokreśloności, nie treść.</span></div>
+    <div class="fn-item"><span class="fn-n">⁵</span><span class="fn-text">Shannon, C.E., Weaver, W. (1949): <em>The Mathematical Theory of Communication</em>. University of Illinois Press. Interpretacja filozoficzna teorii informacji.</span></div>
+    <div class="fn-item"><span class="fn-n">⁶</span><span class="fn-text">Bateson, G. (1979): <em>Mind and Nature: A Necessary Unity</em>. Dutton, Nowy Jork. Definicja informacji jako różnicy która robi różnicę — przejście od teorii komunikacji do ontologii.</span></div>
+    <div class="fn-item"><span class="fn-n">⁷</span><span class="fn-text">Munk, W.H., Worcester, P., Wunsch, C. (1995): <em>Ocean Acoustic Tomography</em>. Cambridge University Press. Kanał SOFAR: fizyka, zastosowania, struktura informacyjna.</span></div>
+  </div>
+</section>
+
+<div class="div-rune"><span>◈</span></div>
+
+<!-- ═══════════════════════════════════════════
+     ROZDZIAŁ XXII — ZŁAMANIE SYMETRII I JEDNOŚĆ JAKO ĤĜ
+═══════════════════════════════════════════ -->
+<section class="chapter" id="rozdXXII">
+  <div class="ch-meta">
+    <span class="ch-num">ROZDZIAŁ XXII</span>
+    <span class="ch-tag">ZŁAMANIE SYMETRII · HIGGS · „1" JAKO Ĥ(Ĝ) · LOKALNY BRAK SYMETRII</span>
+  </div>
+  <h2 class="ch-title">Jedność jako lokalny brak symetrii</h2>
+  <p class="ch-sub">Ĥ jako akt stabilizacji Ĝ · Jedynka jako złamanie symetrii informacyjnej · Masa i tożsamość jednocześnie</p>
+
+  <p class="lead">Przesunięcie z arytmetyki obiektów do ontologii relacji ma swój dokładny odpowiednik fizyczny w mechanizmie złamania symetrii. Tak jak jedność jest lokalną aktywacją różnicy w polu jednorodnym, tak masa cząstki elementarnej jest lokalną aktywacją sprzężenia w polu Higgsa. Jedność i masa są strukturalnie analogicznymi zjawiskami: oboje są wyłonieniem się ze stanu symetrii przez akt relacyjny.</p>
+
+  <p>W stanie symetrycznym — w polu potencjalności przed złamaniem symetrii, w maksymalnym Ω, w reprezentacji TERJ przez operator Ĝ — żadna konfiguracja nie jest uprzywilejowana. Pole jest „gotowe na wszystko". Złamanie symetrii jest przejściem od tego stanu do stanu, w którym jeden kierunek, jedna konfiguracja, jedna wartość staje się wyróżniona. <em>„1"</em> w systemie binarnym to właśnie ta wyróżniona konfiguracja — to, że stan się znalazł tu, a nie gdzie indziej.</p>
+
+  <div class="sec-title">§1 · Jedynka jako Ĥ(Ĝ): forma wyłoniona z potencjalności</div>
+
+  <p>W aparacie TERJ akt rozróżnienia opisuje dokładnie relacja między Ĝ (gradientem potencjalności, stanem otwartości) i Ĥ (Hamiltonianem formy, stanem zamknięcia). Jedynka jest Ĥ działającym na Ĝ — jest formą wyłonioną z potencjalności. Ale — i to jest kluczowe — ta forma nie niszczy Ĝ. Ĝ pozostaje jako tło nieokreśloności, kontekst w którym jedność ma sens. Ĝ jest warunkiem możliwości każdego kolejnego aktu rozróżnienia.</p>
+
+  <blockquote class="violet">
+    <p>Jedność nie jest zaprzeczeniem nieskończoności. Jest jej lokalną aktualizacją. Każdy akt rozróżnienia wzbogaca pole potencjalności o nową relację — przez zakar — a nie zubaża je przez zamknięcie. Ĥ nie pochłania Ĝ; jest jego wyrazem w konkretnym układzie.</p>
+  </blockquote>
+
+  <div class="fbox" data-label="Jedność jako Ĥ(Ĝ) — formalizm TERJ">
+    <div class="feq">|1⟩ = P̂_k |Ĝ⟩ &nbsp;&nbsp; gdzie P̂_k = akt rozróżnienia stanu k ze zbioru {k₁, k₂, ..., kₙ}</div>
+    <span class="fcomment">Stan „jedności" jest rzutem Ĝ (superpozycji możliwości) na konkretny podprzestrzenny stan przez operator P̂. To jest dokładna analogia do kolapsu funkcji falowej w mechanice kwantowej — i do aktu rozróżnienia jedynki w systemie binarnym. Jedność = projekcja, nie substancja.</span>
+  </div>
+
+  <div class="sec-title">§2 · Komplementarność jedności i nieskończoności</div>
+
+  <p>Zasada nieoznaczoności Heisenberga — Δx · Δp ≥ ℏ/2 — wyraża geometryczny fakt, że pewne pary obserwabli są wzajemnie nieredukowalne. W języku TERJ: [Ĝ, Ĥ] ≠ 0. Pełna potencjalność (maksymalne Ĝ) i pełna określoność formy (maksymalne Ĥ) są wzajemnie wykluczające się. Analogicznie: pełna jedność (zero entropii informacyjnej) i pełna nieokreśloność (maksymalna entropia) są dwoma biegunami tego samego pola.</p>
+
+  <p>To nie jest patos filozoficzny lecz precyzja matematyczna. Jedność i nieskończoność nie są opozycją, której trzeba dokonać wyboru. Są komplementarnym opisem tej samej struktury relacyjnej: jedność jest lokalnym aktem wyróżnienia w oceanie nieskończonej możliwości, i bez tego oceanu nie byłaby rozróżnialna.</p>
+
+  <div class="vis-section">
+    <div class="vis-header"><div class="vis-dot"></div>Jedność jako złamanie symetrii — wizualizacja</div>
+    <div class="vis-tabs">
+      <button class="vis-tab on" data-panel="unityBreak">Akt jedności w polu Ĝ</button>
+      <button class="vis-tab" data-panel="compVis">Komplementarność Ĝ/Ĥ</button>
+    </div>
+    <div class="vis-body">
+      <div class="vis-panel on" id="unityBreak">
+        <canvas class="vis-canvas" id="unityCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Akt rozróżnienia</span><input type="range" id="ubAct" min="0" max="100" value="50"><span class="vc-val" id="ubActV">50</span></div>
+          <div class="vc"><span class="vc-lbl">Zasięg Ĝ</span><input type="range" id="ubRange" min="10" max="100" value="55"><span class="vc-val" id="ubRangeV">55</span></div>
+        </div>
+        <div class="vis-desc">Pole jednorodne (Ĝ = szlemut, wysokie Ω) na tle; lokalny akt rozróżnienia jako złamanie symetrii. Wyróżniony węzeł = jedność. Promieniste połączenia = relacje które ją konstytuują. Bez sieci relacji węzeł nie jest „jednym" — jest po prostu punktem bez tożsamości.</div>
+      </div>
+      <div class="vis-panel" id="compVis">
+        <canvas class="vis-canvas" id="compCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Ĝ / Ĥ balans</span><input type="range" id="compBal" min="0" max="100" value="50"><span class="vc-val" id="compBalV">50</span></div>
+        </div>
+        <div class="vis-desc">Komplementarność [Ĝ, Ĥ] ≠ 0. Przesuwanie suwaka w lewo: dominacja Ĝ — pole potencjalności, nieokreśloność, brak wyróżnionej jedności. W prawo: dominacja Ĥ — zamknięta forma, pełna jedność, utracona otwartość. Żaden z krańców nie jest nieskończonością: nieskończoność jest przestrzenią możliwych relacji między nimi.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fn-section">
+    <span class="fn-label">Przypisy — Rozdział XXII</span>
+    <div class="fn-item"><span class="fn-n">⁸</span><span class="fn-text">Anderson, P.W. (1972): More Is Different. <em>Science</em> 177. Złamanie symetrii jako mechanizm emergencji: każdy poziom złożoności wymaga własnych praw.</span></div>
+    <div class="fn-item"><span class="fn-n">⁹</span><span class="fn-text">Nambu, Y. (1960): Quasi-Particles and Gauge Invariance in the Theory of Superconductivity. <em>Physical Review</em> 117. Spontaniczne złamanie symetrii w kondensacie — precedens dla Higgsa.</span></div>
+  </div>
+</section>
+
+<div class="div-rune"><span>◈</span></div>
+
+<!-- ═══════════════════════════════════════════
+     ROZDZIAŁ XXIII — RELACYJNA QM I JEDNOŚĆ JAKO KOLAPS
+═══════════════════════════════════════════ -->
+<section class="chapter" id="rozdXXIII">
+  <div class="ch-meta">
+    <span class="ch-num">ROZDZIAŁ XXIII</span>
+    <span class="ch-tag">ROVELLI · RELACYJNA QM · KOLAPS JAKO AKT JEDNOŚCI · DEKOHERENCJA</span>
+  </div>
+  <h2 class="ch-title">Relacyjna mechanika kwantowa i jedność jako kolaps</h2>
+  <p class="ch-sub">Każdy akt pomiaru jest aktem rozróżnienia · Stan kwantowy jako opis relacji · Dekoherencja jako aktualizacja jedności</p>
+
+  <p class="lead">Mechanika kwantowa dostarcza najprecyzyjniejszego opisu znowu tej samej struktury: jedność jest aktem relacyjnym, a nie własnością izolowanego obiektu. Carlo Rovelli w relacyjnej interpretacji mechaniki kwantowej (1996) formułuje to wprost: żaden stan kwantowy nie jest absolutny. Każdy stan jest opisem relacji między układem a obserwatorem. „1" jako wynik pomiaru nie istnieje przed aktem pomiaru — wyłania się w momencie relacji.</p>
+
+  <p>Cząstka kwantowa w superpozycji nie jest w nieokreślonym stanie — jest w stanie, który z precyzją opisuje pole możliwych relacji. Gdy układ wchodzi w interakcję z innym układem (pomiar, dekoherencja, kolaps), ta superpozycja zostaje zaktualizowana do konkretnej wartości: jedności w danym stopniu wolności. To jest ontologicznie dokładna realizacja Ĥ działającego na Ĝ: z pola możliwości wyłania się konkretna forma przez akt relacyjny.</p>
+
+  <div class="sec-title">§1 · Stan kwantowy jako Ĝ: pole relacyjnych możliwości</div>
+
+  <p>Funkcja falowa |ψ⟩ = Σᵢ cᵢ |ψᵢ⟩ jest matematycznym opisem stanu Ĝ: wszystkie możliwe wartości z wagami amplitud prawdopodobieństwa. W tym stanie obiekt nie jest „niezdecydowany" — jest w stanie pełnej relacyjnej potencjalności. Żadna wartość nie jest wyróżniona: entropia informacyjna jest wysoka, Ω jest duże, złamanie symetrii jeszcze nie zaszło.</p>
+
+  <p>Kolaps — czyli wejście układu w konkretną relację z innym układem — jest aktem rozróżnienia: przejściem od |ψ⟩ do konkretnego |ψₖ⟩. Po tym akcie stan jest jednym, a nie wieloma. Jedność została wyłoniona. Ale — i tu jest głębia relacyjnej interpretacji Rovellego — ta jedność jest jedynością-względem-konkretnego-obserwatora. Inny obserwator, który nie wszedł jeszcze w interakcję z układem, nadal opisuje go superpozycją. <strong class="hl">Jedność nie jest absolutna: jest relacyjna, perspektywistyczna, lokalna.</strong></p>
+
+  <div class="fbox" data-label="Rovelli 1996 · Relacyjna QM">
+    <div class="feq">|ψ_{S|O}⟩ ≠ |ψ_{S|O'}⟩ &nbsp;·&nbsp; stan układu S względem O ≠ stan S względem O'</div>
+    <span class="fcomment">Nie ma jednego absolutnego stanu układu S. Istnieje nieskończenie wiele stanów relacyjnych — po jednym dla każdej pary (S, obserwator). „1" jako wynik pomiaru jest konkretną relacją, nie absolutną własnością. W TERJ: Ĥ(S|O) ≠ Ĥ(S|O') — forma jest zawsze formą-w-relacji, nie substancją samą w sobie.</span>
+  </div>
+
+  <div class="sec-title">§2 · Dekoherencja jako proliferacja jedności</div>
+
+  <p>Dekoherencja — proces, w którym układ kwantowy traci spójność fazową przez interakcję ze środowiskiem — jest ontologicznie czymś głębszym niż technicznym zjawiskiem fizycznym. Jest procesem, przez który informacja o stanie układu zostaje wpisana w środowisko. Jedność zostaje zaktualizowana przez relację z otoczeniem, nie przez pomiar zewnętrznego obserwatora. Dekoherencja jest stałym strumieniem aktów rozróżnienia zachodzących między układem a środowiskiem.</p>
+
+  <p>W języku TERJ: dekoherencja jest mechanizmem zakar — wpisywania każdego aktu relacyjnego w architekturę rzeczywistości. Każda dekoherentna interakcja jest jedynką, która staje się informacją przez to, że wchodzi w relację z otoczeniem. Zasada Landauera stosowana do dekoherencji: kasowanie tych relacji ma fizyczny koszt, bo są one realną informacją wpisaną w stan środowiska.</p>
+
+  <div class="vis-section">
+    <div class="vis-header"><div class="vis-dot"></div>Relacyjna QM — kolaps i dekoherencja jako akty jedności</div>
+    <div class="vis-tabs">
+      <button class="vis-tab on" data-panel="relQM">Stan relacyjny</button>
+      <button class="vis-tab" data-panel="decoVis">Dekoherencja jako zakar</button>
+      <button class="vis-tab" data-panel="multiObs">Wielu obserwatorów</button>
+    </div>
+    <div class="vis-body">
+      <div class="vis-panel on" id="relQM">
+        <canvas class="vis-canvas" id="relQMCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Superpozycja N</span><input type="range" id="rqN" min="2" max="12" value="6"><span class="vc-val" id="rqNV">6</span></div>
+          <div class="vc"><span class="vc-lbl">Sprzężenie</span><input type="range" id="rqC" min="0" max="100" value="50"><span class="vc-val" id="rqCV">50</span></div>
+        </div>
+        <div class="vis-desc">Stan kwantowy |ψ⟩ = Σcᵢ|ψᵢ⟩ jako Ĝ — pole potencjalności z wagami amplitud. Każde kliknięcie lub zwiększenie sprzężenia realizuje jeden akt relacyjny: superpozycja kolapsuje do konkretnej jedności. Rozmiar węzłów koduje |cᵢ|² — prawdopodobieństwo aktualizacji danej jedności.</div>
+      </div>
+      <div class="vis-panel" id="decoVis">
+        <canvas class="vis-canvas" id="decoVisCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Tempo dekoherencji</span><input type="range" id="dvRate" min="1" max="100" value="40"><span class="vc-val" id="dvRateV">40</span></div>
+        </div>
+        <div class="vis-desc">Dekoherencja jako stały strumień aktów rozróżnienia zapisywanych w środowisku (zakar). Każda interakcja układu ze środowiskiem (fioletowe trafienia) to jedność wyłoniona przez relację i wpisana w architekturę rzeczywistości — przez zasadę Landauera niezniszczalna.</div>
+      </div>
+      <div class="vis-panel" id="multiObs">
+        <canvas class="vis-canvas" id="multiObsCanvas" height="360"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Liczba obserwatorów</span><input type="range" id="moN" min="1" max="6" value="3"><span class="vc-val" id="moNV">3</span></div>
+        </div>
+        <div class="vis-desc">Ten sam układ (centrum) opisywany przez różnych obserwatorów — każdy widzi inną jedność, każda jest równie prawdziwa. Brak absolutnej jedności: jedność jest zawsze jedynością-w-relacji. Rozróżnienia których dokonują różni obserwatorzy są ze sobą spójne — ale nie tożsame. W TERJ: Ĥ(S|O₁) i Ĥ(S|O₂) są składnikami tej samej sieci morfizmów.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fn-section">
+    <span class="fn-label">Przypisy — Rozdział XXIII</span>
+    <div class="fn-item"><span class="fn-n">¹⁰</span><span class="fn-text">Rovelli, C. (1996): Relational Quantum Mechanics. <em>International Journal of Theoretical Physics</em> 35. Stan kwantowy jako opis relacji, nie absolutna własność.</span></div>
+    <div class="fn-item"><span class="fn-n">¹¹</span><span class="fn-text">Zurek, W.H. (2003): Decoherence, einselection, and the quantum origins of the classical. <em>Reviews of Modern Physics</em> 75. Dekoherencja jako mechanizm wyłaniania się jedności klasycznej z superpozycji kwantowej.</span></div>
+    <div class="fn-item"><span class="fn-n">¹²</span><span class="fn-text">Smerlak, M., Rovelli, C. (2007): Relational EPR. <em>Foundations of Physics</em> 37. Niesprzeczność relacyjnych opisów różnych obserwatorów.</span></div>
+  </div>
+</section>
+
+<div class="div-rune"><span>◈</span></div>
+
+<!-- ═══════════════════════════════════════════
+     ROZDZIAŁ XXIV — TEORIA KATEGORII: OBIEKT JAKO WĘZEŁ MORFIZMÓW
+═══════════════════════════════════════════ -->
+<section class="chapter" id="rozdXXIV">
+  <div class="ch-meta">
+    <span class="ch-num">ROZDZIAŁ XXIV</span>
+    <span class="ch-tag">TEORIA KATEGORII · LEMAT YONEDY · FUNKTOR HOM · MORFIZMY JAKO ONTOLOGIA</span>
+  </div>
+  <h2 class="ch-title">Teoria kategorii: obiekt jako węzeł morfizmów</h2>
+  <p class="ch-sub">A ≅ Hom(−, A) · Morfizm jako podstawowa jednostka ontologiczna · Matematyczny dowód prymatu relacji</p>
+
+  <p class="lead">Teoria kategorii jest projektem matematycznym, który programowo i świadomie usuwa obiekty z centrum analizy i zastępuje je morfizmami — przekształceniami, relacjami, odwzorowaniami. To nie jest tylko zmiana notacji. Jest to fundamentalna zmiana ontologii matematyki: od pytania „co to jest?" do pytania „jak to się odnosi do wszystkiego innego?". Lemat Yonedy — jedno z najgłębszych twierdzeń matematyki — formalizuje ten przełom.</p>
+
+  <p>Lemat Yonedy stwierdza: obiekt A w kategorii jest całkowicie i jednoznacznie opisany przez funktor Hom(−, A) — przez zbiór wszystkich morfizmów „do niego" ze wszystkich innych obiektów. Żadna wewnętrzna własność nie jest dostępna poza morfizmami. Obiekt jest tym, jak inne obiekty mogą być do niego w relacji. Nic więcej. Nic mniej. To jest matematyczny dowód tezy, że relacyjność jest pierwotna wobec substancjalności — sformułowany wewnątrz matematyki, nie importowany z filozofii.</p>
+
+  <div class="fbox" data-label="Lemat Yonedy · Mac Lane 1971">
+    <div class="feq">A ≅ Hom(−, A) &nbsp;&nbsp;&nbsp; Hom(X, A) = {f : X → A | f morfizm}</div>
+    <span class="fcomment">Izomorfizm naturalny: obiekt A jest w pełni opisany przez swoje morfizmy. Dwa obiekty są tożsame jeśli mają tożsame funktory Hom — czyli identyczne wzorce relacji do wszystkich innych. W języku TERJ: tożsamość to struktura morfizmów, nie substancja. Zakar: każdy morfizm (przeżyta relacja) wzbogaca opis obiektu i jest niezniszczalny.</span>
+  </div>
+
+  <div class="sec-title">§1 · Identyczność jako izomorfizm, nie tożsamość substancjalna</div>
+
+  <p>W teorii kategorii nie ma pojęcia „absolutnej identyczności" obiektów — jest tylko izomorfizm: para morfizmów f: A → B i g: B → A taka, że g∘f = id_A i f∘g = id_B. Dwa obiekty są „takie same" jeśli istnieje między nimi izomorfizm — jeśli mają strukturalnie tożsame relacje do wszystkich innych obiektów. Nie istnieje natomiast żaden sense, w którym można by sprawdzić, czy dwa obiekty są „z tej samej substancji".</p>
+
+  <p>To jest matematyczna realizacja twierdzenia Rovellego o relacyjnej mechanice kwantowej i twierdzenia Shannona o informacji jako różnicy: tożsamość jest zawsze tożsamością relacyjną, strukturalną, kontekstualną. Nie ma tożsamości-samej-w-sobie.</p>
+
+  <div class="concept-grid">
+    <div class="ccard c-teal">
+      <span class="ccard-label">Kategoria · Ob(C)</span>
+      <span class="ccard-title">Obiekty</span>
+      <p class="ccard-body">Węzły grafu. Nie mają wewnętrznej struktury dostępnej bez morfizmów. „Byty" teorii kategorii to nie substancje, lecz pozycje w sieci przekształceń.</p>
+    </div>
+    <div class="ccard c-amber">
+      <span class="ccard-label">Kategoria · Mor(C)</span>
+      <span class="ccard-title">Morfizmy</span>
+      <p class="ccard-body">Krawędzie grafu. Są pierwotne. Identyczność obiektu (id_A: A→A) jest morfizmem — być sobą to być-w-relacji z samym sobą. Composability: morfizmy można składać.</p>
+    </div>
+    <div class="ccard c-violet">
+      <span class="ccard-label">Funktory · Nat. transf.</span>
+      <span class="ccard-title">Morfizmy kategorii</span>
+      <p class="ccard-body">Funktory to morfizmy między kategoriami: zachowują strukturę morfizmów. Transformacje naturalne to morfizmy między funktorami. Każdy poziom jest relacyjny.</p>
+    </div>
+    <div class="ccard c-cyan">
+      <span class="ccard-label">Lemat Yonedy</span>
+      <span class="ccard-title">A ≅ Hom(−, A)</span>
+      <p class="ccard-body">Dowód: obiekt jest całkowicie opisany przez morfizmy. Nie ma więcej. Tożsamość wyczerpuje się w relacjach. Matematyczny fundament ontologii relacyjnej TERJ.</p>
+    </div>
+  </div>
+
+  <div class="sec-title">§2 · Algebra C* i relacyjność kwantowa</div>
+
+  <p>Twierdzenie Haaga-Kastlera (1964) idzie w tym samym kierunku co lemat Yonedy, ale w języku algebraicznej teorii pola kwantowego: ta sama algebra obserwabli C* może być reprezentowana przez różne przestrzenie Hilberta. Algebra jest głębsza niż przestrzeń stanów. Obserwable (morfizmy, relacje między możliwymi pomiarami) są bardziej fundamentalne niż stany (obiekty, konfiguracje). Fizyka kwantowa i teoria kategorii dochodzą niezależnymi drogami do tego samego twierdzenia ontologicznego: relacja jest pierwotna.</p>
+
+  <div class="vis-section">
+    <div class="vis-header"><div class="vis-dot"></div>Teoria kategorii — morfizmy i lemat Yonedy</div>
+    <div class="vis-tabs">
+      <button class="vis-tab on" data-panel="catVis">Sieć morfizmów</button>
+      <button class="vis-tab" data-panel="yonedaVis">Lemat Yonedy</button>
+    </div>
+    <div class="vis-body">
+      <div class="vis-panel on" id="catVis">
+        <canvas class="vis-canvas" id="catCanvas" height="380"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Obiekty N</span><input type="range" id="catN" min="3" max="16" value="8"><span class="vc-val" id="catNV">8</span></div>
+          <div class="vc"><span class="vc-lbl">Gęstość morfizmów</span><input type="range" id="catD" min="10" max="100" value="45"><span class="vc-val" id="catDV">45%</span></div>
+        </div>
+        <div class="vis-desc">Kategoria jako sieć obiektów i morfizmów. Kliknij węzeł — podświetlą się wszystkie morfizmy Hom(−, A) i Hom(A, −). Tożsamość obiektu = jego „podpis morfizmowy". Dwa węzły z identycznymi wzorcami połączeń są kategorycznie nieodróżnialne — izomorficzne.</div>
+      </div>
+      <div class="vis-panel" id="yonedaVis">
+        <canvas class="vis-canvas" id="yonedaCanvas" height="380"></canvas>
+        <div class="vis-desc">Lemat Yonedy wizualnie: trzy różne obiekty A, B, C. Kolory krawędzi pokazują Hom(−, X) dla każdego. Gdy dwa obiekty mają identyczne wzorce Hom, są izomorficzne — „takie same" w sensie kategorycznym. Substancja irrelewantna; morfizmy wystarczają.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fn-section">
+    <span class="fn-label">Przypisy — Rozdział XXIV</span>
+    <div class="fn-item"><span class="fn-n">¹³</span><span class="fn-text">Mac Lane, S. (1971): <em>Categories for the Working Mathematician</em>. Springer. Lemat Yonedy (rozdz. III.2): funktor Hom wiernie reprezentuje każdy obiekt przez swoje morfizmy.</span></div>
+    <div class="fn-item"><span class="fn-n">¹⁴</span><span class="fn-text">Awodey, S. (2010): <em>Category Theory</em>. Oxford University Press. Dostępne wprowadzenie z akcentem na implikacje filozoficzne.</span></div>
+    <div class="fn-item"><span class="fn-n">¹⁵</span><span class="fn-text">Haag, R., Kastler, D. (1964): An algebraic approach to quantum field theory. <em>Journal of Mathematical Physics</em> 5. Algebra C* jako fundament głębszy niż przestrzeń Hilberta.</span></div>
+    <div class="fn-item"><span class="fn-n">¹⁶</span><span class="fn-text">Lawvere, F.W. (1969): Adjointness in foundations. <em>Dialectica</em> 23. Teoria kategorii jako fundament matematyki — morfizmy jako podmioty, nie obiekty.</span></div>
+  </div>
+</section>
+
+<div class="div-rune"><span>◈</span></div>
+
+<!-- ═══════════════════════════════════════════
+     ROZDZIAŁ XXV — EMERGENCJA: CAŁOŚĆ > SUMA
+═══════════════════════════════════════════ -->
+<section class="chapter" id="rozdXXV">
+  <div class="ch-meta">
+    <span class="ch-num">ROZDZIAŁ XXV · SYNTEZA</span>
+    <span class="ch-tag">EMERGENCJA · PRIGOGINE · OCEAN VS KROPLE · SIEĆ KOSMICZNA · TERJ POSTULAT</span>
+  </div>
+  <h2 class="ch-title">Emergencja: całość ontologicznie różna od sumy</h2>
+  <p class="ch-sub">Ocean nie jest zbiorem kropel · Sieć kosmiczna jako fraktal relacyjności · Zamknięcie pętli XX–XXV</p>
+
+  <p class="lead">Przez pięć rozdziałów budowaliśmy ten sam argument z różnych stron: jedność jest aktem relacyjnym, informacja jest różnicą, masa jest sprzężeniem z polem, stan kwantowy jest opisem relacji, obiekt matematyczny jest węzłem morfizmów. Wszystkie te argumenty prowadzą do jednego twierdzenia, które TERJ formułuje jako postulat centralny: relacja jest ontologicznie pierwotna wobec substancji. Czas domknąć ten argument przez zjawisko emergencji — najbardziej spektakularny dowód nieadektywności ontologii substancjalnej.</p>
+
+  <p>Metafora oceanu i kropel, z której korzysta myślenie substancjalne, zawiera fundamentalny błąd ontologiczny. Zakłada, że ocean jest agregatem kropel — że własności całości są sumą własności części. Tymczasem ocean jest <em>dynamicznym polem relacji między cząsteczkami wody</em> — ciśnienia, fal, przepływów energii, gradientów temperatury, rezonansów. Pojedyncza kropla wody wyjęta z oceanu traci większość własności, które posiadała jako część układu: nie posiada ani ciśnienia hydrostatycznego, ani wektora prądu, ani termoklinowych gradientów, ani pozycji w polu ciśnienia. Traci nawet swoją objętość w sensie oceanograficznym.</p>
+
+  <div class="sec-title">§1 · Emergencja jako ontologiczne twierdzenie</div>
+
+  <p>Ilya Prigogine wykazał, że układy daleko od równowagi — struktury dysypatywne — posiadają własności, które nie są redukowalne do własności ich elementów: spójność fazową, globalne wzorce cyrkulacji, rytmy temporalne, zdolność do przetwarzania informacji. Te własności są wyłaniającymi się, nie sumowalny. Nie można ich przewidzieć przez prostą agregację.</p>
+
+  <p>Anderson (1972) sformułował to jako prawo ogólne: „More Is Different" — więcej jest inne, nie po prostu więcej. Każdy poziom złożoności organizacji materii podlega własnym prawom, których nie można wyprowadzić z praw poziomu niższego. Elektrony podlegają kwantowej elektrodynamice; ale kryształ — sieć miliardów elektronów w relacji z jonami sieciowymi — podlega prawom fizyki ciała stałego, które są nieodwracalne do QED.</p>
+
+  <div class="two-col">
+    <div class="tc-card minus">
+      <span class="tc-sym">Σ</span>
+      <span class="tc-nm">Ontologia addytywna (substancjalna)</span>
+      <p class="tc-body">Całość = suma części. Własności systemu są superpozycją własności elementów. Wystarczy opisać elementy, by opisać całość. Ocean = wiele kropel.</p>
+    </div>
+    <div class="tc-card plus">
+      <span class="tc-sym">ℛ</span>
+      <span class="tc-nm">Ontologia relacyjna (TERJ)</span>
+      <p class="tc-body">Całość posiada własności emergentne, których nie ma żaden element. Relacje między elementami generują nowe poziomy bytu. Ocean = dynamiczne pole relacji. SOFAR = emergentna struktura informacyjna z gradientu.</p>
+    </div>
+  </div>
+
+  <div class="sec-title">§2 · Sieć kosmiczna jako fraktal relacyjności</div>
+
+  <p>Sieć kosmiczna — wielka struktura Wszechświata złożona z włókien, węzłów i próżni — jest bodaj największą skalą, na której można zaobserwować emergencję relacyjną. Galaktyki grupują się wzdłuż włókien, które są wyznaczone przez początkowe fluktuacje gęstości w epoce rekombinacji. Żadna galaktyka „nie wie" o istnieniu innych — komunikacja między nimi jest niemożliwa w skali kosmologicznej. A jednak razem tworzą strukturę fraktalną o wymiarze Hausdorffa D ≈ 2.1, która wyłoniła się wyłącznie z pola grawitacyjnych relacji między cząstkami ciemnej materii.</p>
+
+  <p>To jest Ĝ działające na skalę kosmologiczną: gradient gęstości stworzony przez kwantowe fluktuacje próżni, wzmocniony przez grawitację, generujący strukturę o nieskończonej złożoności relacyjnej przez samą iterację prostej reguły — grawitacyjnego przyciągania jako lokalnego aktu rozróżnienia kierunków w przestrzeni. Każdy węzeł sieci kosmicznej jest jedynką w polu grawitacyjnym — lokalnym aktem rozróżnienia w polu potencjalności kosmologicznej.</p>
+
+  <div class="vis-section">
+    <div class="vis-header"><div class="vis-dot"></div>Emergencja relacyjna — od oceanu do sieci kosmicznej</div>
+    <div class="vis-tabs">
+      <button class="vis-tab on" data-panel="emergeVis">Emergencja struktury</button>
+      <button class="vis-tab" data-panel="cosmicWeb">Sieć kosmiczna</button>
+      <button class="vis-tab" data-panel="synthXXV">Synteza XX–XXV</button>
+    </div>
+    <div class="vis-body">
+      <div class="vis-panel on" id="emergeVis">
+        <canvas class="vis-canvas" id="emergeCanvas" height="380"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Liczba elementów N</span><input type="range" id="emN" min="10" max="300" value="80"><span class="vc-val" id="emNV">80</span></div>
+          <div class="vc"><span class="vc-lbl">Siła relacji</span><input type="range" id="emR" min="0" max="100" value="55"><span class="vc-val" id="emRV">55</span></div>
+        </div>
+        <div class="vis-desc">Elementy identyczne, proste reguły oddziaływania (relacje) — emergentna struktura globalna. Czerwony: bez relacji — agregat bez emergencji. Teal: z relacjami — pojawia się spójność, wzorzec, własności których żaden element nie posiada osobno. To jest ontologiczna przepaść między sumą a siecią.</div>
+      </div>
+      <div class="vis-panel" id="cosmicWeb">
+        <canvas class="vis-canvas" id="cosmicCanvas" height="380"></canvas>
+        <div class="vis-controls">
+          <div class="vc"><span class="vc-lbl">Gradient Ĝ</span><input type="range" id="cwG" min="10" max="100" value="60"><span class="vc-val" id="cwGV">60</span></div>
+          <div class="vc"><span class="vc-lbl">Iteracje</span><input type="range" id="cwI" min="1" max="8" value="4"><span class="vc-val" id="cwIV">4</span></div>
+        </div>
+        <div class="vis-desc">Uproszczony model sieci kosmicznej generowany przez iterację reguły grawitacyjnej (Ĝ). Włókna, węzły, próżnie — własności emergentne z prostego pola relacji. Każdy węzeł galaktyki to lokalny akt rozróżnienia — jedność wyłoniona z gradientu kosmologicznego. D_H ≈ 2.1: wymiar fraktalny sieci relacyjnej.</div>
+      </div>
+      <div class="vis-panel" id="synthXXV">
+        <canvas class="vis-canvas" id="synthCanvas" height="400"></canvas>
+        <div class="vis-desc">Synteza XX–XXV: pięć pięter argumentu relacyjnego. Frege/Peano: jedność jako akt. Shannon: informacja jako różnica. QM/Rovelli: stan jako opis relacji. Yoneda: obiekt jako węzeł morfizmów. Prigogine/emergencja: całość różna od sumy. Wszystkie piętra opisują jeden mechanizm: ℛ = Ĝ ⊕ Ĥ jako fundamentalna struktura bytu.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="postulate">
+    <span class="postulate-label">Postulat Rozdziałów XX–XXV · Ontologia Relacyjna</span>
+    <div class="postulate-formula">¬∃ obiekt bez relacji &nbsp;·&nbsp; ∀ A: A ≅ Hom(−,A) &nbsp;·&nbsp; informacja = Δ(stany) &nbsp;·&nbsp; emergencja: ℛ > Σ(Ob)</div>
+    <p class="postulate-text">Jedność jest aktem relacyjnym, nie substancją pierwotną. Informacja jest różnicą, nie treścią. Obiekt jest węzłem morfizmów, nie izolowanym bytem. Całość posiada własności nieposiadane przez sumę elementów. W aparacie TERJ: Ĝ (pole potencjalności, nieokreśloność, superpozycja) i Ĥ (forma, zamknięcie, konkretna jedność) są komplementarnym opisem tej samej struktury relacyjnej, z której wyłania się każdy poziom rzeczywistości — od bitu po sieć kosmiczną.</p>
+  </div>
+
+  <div class="pull-dark">
+    <p>Matematyka zaczyna stykać się z filozofią bytu nie dlatego, że opuszcza rygor formalny — lecz dlatego, że rygor formalny prowadzi ją nieuchronnie do pytań ontologicznych. Lemat Yonedy, teoria Shannona, relacyjna QM i termodynamika nierównowagowa mówią jednym głosem: rzeczywistość jest siecią relacji, nie zbiorem substancji.</p>
+  </div>
+
+  <div class="fn-section">
+    <span class="fn-label">Przypisy — Rozdział XXV</span>
+    <div class="fn-item"><span class="fn-n">¹⁷</span><span class="fn-text">Anderson, P.W. (1972): More Is Different. <em>Science</em> 177. Emergencja jako prawo ogólne: każdy poziom złożoności wymaga własnych zasad nieredukowalnych do poziomu niższego.</span></div>
+    <div class="fn-item"><span class="fn-n">¹⁸</span><span class="fn-text">Prigogine, I., Stengers, I. (1984): <em>Order Out of Chaos</em>. Bantam Books. Struktury dysypatywne jako emergentne własności relacyjne układów daleko od równowagi.</span></div>
+    <div class="fn-item"><span class="fn-n">¹⁹</span><span class="fn-text">Bond, J.R., Kofman, L., Pogosyan, D. (1996): How filaments are woven into the cosmic web. <em>Nature</em> 380. Sieć kosmiczna jako emergentna struktura relacyjna z kwantowych fluktuacji próżni.</span></div>
+    <div class="fn-item"><span class="fn-n">²⁰</span><span class="fn-text">Tononi, G. (2008): Consciousness as Integrated Information. <em>Biological Bulletin</em> 215. Φ = zintegrowana informacja jako miara własności emergentnie relacyjnych — nieposiadana przez elementy, wyłącznie przez całość.</span></div>
+  </div>
+
+  <!-- BIB -->
+  <div class="bib">
+    <span class="bib-title">Wybrana bibliografia — Rozdziały XX–XXV</span>
+    <div class="bib-item"><span class="bib-n">[1]</span><span class="bib-text">Frege, G. (1884): <em>Grundlagen der Arithmetik</em>. Breslau. Jedność jako własność pojęcia, nie obiektu.</span></div>
+    <div class="bib-item"><span class="bib-n">[2]</span><span class="bib-text">Shannon, C.E. (1948): A Mathematical Theory of Communication. <em>Bell System Technical Journal</em> 27.</span></div>
+    <div class="bib-item"><span class="bib-n">[3]</span><span class="bib-text">Bateson, G. (1979): <em>Mind and Nature</em>. Dutton. Informacja jako różnica.</span></div>
+    <div class="bib-item"><span class="bib-n">[4]</span><span class="bib-text">Rovelli, C. (1996): Relational Quantum Mechanics. <em>Int. J. Theor. Phys.</em> 35.</span></div>
+    <div class="bib-item"><span class="bib-n">[5]</span><span class="bib-text">Mac Lane, S. (1971): <em>Categories for the Working Mathematician</em>. Springer. Lemat Yonedy.</span></div>
+    <div class="bib-item"><span class="bib-n">[6]</span><span class="bib-text">Haag, R., Kastler, D. (1964): Algebraic approach to QFT. <em>J. Math. Phys.</em> 5.</span></div>
+    <div class="bib-item"><span class="bib-n">[7]</span><span class="bib-text">Prigogine, I. (1977): <em>Self-Organization in Nonequilibrium Systems</em>. Wiley. Nobel z chemii 1977.</span></div>
+    <div class="bib-item"><span class="bib-n">[8]</span><span class="bib-text">Anderson, P.W. (1972): More Is Different. <em>Science</em> 177.</span></div>
+    <div class="bib-item"><span class="bib-n">[9]</span><span class="bib-text">Majsterek, P. (2026): TEREJ IX — Fraktal, Kryształ Czasu i Niezmienniczość Skalowania Ĝ. pawcio99.github.io/TEREJ_IX/</span></div>
+  </div>
+
+  <div class="part-nav">
+    <a href="teoria.html" target="_blank">TEREJ IX — Praca macierzysta ↗</a>
+    <a href="yhwh-entropia.html" target="_blank">YHWH i Entropia ↗</a>
+    <a href="#" class="current">Rozdziały XX–XXV · Ontologia Relacyjna</a>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div style="background:linear-gradient(135deg,rgba(12,20,42,0.97),rgba(20,12,45,0.97));border:1px solid rgba(255,180,60,0.2);border-radius:14px;padding:2.5rem 3rem;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,180,60,0.5),rgba(46,232,200,0.5),transparent);"></div>
+    <div style="display:flex;align-items:flex-start;gap:2.5rem;flex-wrap:wrap;margin-bottom:2rem;">
+      <div style="flex:0 0 auto;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,rgba(255,180,60,0.15),rgba(46,232,200,0.1));border:1.5px solid rgba(255,180,60,0.35);display:flex;align-items:center;justify-content:center;font-family:'Syncopate',sans-serif;font-size:1.3rem;color:rgba(255,180,60,0.9);">PM</div>
+      <div style="flex:1;min-width:220px;">
+        <div style="font-family:'Syncopate',sans-serif;font-size:0.65rem;letter-spacing:0.28em;color:rgba(255,180,60,0.85);margin-bottom:0.4rem;text-transform:uppercase;">Autor</div>
+        <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.55rem;color:#e8f0ff;margin-bottom:0.35rem;">Paweł Majsterek</div>
+        <div style="font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:0.15em;color:rgba(46,232,200,0.7);margin-bottom:0.6rem;">TERJ · Część V · Rozdziały XX–XXV · Marzec 2026</div>
+        <div style="font-size:0.88rem;color:rgba(160,185,255,0.6);line-height:1.6;font-style:italic;font-family:'Cormorant Garamond',Georgia,serif;">Ontologia Relacyjna — od jedności jako aktu rozróżnienia do emergencji sieci kosmicznej.</div>
+      </div>
+    </div>
+    <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(46,232,200,0.2),transparent);margin-bottom:2rem;"></div>
+    <div style="font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:0.18em;color:rgba(255,180,60,0.75);margin-bottom:0.5rem;text-transform:uppercase;">Creative Commons Attribution 4.0 International</div>
+    <div style="font-size:0.82rem;color:rgba(160,185,255,0.65);line-height:1.7;font-family:'Cormorant Garamond',Georgia,serif;">Majsterek, P. (2026). <em>TEREJ — Rozdziały XX–XXV: Ontologia Relacyjna.</em> Licencja CC BY 4.0. Wydanie Marzec 2026.</div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(46,232,200,0.5),rgba(255,180,60,0.5),transparent);"></div>
+  </div>
+</footer>
+
+<script>
+'use strict';
+const TAU = Math.PI * 2;
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp = (a,b,t) => a + (b-a)*t;
+const G = id => document.getElementById(id);
+
+/* ═══ PROGRESS BAR ═══ */
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const bar = G('progress');
+  if(bar) bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, {passive:true});
+
+/* ═══ SCROLL REVEAL ═══ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.05});
+document.querySelectorAll('.chapter').forEach(c => revealObs.observe(c));
+
+/* ═══ NAV ACTIVE ═══ */
+['rozdXX','rozdXXI','rozdXXII','rozdXXIII','rozdXXIV','rozdXXV'].forEach(id => {
+  const el = G(id); if(!el) return;
+  new IntersectionObserver(([e]) => {
+    if(e.isIntersecting){
+      document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+      const a = document.querySelector(`nav a[href="#${id}"]`);
+      if(a) a.classList.add('active');
+    }
+  }, {threshold:0.25}).observe(el);
+});
+
+/* ═══ VIS TABS ═══ */
+document.querySelectorAll('.vis-tabs').forEach(tabs => {
+  tabs.querySelectorAll('.vis-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const c = btn.closest('.vis-section');
+      c.querySelectorAll('.vis-tab').forEach(b => b.classList.remove('on'));
+      c.querySelectorAll('.vis-panel').forEach(p => p.classList.remove('on'));
+      btn.classList.add('on');
+      const panel = c.querySelector('#' + btn.dataset.panel);
+      if(panel) panel.classList.add('on');
+    });
+  });
+});
+
+/* ═══ LAZY CANVAS ═══ */
+function lazyCanvas(cv, startFn) {
+  if(!cv) return;
+  const io = new IntersectionObserver(([entry]) => {
+    if(entry.isIntersecting){
+      if(cv.offsetWidth > 0) cv.width = cv.offsetWidth;
+      startFn();
+      io.disconnect();
+    }
+  }, {threshold:0.05, rootMargin:'200px'});
+  io.observe(cv);
+}
+
+/* ═══ ROUNDRECT POLYFILL ═══ */
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    this.beginPath();
+    this.moveTo(x+r, y);
+    this.lineTo(x+w-r, y); this.arcTo(x+w, y, x+w, y+r, r);
+    this.lineTo(x+w, y+h-r); this.arcTo(x+w, y+h, x+w-r, y+h, r);
+    this.lineTo(x+r, y+h); this.arcTo(x, y+h, x, y+h-r, r);
+    this.lineTo(x, y+r); this.arcTo(x, y, x+r, y, r);
+    this.closePath();
+  };
+}
+
+/* ═══ COSMOS BACKGROUND ═══ */
+(function(){
+  const cv = G('cosmos'); if(!cv) return;
+  const cx = cv.getContext('2d');
+  let W, H, pts = [];
+  function resize(){ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
+  function init(){
+    pts = Array.from({length:160}, () => ({
+      x:Math.random()*W, y:Math.random()*H,
+      r:Math.random()*1.2+0.2, a:Math.random(),
+      da:(Math.random()-0.5)*0.005,
+      vx:(Math.random()-0.5)*0.016, vy:(Math.random()-0.5)*0.016,
+      h:Math.random() > 0.7 ? 185 : (Math.random() > 0.5 ? 42 : 220)
+    }));
+  }
+  function draw(){
+    cx.clearRect(0,0,W,H);
+    [[0.2,0.35,185,0.07],[0.75,0.6,42,0.05],[0.5,0.8,280,0.04]].forEach(([rx,ry,h,a]) => {
+      const g = cx.createRadialGradient(rx*W,ry*H,0,rx*W,ry*H,Math.min(W,H)*0.44);
+      g.addColorStop(0, `hsla(${h},70%,40%,${a})`); g.addColorStop(1,'rgba(0,0,0,0)');
+      cx.fillStyle=g; cx.fillRect(0,0,W,H);
+    });
+    pts.forEach(p => {
+      p.a += p.da; if(p.a<=0||p.a>=1) p.da*=-1;
+      p.x += p.vx; p.y += p.vy;
+      if(p.x<0) p.x=W; if(p.x>W) p.x=0; if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+      cx.beginPath(); cx.arc(p.x,p.y,p.r,0,TAU);
+      cx.fillStyle=`hsla(${p.h},80%,75%,${p.a*0.7})`; cx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', ()=>{resize(); init();});
+  resize(); init(); draw();
+})();
+
+/* ═══ HERO BG ═══ */
+(function(){
+  const cv = G('heroBg'); if(!cv) return;
+  const cx = cv.getContext('2d');
+  let t = 0;
+  function resize(){ cv.width = cv.offsetWidth||window.innerWidth; cv.height = cv.offsetHeight||window.innerHeight; }
+  function draw(){
+    const W=cv.width, H=cv.height;
+    cx.clearRect(0,0,W,H);
+    // Relational network background
+    const nodes = [];
+    for(let i=0;i<16;i++){
+      const a = i/16*TAU + t*0.04;
+      const r = (0.2+0.12*Math.sin(t*0.2+i*0.7)) * Math.min(W,H);
+      nodes.push({x:W/2+r*Math.cos(a), y:H/2+r*Math.sin(a)*0.6});
+    }
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        const dx = nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < W*0.35){
+          const alpha = (1-dist/(W*0.35))*0.08;
+          cx.beginPath(); cx.moveTo(nodes[i].x,nodes[i].y); cx.lineTo(nodes[j].x,nodes[j].y);
+          cx.strokeStyle=`rgba(46,232,200,${alpha})`; cx.lineWidth=0.8; cx.stroke();
+        }
+      }
+    }
+    nodes.forEach((n,i) => {
+      const pulse = 0.5+0.5*Math.sin(t*0.5+i*0.8);
+      cx.beginPath(); cx.arc(n.x,n.y,3+pulse*3,0,TAU);
+      cx.fillStyle=`rgba(${i%2?255:46},${i%2?180:232},${i%2?60:200},${0.3+pulse*0.3})`; cx.fill();
+    });
+    t += 0.015; requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize', resize);
+  resize(); draw();
+})();
+
+/* ═══ DISTINCTION SPACE (rozdXX) ═══ */
+(function(){
+  const cv = G('distCanvas'); if(!cv) return;
+  cv.width = cv.offsetWidth||800; cv.height = 360;
+  const cx = cv.getContext('2d');
+  let t=0, nodes=[], edges=[];
+  function rebuild(){
+    const N = +G('dN').value;
+    G('dNv').textContent = N;
+    const W=cv.width, H=cv.height;
+    nodes = Array.from({length:N}, (_,i) => {
+      const a = i/N*TAU, r=Math.min(W,H)*0.28;
+      return {x:W/2+r*Math.cos(a), y:H/2+r*Math.sin(a)*0.7, vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3, h:i/N*240+160};
+    });
+    edges=[];
+    for(let i=0;i<N;i++) for(let j=i+1;j<N;j++) if(Math.random()<0.55) edges.push({a:i,b:j});
+  }
+  rebuild();
+  function draw(){
+    const W=cv.width, H=cv.height, E=G('dE').value/100;
+    G('dEv').textContent = G('dE').value;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    // Background entropy field
+    for(let x=0;x<W;x+=18) for(let y=0;y<H;y+=18){
+      const noise = Math.sin(x*0.05+t)*Math.cos(y*0.06+t*0.7)*E;
+      cx.beginPath(); cx.arc(x,y,1.5,0,TAU);
+      cx.fillStyle=`rgba(46,232,200,${Math.max(0,(0.05+noise*0.04))*E})`; cx.fill();
+    }
+    nodes.forEach(n => { n.x+=n.vx; n.y+=n.vy; if(n.x<40||n.x>W-40)n.vx*=-1; if(n.y<30||n.y>H-30)n.vy*=-1; });
+    edges.forEach(e => {
+      const a=nodes[e.a],b=nodes[e.b];
+      const pulse=0.15+0.15*Math.sin(t+e.a*0.8);
+      cx.beginPath(); cx.moveTo(a.x,a.y); cx.lineTo(b.x,b.y);
+      cx.strokeStyle=`rgba(46,232,200,${pulse})`; cx.lineWidth=0.8; cx.stroke();
+    });
+    nodes.forEach((n,i) => {
+      const pulse=1+0.08*Math.sin(t*0.5+i);
+      const glow=cx.createRadialGradient(n.x,n.y,0,n.x,n.y,14*pulse);
+      glow.addColorStop(0,`hsla(${n.h},75%,65%,0.5)`); glow.addColorStop(1,'rgba(0,0,0,0)');
+      cx.fillStyle=glow; cx.fillRect(n.x-14,n.y-14,28,28);
+      cx.beginPath(); cx.arc(n.x,n.y,6*pulse,0,TAU);
+      cx.fillStyle=`hsla(${n.h},75%,65%,0.9)`; cx.fill();
+      cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+      cx.fillStyle=`hsla(${n.h},80%,80%,0.7)`;
+      cx.fillText(`akt ${i+1}`,n.x,n.y-10);
+    });
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.6)';
+    cx.fillText(`${edges.length} relacji konstytuuje tożsamość ${nodes.length} aktów rozróżnienia`,W/2,H-10);
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  G('dN').oninput = rebuild;
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ SYMMETRY BREAKING (rozdXX) ═══ */
+(function(){
+  const cv = G('symCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0;
+  function draw(){
+    const W=cv.width, H=cv.height, deg=G('sbDeg').value/100;
+    G('sbDegV').textContent=G('sbDeg').value;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    // Left: homogeneous field (Ĝ)
+    const gridS=22;
+    for(let x=0;x<W/2-20;x+=gridS) for(let y=0;y<H;y+=gridS){
+      const a=0.06+0.04*Math.sin(x*0.04+t)*Math.cos(y*0.05+t);
+      cx.beginPath(); cx.arc(x+gridS/2,y+gridS/2,1.5,0,TAU);
+      cx.fillStyle=`rgba(46,232,200,${a})`; cx.fill();
+    }
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(46,232,200,0.6)'; cx.fillText('Ĝ — pole jednorodne',W/4,18);
+    cx.fillStyle='rgba(46,232,200,0.3)'; cx.fillText('szlemut · max Ω · brak wyróżnienia',W/4,32);
+    // Divider
+    cx.beginPath(); cx.moveTo(W/2,0); cx.lineTo(W/2,H);
+    cx.strokeStyle='rgba(255,255,255,0.1)'; cx.lineWidth=1; cx.setLineDash([5,5]); cx.stroke(); cx.setLineDash([]);
+    // Right: symmetry broken, unity emerging
+    const cx0=W*0.75, cy0=H/2;
+    for(let x=W/2+10;x<W;x+=gridS) for(let y=0;y<H;y+=gridS){
+      const dx=x-cx0, dy=y-cy0, dist=Math.sqrt(dx*dx+dy*dy);
+      const pull=deg*80;
+      const a=0.04+0.06*Math.exp(-dist/pull)*deg;
+      const hue=185+deg*40*(1-dist/(pull*2));
+      cx.beginPath(); cx.arc(x,y,1.5+2*Math.exp(-dist/pull)*deg,0,TAU);
+      cx.fillStyle=`hsla(${hue},70%,60%,${a})`; cx.fill();
+      if(dist<pull*1.5&&dist>5&&deg>0.2){
+        const nx=(dx/dist)*2, ny=(dy/dist)*2;
+        cx.beginPath(); cx.moveTo(x,y); cx.lineTo(x-nx*4*deg,y-ny*4*deg);
+        cx.strokeStyle=`rgba(255,180,60,${0.05*deg})`; cx.lineWidth=0.5; cx.stroke();
+      }
+    }
+    // The "one" — unified node
+    const r=8+6*Math.sin(t*1.2);
+    const glow=cx.createRadialGradient(cx0,cy0,0,cx0,cy0,r*4);
+    glow.addColorStop(0,'rgba(255,180,60,0.6)'); glow.addColorStop(1,'rgba(255,180,60,0)');
+    cx.fillStyle=glow; cx.fillRect(cx0-r*4,cy0-r*4,r*8,r*8);
+    cx.beginPath(); cx.arc(cx0,cy0,r*deg,0,TAU);
+    cx.fillStyle=`rgba(255,180,60,${0.5+0.4*deg})`; cx.fill();
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.7)'; cx.fillText('Ĥ — lokalny akt rozróżnienia',W*0.75,18);
+    cx.fillStyle='rgba(255,180,60,0.4)'; cx.fillText('jedność wyłoniona z tła',W*0.75,32);
+    if(deg>0.1){
+      cx.fillStyle='rgba(255,180,60,0.85)'; cx.font="bold 11px 'Space Mono',monospace";
+      cx.fillText('"1"',cx0,cy0+r*deg+18);
+    }
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  G('sbDeg').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ BINARY RELATION (rozdXX) ═══ */
+(function(){
+  const cv = G('binCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0;
+  const contexts=[
+    {name:'UTF-8 (65)', meaning:'litera A', color:'#ffb43c'},
+    {name:'ASCII (65)', meaning:'litera A', color:'#2ee8c8'},
+    {name:'IEEE float', meaning:'2.29×10⁻⁴⁴', color:'#b088f8'},
+    {name:'Adres pamięci', meaning:'0x41', color:'#60d4f8'},
+    {name:'Sygnał 1-bitowy', meaning:'stan ON', color:'#7ae86e'},
+  ];
+  const bits=[0,1,0,0,0,0,0,1]; // 65
+  function draw(){
+    const W=cv.width, H=cv.height;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    // Bit display
+    const bW=40, gap=8, startX=(W-bits.length*(bW+gap))/2;
+    bits.forEach((b,i) => {
+      const x=startX+i*(bW+gap), y=50;
+      cx.fillStyle=b?'rgba(255,180,60,0.15)':'rgba(46,232,200,0.08)';
+      cx.fillRect(x,y,bW,44);
+      cx.strokeStyle=b?'rgba(255,180,60,0.6)':'rgba(46,232,200,0.3)';
+      cx.lineWidth=1; cx.strokeRect(x,y,bW,44);
+      cx.font=`bold 18px 'Space Mono',monospace`; cx.textAlign='center';
+      cx.fillStyle=b?'#ffb43c':'rgba(46,232,200,0.7)'; cx.fillText(String(b),x+bW/2,y+28);
+    });
+    cx.font="9px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(160,185,255,0.5)'; cx.fillText('01000001 — izolowana sekwencja bitów',W/2,112);
+    // Context cards
+    const activeCtx = Math.floor(t*0.3)%contexts.length;
+    contexts.forEach((c,i) => {
+      const y=130+i*40, isActive=i===activeCtx;
+      const alpha=isActive?1:0.3;
+      cx.fillStyle=`${c.color}${Math.round(alpha*0.15*255).toString(16).padStart(2,'0')}`;
+      cx.fillRect(40,y,W-80,32);
+      if(isActive){ cx.strokeStyle=c.color; cx.lineWidth=1.5; cx.strokeRect(40,y,W-80,32); }
+      cx.font=`${isActive?'bold ':''} 9px 'Space Mono',monospace`; cx.textAlign='left';
+      cx.fillStyle=`${c.color}${Math.round(alpha*255).toString(16).padStart(2,'0')}`;
+      cx.fillText(`Kontekst: ${c.name}`,52,y+13);
+      cx.textAlign='right';
+      cx.fillText(`Znaczenie: ${c.meaning}`,W-52,y+13);
+      cx.textAlign='center';
+      cx.fillStyle=`rgba(160,185,255,${alpha*0.5})`;
+      cx.fillText('→ ta sama sekwencja bitów',W/2,y+23);
+    });
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.6)';
+    cx.fillText('Informacja ≠ sekwencja bitów · Informacja = relacja sekwencji z kontekstem kodowania',W/2,H-10);
+    t+=0.025; requestAnimationFrame(draw);
+  }
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ SHANNON H(p) VIS (rozdXXI) ═══ */
+(function(){
+  const cv = G('shannonVisCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=340;
+  const cx = cv.getContext('2d');
+  let t=0;
+  function Hbit(p){ return(p<=0||p>=1)?0:-(p*Math.log2(p)+(1-p)*Math.log2(1-p)); }
+  function HN(probs){ return -probs.reduce((s,p)=>s+(p>0?p*Math.log2(p):0),0); }
+  function draw(){
+    const W=cv.width, H=cv.height;
+    const p0=G('shVp').value/100, N=+G('shVN').value;
+    G('shVpV').textContent=G('shVp').value+'%';
+    G('shVNV').textContent=N;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#06101e'; cx.fillRect(0,0,W,H);
+    const pad={l:55,r:120,t:30,b:45}, pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+    // Grid
+    for(let i=1;i<4;i++){ cx.beginPath(); cx.moveTo(pad.l,pad.t+ph*i/4); cx.lineTo(pad.l+pw,pad.t+ph*i/4); cx.strokeStyle='rgba(160,185,255,0.05)'; cx.lineWidth=0.5; cx.stroke(); }
+    // H curve (N=2)
+    cx.beginPath();
+    for(let i=0;i<=200;i++){ const p=i/200; cx.lineTo(pad.l+p*pw, pad.t+ph*(1-Hbit(p))); }
+    cx.strokeStyle='rgba(255,180,60,0.45)'; cx.lineWidth=2; cx.stroke();
+    // Current point
+    const px=pad.l+p0*pw, py=pad.t+ph*(1-Hbit(p0));
+    // Trail
+    cx.beginPath(); cx.arc(px,py,8,0,TAU);
+    const glow=cx.createRadialGradient(px,py,0,px,py,12);
+    glow.addColorStop(0,'rgba(255,180,60,0.5)'); glow.addColorStop(1,'rgba(255,180,60,0)');
+    cx.fillStyle=glow; cx.fill();
+    cx.beginPath(); cx.arc(px,py,5,0,TAU); cx.fillStyle='#ffb43c'; cx.fill();
+    // Vertical/horizontal dashes
+    cx.setLineDash([4,6]);
+    cx.beginPath(); cx.moveTo(px,pad.t+ph); cx.lineTo(px,py); cx.strokeStyle='rgba(255,180,60,0.25)'; cx.lineWidth=1; cx.stroke();
+    cx.beginPath(); cx.moveTo(pad.l,py); cx.lineTo(px,py); cx.strokeStyle='rgba(255,180,60,0.25)'; cx.stroke();
+    cx.setLineDash([]);
+    // Ĝ and Ĥ markers
+    cx.font="9px 'Space Mono',monospace"; cx.textAlign='center';
+    const midX=pad.l+pw/2;
+    cx.fillStyle='rgba(46,232,200,0.8)'; cx.fillText('Ĝ (max H)',midX,pad.t+14);
+    cx.fillStyle='rgba(248,96,96,0.7)'; cx.fillText('Ĥ (H→0)',pad.l+12,pad.t+ph-10);
+    cx.fillStyle='rgba(248,96,96,0.7)'; cx.fillText('Ĥ (H→0)',pad.l+pw-12,pad.t+ph-10);
+    // Info panel
+    const ix=pad.l+pw+8;
+    [['rgba(255,180,60,0.8)', `H = ${Hbit(p0).toFixed(3)} bit`],
+     ['rgba(255,180,60,0.5)', `p = ${p0.toFixed(2)}`],
+     ['rgba(46,232,200,0.5)', `I(1) = ${p0>0?(-Math.log2(p0)).toFixed(2):'∞'} bit`],
+     ['rgba(46,232,200,0.4)', `max H = log₂(${N})=${Math.log2(N).toFixed(2)}`]
+    ].forEach(([col,txt],i) => {
+      cx.font="9px 'Space Mono',monospace"; cx.textAlign='left'; cx.fillStyle=col;
+      cx.fillText(txt, ix, pad.t+20+i*18);
+    });
+    // Axes
+    cx.strokeStyle='rgba(255,180,60,0.2)'; cx.lineWidth=0.8;
+    cx.beginPath(); cx.moveTo(pad.l,pad.t); cx.lineTo(pad.l,pad.t+ph); cx.lineTo(pad.l+pw,pad.t+ph); cx.stroke();
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.6)'; cx.fillText('Entropia Shannona H(p) — akt rozróżnienia jako funkcja nieokreśloności',W/2,H-10);
+    t+=0.015; requestAnimationFrame(draw);
+  }
+  G('shVp').oninput=()=>{}; G('shVN').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ SOFAR CHANNEL (rozdXXI) ═══ */
+(function(){
+  const cv = G('sofarCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0;
+  function draw(){
+    const W=cv.width, H=cv.height;
+    const depth=G('sfDepth').value/100, pow=G('sfPow').value/100;
+    G('sfDepthV').textContent=Math.round(depth*100)+'%';
+    G('sfPowV').textContent=G('sfPow').value;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#030810'; cx.fillRect(0,0,W,H);
+    // Sound speed profile on left
+    const profW=60, profX=10;
+    for(let y=0;y<H;y++){
+      const z=y/H; // normalized depth
+      // SOFAR profile: minimum at depth 'depth'
+      const c=1+(z-depth)*(z-depth)*2 - 0.3*Math.exp(-((z-depth)*(z-depth))/0.01);
+      const norm=clamp((c-0.7)/0.6,0,1);
+      const r=Math.round(lerp(0,96,norm)), g2=Math.round(lerp(50,212,1-norm)), b=Math.round(lerp(200,248,1-norm));
+      cx.fillStyle=`rgb(${r},${g2},${b})`;
+      cx.fillRect(profX,y,profW,1);
+    }
+    // Profile label
+    cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(160,185,255,0.5)'; cx.fillText('c(z)',profX+profW/2,12);
+    // Ocean cross-section background
+    const oceanX=profX+profW+10;
+    const grad=cx.createLinearGradient(oceanX,0,oceanX,H);
+    grad.addColorStop(0,'rgba(10,30,80,0.8)');
+    grad.addColorStop(depth,'rgba(5,15,60,0.9)');
+    grad.addColorStop(1,'rgba(20,10,40,0.95)');
+    cx.fillStyle=grad; cx.fillRect(oceanX,0,W-oceanX,H);
+    // SOFAR channel highlight
+    const chanY=depth*H, chanH=H*0.12;
+    const chanGrad=cx.createLinearGradient(0,chanY-chanH,0,chanY+chanH);
+    chanGrad.addColorStop(0,'rgba(46,232,200,0)');
+    chanGrad.addColorStop(0.5,'rgba(46,232,200,0.07)');
+    chanGrad.addColorStop(1,'rgba(46,232,200,0)');
+    cx.fillStyle=chanGrad; cx.fillRect(oceanX,chanY-chanH,W-oceanX,chanH*2);
+    // Sound rays
+    const numRays=8;
+    for(let r=0;r<numRays;r++){
+      const startX=oceanX+20, startY=chanY;
+      const angle0=(r/numRays-0.5)*1.2*pow;
+      cx.beginPath(); cx.moveTo(startX,startY);
+      let x=startX, y=startY, angle=angle0;
+      for(let step=0;step<300;step++){
+        const z=y/H;
+        const c=1+(z-depth)*(z-depth)*2-0.3*Math.exp(-((z-depth)*(z-depth))/0.01);
+        const dcDz=(2*(z-depth)*2 + 0.6*(z-depth)*Math.exp(-((z-depth)*(z-depth))/0.01))*(1/H);
+        angle += dcDz*0.15*Math.sign(angle||1);
+        x+=2; y+=Math.sin(angle)*2;
+        if(y<0||y>H||x>W) break;
+        cx.lineTo(x,y);
+      }
+      const hue=175+r*8;
+      cx.strokeStyle=`hsla(${hue},70%,60%,${0.35*pow})`; cx.lineWidth=1.2; cx.stroke();
+    }
+    // Propagating signal pulse
+    const pulseX=oceanX+30+(t*2*pow)%(W-oceanX-40);
+    cx.beginPath(); cx.arc(pulseX,chanY,6+3*Math.sin(t*3),0,TAU);
+    const pulseGlow=cx.createRadialGradient(pulseX,chanY,0,pulseX,chanY,15);
+    pulseGlow.addColorStop(0,'rgba(255,180,60,0.9)'); pulseGlow.addColorStop(1,'rgba(255,180,60,0)');
+    cx.fillStyle=pulseGlow; cx.fill();
+    // Labels
+    cx.font="9px 'Space Mono',monospace"; cx.textAlign='left';
+    cx.fillStyle='rgba(46,232,200,0.7)'; cx.fillText(`Kanał SOFAR (z=${Math.round(depth*100)}%)`,oceanX+8,chanY-chanH-8);
+    cx.fillStyle='rgba(255,180,60,0.6)'; cx.fillText('● sygnał akustyczny',oceanX+8,H-10);
+    cx.fillStyle='rgba(46,232,200,0.4)'; cx.fillText('— promienie uwięzione w gradiencie',oceanX+130,H-10);
+    t+=0.04; requestAnimationFrame(draw);
+  }
+  G('sfDepth').oninput=()=>{}; G('sfPow').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ INFO FLOW (rozdXXI) ═══ */
+(function(){
+  const cv = G('infoFlowCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=340;
+  const cx = cv.getContext('2d');
+  let t=0;
+  function draw(){
+    const W=cv.width, H=cv.height;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    // Left: substancial model
+    const lW=W/2-20;
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(248,96,96,0.7)'; cx.fillText('Model substancjalny',lW/2,18);
+    for(let i=0;i<12;i++){
+      const x=20+Math.random()*20+(i%4)*70, y=40+Math.floor(i/4)*80;
+      // Each node independent
+      cx.beginPath(); cx.arc(x+30,y+30,12,0,TAU);
+      cx.fillStyle=`rgba(248,96,96,${0.4+0.3*Math.sin(t+i)})`; cx.fill();
+      cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+      cx.fillStyle='rgba(248,96,96,0.6)'; cx.fillText(`bit ${i+1}`,x+30,y+42);
+    }
+    cx.fillStyle='rgba(248,96,96,0.4)'; cx.fillText('informacja lokalna w węzłach',lW/2,H-25);
+    cx.fillStyle='rgba(248,96,96,0.25)'; cx.fillText('I_total = Σ I_i',lW/2,H-10);
+    // Divider
+    cx.beginPath(); cx.moveTo(W/2,20); cx.lineTo(W/2,H-20);
+    cx.strokeStyle='rgba(255,255,255,0.08)'; cx.lineWidth=1; cx.setLineDash([4,6]); cx.stroke(); cx.setLineDash([]);
+    // Right: relational model
+    const rx=W/2+10;
+    cx.fillStyle='rgba(46,232,200,0.7)'; cx.fillText('Model relacyjny',rx+(W-rx)/2,18);
+    // Nodes with connections
+    const rNodes=[];
+    for(let i=0;i<8;i++){
+      const a=i/8*TAU, r=(W-rx-40)*0.32;
+      rNodes.push({x:rx+(W-rx)/2+r*Math.cos(a), y:H/2+r*Math.sin(a)*0.7});
+    }
+    for(let i=0;i<rNodes.length;i++) for(let j=i+1;j<rNodes.length;j++){
+      const pulse=0.12+0.15*Math.sin(t*0.8+i*0.5+j*0.3);
+      cx.beginPath(); cx.moveTo(rNodes[i].x,rNodes[i].y); cx.lineTo(rNodes[j].x,rNodes[j].y);
+      cx.strokeStyle=`rgba(46,232,200,${pulse})`; cx.lineWidth=0.8; cx.stroke();
+    }
+    rNodes.forEach((n,i) => {
+      cx.beginPath(); cx.arc(n.x,n.y,8,0,TAU);
+      cx.fillStyle=`hsla(${185+i*20},70%,60%,0.85)`; cx.fill();
+    });
+    cx.fillStyle='rgba(46,232,200,0.4)'; cx.fillText('informacja w krawędziach relacji',rx+(W-rx)/2,H-25);
+    cx.fillStyle='rgba(46,232,200,0.25)'; cx.fillText('I_sieć ≠ Σ I_węzły',rx+(W-rx)/2,H-10);
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ UNITY BREAK (rozdXXII) ═══ */
+(function(){
+  const cv = G('unityCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0;
+  function draw(){
+    const W=cv.width, H=cv.height, act=G('ubAct').value/100, range=G('ubRange').value/100;
+    G('ubActV').textContent=G('ubAct').value;
+    G('ubRangeV').textContent=G('ubRange').value;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    const cx0=W/2, cy0=H/2, R=Math.min(W,H)*range*0.4;
+    // Background field (Ĝ)
+    for(let x=0;x<W;x+=20) for(let y=0;y<H;y+=20){
+      const dx=x-cx0, dy=y-cy0, dist=Math.sqrt(dx*dx+dy*dy);
+      const fieldAmt=Math.exp(-dist/(R*1.5))*act;
+      const a=0.03+fieldAmt*0.15;
+      cx.beginPath(); cx.arc(x,y,1.5+fieldAmt*3,0,TAU);
+      cx.fillStyle=`hsla(${185+fieldAmt*40},65%,55%,${a})`; cx.fill();
+    }
+    // Relational spokes
+    const numSpokes=12;
+    for(let s=0;s<numSpokes;s++){
+      const angle=s/numSpokes*TAU+t*0.08;
+      const x1=cx0+R*Math.cos(angle), y1=cy0+R*Math.sin(angle);
+      const alpha=0.1+0.25*Math.sin(t*0.5+s*0.7)*act;
+      cx.beginPath(); cx.moveTo(cx0,cy0); cx.lineTo(x1,y1);
+      cx.strokeStyle=`rgba(255,180,60,${alpha*act})`; cx.lineWidth=1; cx.stroke();
+      cx.beginPath(); cx.arc(x1,y1,4,0,TAU);
+      cx.fillStyle=`rgba(255,180,60,${0.4*act})`; cx.fill();
+    }
+    // Central unity node
+    const r=10+8*Math.sin(t*1.2)*act;
+    const glow=cx.createRadialGradient(cx0,cy0,0,cx0,cy0,r*3);
+    glow.addColorStop(0,`rgba(255,180,60,${0.7*act})`); glow.addColorStop(1,'rgba(255,180,60,0)');
+    cx.fillStyle=glow; cx.fillRect(cx0-r*3,cy0-r*3,r*6,r*6);
+    cx.beginPath(); cx.arc(cx0,cy0,r*act+4,0,TAU);
+    cx.fillStyle=`rgba(255,180,60,${0.5+0.4*act})`; cx.fill();
+    // Labels
+    cx.font="11px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle=`rgba(255,180,60,${0.5+0.5*act})`;
+    cx.fillText(act<0.1?'brak rozróżnienia':'„1" — lokalny akt rozróżnienia',cx0,cy0-r*act-20);
+    cx.font="9px 'Space Mono',monospace";
+    cx.fillStyle='rgba(46,232,200,0.5)';
+    cx.fillText(`Ĝ (pole potencjalności) · Ĥ (akt) · zasięg: ${Math.round(range*100)}%`,cx0,H-10);
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  G('ubAct').oninput=()=>{}; G('ubRange').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ COMPLEMENTARITY Ĝ/Ĥ (rozdXXII) ═══ */
+(function(){
+  const cv = G('compCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0;
+  function draw(){
+    const W=cv.width, H=cv.height, bal=G('compBal').value/100;
+    G('compBalV').textContent=G('compBal').value;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    // Ĝ field (left side)
+    const gAmt=1-bal;
+    const hAmt=bal;
+    cx.font="11px 'Space Mono',monospace"; cx.textAlign='left';
+    cx.fillStyle=`rgba(255,180,60,${0.3+0.6*gAmt})`;
+    cx.fillText(`Ĝ: ${Math.round(gAmt*100)}%`,20,22);
+    cx.textAlign='right';
+    cx.fillStyle=`rgba(176,136,248,${0.3+0.6*hAmt})`;
+    cx.fillText(`Ĥ: ${Math.round(hAmt*100)}%`,W-20,22);
+    // Wavefunction visualization
+    const cy0=H*0.55;
+    cx.beginPath();
+    for(let x=0;x<W;x++){
+      const pct=x/W;
+      // Superposition amplitude (high when Ĝ dominant)
+      const amp=(1-bal)*80+10;
+      const freq=1+(bal*3);
+      const y=cy0-amp*Math.sin(pct*TAU*freq+t);
+      x===0?cx.moveTo(x,y):cx.lineTo(x,y);
+    }
+    cx.strokeStyle=`rgba(46,232,200,${0.4+0.5*gAmt})`; cx.lineWidth=2; cx.stroke();
+    // If Ĥ dominant: collapse to single value
+    if(hAmt>0.4){
+      const colX=W/2;
+      const colH=(hAmt-0.4)/0.6*H*0.35;
+      cx.beginPath(); cx.moveTo(colX,cy0); cx.lineTo(colX,cy0-colH);
+      cx.strokeStyle=`rgba(176,136,248,${hAmt*0.8})`; cx.lineWidth=3; cx.stroke();
+      cx.beginPath(); cx.arc(colX,cy0-colH,8,0,TAU);
+      cx.fillStyle=`rgba(176,136,248,${hAmt*0.9})`; cx.fill();
+      cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+      cx.fillStyle=`rgba(176,136,248,${hAmt*0.8})`; cx.fillText('"1"',colX,cy0-colH-14);
+    }
+    // Uncertainty relation bar
+    const barY=H-40, barW=W-60;
+    cx.fillStyle='rgba(160,185,255,0.08)'; cx.fillRect(30,barY,barW,20);
+    cx.fillStyle='rgba(255,180,60,0.3)'; cx.fillRect(30,barY,barW*gAmt,20);
+    cx.fillStyle='rgba(176,136,248,0.3)'; cx.fillRect(30+barW*gAmt,barY,barW*hAmt,20);
+    cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(160,185,255,0.5)'; cx.fillText('[Ĝ, Ĥ] ≠ 0 — komplementarność zasady nieoznaczoności',W/2,H-10);
+    t+=0.025; requestAnimationFrame(draw);
+  }
+  G('compBal').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ RELATIONAL QM (rozdXXIII) ═══ */
+(function(){
+  const cv = G('relQMCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0, collapsed=-1;
+  const N=()=>+G('rqN').value;
+  function draw(){
+    const W=cv.width, H=cv.height, n=N(), coup=G('rqC').value/100;
+    G('rqNV').textContent=n; G('rqCV').textContent=G('rqC').value;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    const cx0=W/2, cy0=H/2, R=Math.min(W,H)*0.30;
+    // Auto-collapse occasionally
+    if(coup>0.7 && Math.random()<0.003) collapsed=Math.floor(Math.random()*n);
+    if(Math.random()<0.003) collapsed=-1;
+    // Draw states
+    for(let i=0;i<n;i++){
+      const angle=i/n*TAU-Math.PI/2;
+      const x=cx0+R*Math.cos(angle), y=cy0+R*Math.sin(angle);
+      const isCollapsed=collapsed===i;
+      const amp=isCollapsed?1:(collapsed===-1?Math.abs(Math.sin(t*0.4+i*0.8)):0.15);
+      const r=8+amp*14;
+      const glow=cx.createRadialGradient(x,y,0,x,y,r*1.8);
+      const hue=185+i*(240/n);
+      glow.addColorStop(0,`hsla(${hue},70%,60%,${amp*0.5})`);
+      glow.addColorStop(1,'rgba(0,0,0,0)');
+      cx.fillStyle=glow; cx.fillRect(x-r*2,y-r*2,r*4,r*4);
+      cx.beginPath(); cx.arc(x,y,r,0,TAU);
+      cx.fillStyle=`hsla(${hue},75%,60%,${0.4+amp*0.5})`; cx.fill();
+      if(isCollapsed){
+        cx.strokeStyle=`hsla(${hue},80%,65%,0.9)`; cx.lineWidth=2.5; cx.stroke();
+      }
+      cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+      cx.fillStyle=`hsla(${hue},80%,70%,${0.4+amp*0.5})`;
+      cx.fillText(`|ψ${i+1}⟩`, x, y+r+12);
+      cx.fillText(`|c|²=${(amp*amp/(collapsed===-1?0.5:1)).toFixed(2)}`, x, y+r+22);
+      // Line to center
+      cx.beginPath(); cx.moveTo(cx0,cy0); cx.lineTo(x,y);
+      cx.strokeStyle=`hsla(${hue},60%,55%,${amp*0.25})`; cx.lineWidth=1; cx.stroke();
+    }
+    // Central state label
+    cx.font="11px 'Space Mono',monospace"; cx.textAlign='center'; cx.textBaseline='middle';
+    cx.fillStyle=collapsed>=0?'rgba(176,136,248,0.9)':'rgba(46,232,200,0.9)';
+    cx.fillText(collapsed>=0?'Ĥ zaktualizowane':'|Ĝ⟩',cx0,cy0-8);
+    cx.font="9px 'Space Mono',monospace";
+    cx.fillStyle='rgba(160,185,255,0.5)';
+    cx.fillText(collapsed>=0?`"1" = |ψ${collapsed+1}⟩`:'Σcᵢ|ψᵢ⟩',cx0,cy0+8);
+    cx.textBaseline='alphabetic';
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.5)';
+    cx.fillText(collapsed>=0?'Jedność wyłoniona przez akt relacyjny':'Superpozycja — pole możliwych jedności',W/2,H-10);
+    t+=0.025; requestAnimationFrame(draw);
+  }
+  G('rqN').oninput=()=>{collapsed=-1;}; G('rqC').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ DECOHERENCE VIS (rozdXXIII) ═══ */
+(function(){
+  const cv = G('decoVisCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0, impacts=[];
+  function draw(){
+    const W=cv.width, H=cv.height, rate=G('dvRate').value/100;
+    G('dvRateV').textContent=G('dvRate').value;
+    cx.fillStyle='rgba(6,10,20,0.12)'; cx.fillRect(0,0,W,H);
+    // Central system
+    const cx0=W/2, cy0=H*0.35;
+    const rings=4;
+    for(let r=0;r<rings;r++){
+      cx.beginPath(); cx.arc(cx0,cy0,(r+1)*25+5*Math.sin(t*0.3+r),0,TAU);
+      cx.strokeStyle=`rgba(255,180,60,${0.15-r*0.03})`; cx.lineWidth=1; cx.stroke();
+    }
+    cx.beginPath(); cx.arc(cx0,cy0,14,0,TAU); cx.fillStyle='rgba(255,180,60,0.7)'; cx.fill();
+    cx.font="9px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.8)'; cx.fillText('układ S',cx0,cy0+26);
+    // Environment dots
+    for(let e=0;e<40;e++){
+      const ex=20+(Math.sin(e*2.3)*0.45+0.5)*(W-40);
+      const ey=H*0.55+(Math.cos(e*3.7)*0.35+0.5)*H*0.42;
+      cx.beginPath(); cx.arc(ex,ey,2.5,0,TAU);
+      cx.fillStyle=`rgba(46,232,200,${0.15+0.1*Math.sin(t+e)})`; cx.fill();
+    }
+    cx.font="9px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(46,232,200,0.35)'; cx.fillText('środowisko (cząstki, fotony, fluktuacje)',W/2,H-30);
+    // Add new impacts
+    if(Math.random()<rate*0.15){
+      const envIdx=Math.floor(Math.random()*40);
+      const ex=20+(Math.sin(envIdx*2.3)*0.45+0.5)*(W-40);
+      const ey=H*0.55+(Math.cos(envIdx*3.7)*0.35+0.5)*H*0.42;
+      impacts.push({x:ex,y:ey,x0:cx0,y0:cy0,life:1,zakar:Math.random()<0.5});
+    }
+    impacts = impacts.filter(imp => imp.life>0);
+    impacts.forEach(imp => {
+      imp.life -= 0.025;
+      const frac=1-imp.life;
+      const ix=lerp(imp.x0,imp.x,frac);
+      const iy=lerp(imp.y0,imp.y,frac);
+      const col=imp.zakar?'176,136,248':'46,232,200';
+      cx.beginPath(); cx.arc(ix,iy,3,0,TAU);
+      cx.fillStyle=`rgba(${col},${imp.life*0.9})`; cx.fill();
+      if(imp.life<0.2){
+        cx.beginPath(); cx.arc(imp.x,imp.y,12*(1-imp.life/0.2),0,TAU);
+        cx.strokeStyle=`rgba(${col},${imp.life*2})`; cx.lineWidth=1.5; cx.stroke();
+        cx.font="7px 'Space Mono',monospace"; cx.textAlign='center';
+        cx.fillStyle=`rgba(${col},${imp.life*3})`;
+        cx.fillText('zakar',imp.x,imp.y-14);
+      }
+    });
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.6)';
+    cx.fillText(`Dekoherencja = akty rozróżnienia zapisywane w środowisku (zakar) · tempo: ${G('dvRate').value}`,W/2,H-10);
+    t+=0.03; requestAnimationFrame(draw);
+  }
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ MULTI OBSERVER (rozdXXIII) ═══ */
+(function(){
+  const cv = G('multiObsCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=360;
+  const cx = cv.getContext('2d');
+  let t=0;
+  const outcomes=['↑','→','↗','↙','←'];
+  const cols=['#2ee8c8','#ffb43c','#b088f8','#f86060','#7ae86e'];
+  function draw(){
+    const W=cv.width, H=cv.height, N=+G('moN').value;
+    G('moNV').textContent=N;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    const cx0=W/2, cy0=H/2;
+    // Central system
+    const rings=3;
+    for(let r=0;r<rings;r++){
+      cx.beginPath(); cx.arc(cx0,cy0,(r+1)*22+4*Math.sin(t*0.4+r),0,TAU);
+      cx.strokeStyle=`rgba(255,180,60,${0.2-r*0.05})`; cx.lineWidth=1; cx.stroke();
+    }
+    cx.beginPath(); cx.arc(cx0,cy0,18,0,TAU);
+    const cGlow=cx.createRadialGradient(cx0,cy0,0,cx0,cy0,18);
+    cGlow.addColorStop(0,'rgba(255,180,60,0.6)'); cGlow.addColorStop(1,'rgba(255,180,60,0.1)');
+    cx.fillStyle=cGlow; cx.fill();
+    cx.font="11px 'Space Mono',monospace"; cx.textAlign='center'; cx.textBaseline='middle';
+    cx.fillStyle='rgba(255,180,60,0.9)'; cx.fillText('S',cx0,cy0);
+    cx.textBaseline='alphabetic';
+    // Observers
+    const R=Math.min(W,H)*0.32;
+    for(let i=0;i<N;i++){
+      const a=-Math.PI/2+i/N*TAU;
+      const ox=cx0+R*Math.cos(a), oy=cy0+R*Math.sin(a);
+      // Relation line
+      const pulse=0.2+0.2*Math.sin(t*0.6+i*1.2);
+      cx.beginPath(); cx.moveTo(cx0+20*Math.cos(a),cy0+20*Math.sin(a)); cx.lineTo(ox-20*Math.cos(a),oy-20*Math.sin(a));
+      cx.strokeStyle=`${cols[i%5].slice(0,7)}${Math.round(pulse*255).toString(16).padStart(2,'0')}`;
+      cx.lineWidth=1.5; cx.setLineDash([4,5]); cx.stroke(); cx.setLineDash([]);
+      // Observer node
+      cx.beginPath(); cx.arc(ox,oy,20,0,TAU);
+      cx.fillStyle=`${cols[i%5]}22`; cx.fill();
+      cx.strokeStyle=cols[i%5]; cx.lineWidth=1.5; cx.stroke();
+      cx.font="10px 'Space Mono',monospace"; cx.textAlign='center'; cx.textBaseline='middle';
+      cx.fillStyle=cols[i%5]; cx.fillText(`O${i+1}`,ox,oy-4);
+      cx.font="13px serif"; cx.fillText(outcomes[i%5],ox,oy+8);
+      cx.textBaseline='alphabetic';
+      cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+      cx.fillStyle=`${cols[i%5]}88`; cx.fillText(`|ψ_{S|O${i+1}}⟩`,ox,oy+28);
+    }
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(160,185,255,0.5)';
+    cx.fillText('Każdy obserwator widzi inną jedność — wszystkie równie prawdziwe (Rovelli)',W/2,H-10);
+    t+=0.022; requestAnimationFrame(draw);
+  }
+  G('moN').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ CATEGORY NETWORK (rozdXXIV) ═══ */
+(function(){
+  const cv = G('catCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=380;
+  const cx = cv.getContext('2d');
+  let t=0, nodes=[], edges=[], selectedNode=-1;
+  function rebuild(){
+    const N=+G('catN').value, D=G('catD').value/100;
+    G('catNV').textContent=N; G('catDV').textContent=G('catD').value+'%';
+    const W=cv.width, H=cv.height, R=Math.min(W,H)*0.32;
+    nodes=Array.from({length:N},(_,i)=>{
+      const a=i/N*TAU-Math.PI/2;
+      return {x:W/2+R*Math.cos(a), y:H/2+R*Math.sin(a)*0.75, h:i/N*300+160};
+    });
+    edges=[];
+    for(let i=0;i<N;i++){
+      edges.push({a:i,b:i,self:true}); // identity morphism
+      for(let j=0;j<N;j++) if(i!==j&&Math.random()<D) edges.push({a:i,b:j,self:false});
+    }
+  }
+  rebuild();
+  cv.addEventListener('click', e => {
+    const rect=cv.getBoundingClientRect(), mx=e.clientX-rect.left, my=e.clientY-rect.top;
+    const scale=cv.width/rect.width;
+    const nmx=mx*scale, nmy=my*scale;
+    let found=-1;
+    nodes.forEach((n,i)=>{ if(Math.sqrt((n.x-nmx)**2+(n.y-nmy)**2)<16) found=i; });
+    selectedNode = found===selectedNode ? -1 : found;
+  });
+  function draw(){
+    const W=cv.width, H=cv.height;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    nodes.forEach(n=>{ n.x+=Math.sin(t*0.2+n.h*0.01)*0.3; n.y+=Math.cos(t*0.18+n.h*0.01)*0.3; });
+    edges.filter(e=>!e.self).forEach(e=>{
+      if(e.a===e.b) return;
+      const a=nodes[e.a],b=nodes[e.b];
+      const isHom=selectedNode>=0&&(e.b===selectedNode);
+      const pulse=isHom?0.7:0.08+0.06*Math.sin(t+e.a*0.5);
+      const col=isHom?nodes[e.b].h:185;
+      cx.beginPath(); cx.moveTo(a.x,a.y); cx.lineTo(b.x,b.y);
+      cx.strokeStyle=`hsla(${col},70%,60%,${pulse})`; cx.lineWidth=isHom?2:0.7; cx.stroke();
+      // Arrow
+      if(isHom){
+        const dx=b.x-a.x, dy=b.y-a.y, len=Math.sqrt(dx*dx+dy*dy);
+        const nx=dx/len, ny=dy/len;
+        const ax2=b.x-nx*18, ay2=b.y-ny*18;
+        cx.beginPath(); cx.moveTo(ax2-ny*5,ay2+nx*5); cx.lineTo(b.x-nx*12,b.y-ny*12); cx.lineTo(ax2+ny*5,ay2-nx*5);
+        cx.strokeStyle=`hsla(${col},70%,65%,0.8)`; cx.lineWidth=1.5; cx.stroke();
+      }
+    });
+    nodes.forEach((n,i)=>{
+      const isSelected=selectedNode===i;
+      const r=isSelected?16:10;
+      const glow=cx.createRadialGradient(n.x,n.y,0,n.x,n.y,r*2);
+      glow.addColorStop(0,`hsla(${n.h},75%,60%,${isSelected?0.5:0.15})`);
+      glow.addColorStop(1,'rgba(0,0,0,0)');
+      cx.fillStyle=glow; cx.fillRect(n.x-r*2,n.y-r*2,r*4,r*4);
+      cx.beginPath(); cx.arc(n.x,n.y,r,0,TAU);
+      cx.fillStyle=`hsla(${n.h},75%,60%,${isSelected?0.95:0.7})`; cx.fill();
+      if(isSelected){ cx.strokeStyle=`hsla(${n.h},80%,70%,0.9)`; cx.lineWidth=2; cx.stroke(); }
+      cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+      cx.fillStyle=`hsla(${n.h},80%,75%,0.7)`; cx.fillText(`A${i+1}`,n.x,n.y+r+12);
+    });
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(255,180,60,0.55)';
+    cx.fillText(selectedNode>=0?`Hom(−, A${selectedNode+1}) — wszystkie morfizmy do węzła (tożsamość przez relacje)`:'Kliknij węzeł aby zobaczyć jego Hom(−, A) — lemat Yonedy w akcji',W/2,H-10);
+    t+=0.018; requestAnimationFrame(draw);
+  }
+  G('catN').oninput=rebuild; G('catD').oninput=rebuild;
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ YONEDA VIS (rozdXXIV) ═══ */
+(function(){
+  const cv = G('yonedaCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=380;
+  const cx = cv.getContext('2d');
+  let t=0;
+  // Three objects with defined Hom patterns
+  const objs=[
+    {x:0.2,y:0.35,label:'A',col:'#ffb43c',hom:[1,0,1,0,1,1]},
+    {x:0.5,y:0.6,label:'B',col:'#2ee8c8',hom:[1,1,0,1,0,1]},
+    {x:0.8,y:0.35,label:'C',col:'#b088f8',hom:[0,1,1,1,1,0]},
+  ];
+  const others=[
+    {x:0.2,y:0.8,label:'X₁'},{x:0.5,y:0.15,label:'X₂'},
+    {x:0.8,y:0.8,label:'X₃'},{x:0.05,y:0.6,label:'X₄'},
+    {x:0.95,y:0.6,label:'X₅'},{x:0.5,y:0.95,label:'X₆'},
+  ];
+  function draw(){
+    const W=cv.width, H=cv.height;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    // Draw morphisms from Xᵢ to each object
+    objs.forEach((obj,oi) => {
+      others.forEach((x,xi) => {
+        if(!obj.hom[xi]) return;
+        const ox=obj.x*W, oy=obj.y*H, xx=x.x*W, xy=x.y*H;
+        const pulse=0.1+0.12*Math.sin(t*0.5+oi*1.1+xi*0.7);
+        cx.beginPath(); cx.moveTo(xx,xy); cx.lineTo(ox,oy);
+        cx.strokeStyle=`${obj.col}${Math.round(pulse*255).toString(16).padStart(2,'0')}`;
+        cx.lineWidth=0.8; cx.stroke();
+      });
+    });
+    // Source objects Xᵢ
+    others.forEach(x => {
+      cx.beginPath(); cx.arc(x.x*W,x.y*H,6,0,TAU);
+      cx.fillStyle='rgba(160,185,255,0.35)'; cx.fill();
+      cx.font="8px 'Space Mono',monospace"; cx.textAlign='center';
+      cx.fillStyle='rgba(160,185,255,0.55)'; cx.fillText(x.label,x.x*W,x.y*H+16);
+    });
+    // Main objects
+    objs.forEach(obj => {
+      const ox=obj.x*W, oy=obj.y*H;
+      const glow=cx.createRadialGradient(ox,oy,0,ox,oy,22);
+      glow.addColorStop(0,`${obj.col}44`); glow.addColorStop(1,'rgba(0,0,0,0)');
+      cx.fillStyle=glow; cx.fillRect(ox-25,oy-25,50,50);
+      cx.beginPath(); cx.arc(ox,oy,15,0,TAU);
+      cx.fillStyle=obj.col+'99'; cx.fill();
+      cx.strokeStyle=obj.col; cx.lineWidth=2; cx.stroke();
+      cx.font="bold 11px 'Space Mono',monospace"; cx.textAlign='center'; cx.textBaseline='middle';
+      cx.fillStyle=obj.col; cx.fillText(obj.label,ox,oy);
+      cx.textBaseline='alphabetic';
+      const homStr=`Hom(−,${obj.label}): ${obj.hom.filter(Boolean).length}/${others.length}`;
+      cx.font="8px 'Space Mono',monospace"; cx.fillStyle=`${obj.col}88`; cx.fillText(homStr,ox,oy+26);
+    });
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(46,232,200,0.5)';
+    cx.fillText('A ≅ Hom(−, A) — tożsamość obiektu = jego wzorzec morfizmów, nie substancja',W/2,H-10);
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ EMERGENCE VIS (rozdXXV) ═══ */
+(function(){
+  const cv = G('emergeCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=380;
+  const cx = cv.getContext('2d');
+  let pts=[], t=0;
+  function rebuild(){
+    const N=+G('emN').value;
+    G('emNV').textContent=N;
+    const W=cv.width, H=cv.height;
+    pts=Array.from({length:N},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      vx:(Math.random()-0.5)*1.2, vy:(Math.random()-0.5)*1.2,
+      h:Math.random()*60+165
+    }));
+  }
+  rebuild();
+  function draw(){
+    const W=cv.width, H=cv.height, rStr=G('emR').value/100;
+    G('emRV').textContent=G('emR').value;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    // Left half: no relations (substancial)
+    const midX=W/2-10;
+    pts.slice(0, Math.floor(pts.length/2)).forEach(p=>{
+      p.x+=p.vx*0.5; p.y+=p.vy*0.5;
+      if(p.x<10||p.x>midX-10) p.vx*=-1;
+      if(p.y<10||p.y>H-10) p.vy*=-1;
+      cx.beginPath(); cx.arc(p.x,p.y,4,0,TAU);
+      cx.fillStyle=`rgba(248,96,96,0.6)`; cx.fill();
+    });
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(248,96,96,0.6)'; cx.fillText('agregat — suma elementów',midX/2,18);
+    // Divider
+    cx.beginPath(); cx.moveTo(W/2,0); cx.lineTo(W/2,H);
+    cx.strokeStyle='rgba(255,255,255,0.08)'; cx.lineWidth=1; cx.setLineDash([4,6]); cx.stroke(); cx.setLineDash([]);
+    // Right half: with relations (emergent)
+    const rPts=pts.slice(Math.floor(pts.length/2));
+    const rx0=W/2+10;
+    rPts.forEach(p=>{
+      // Attraction towards cluster center
+      const cx2=rPts.reduce((s,q)=>s+q.x,0)/rPts.length;
+      const cy2=rPts.reduce((s,q)=>s+q.y,0)/rPts.length;
+      p.vx+=(cx2-p.x)*rStr*0.003;
+      p.vy+=(cy2-p.y)*rStr*0.003;
+      p.vx*=0.96; p.vy*=0.96;
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<rx0+10) p.x=rx0+10; if(p.x>W-10) p.x=W-10;
+      if(p.y<10) p.y=10; if(p.y>H-10) p.y=H-10;
+    });
+    // Relation lines
+    rPts.forEach((p,i)=>rPts.slice(i+1).forEach(q=>{
+      const dx=p.x-q.x, dy=p.y-q.y, dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<80){
+        const a=(1-dist/80)*rStr*0.4;
+        cx.beginPath(); cx.moveTo(p.x,p.y); cx.lineTo(q.x,q.y);
+        cx.strokeStyle=`rgba(46,232,200,${a})`; cx.lineWidth=0.8; cx.stroke();
+      }
+    }));
+    rPts.forEach(p=>{
+      cx.beginPath(); cx.arc(p.x,p.y,4,0,TAU);
+      cx.fillStyle=`hsla(${p.h},70%,60%,0.8)`; cx.fill();
+    });
+    cx.fillStyle='rgba(46,232,200,0.6)'; cx.fillText('sieć relacji — emergentna całość',rx0+(W-rx0)/2,18);
+    cx.fillStyle='rgba(46,232,200,0.35)'; cx.fillText('własności ≠ Σ elementów',rx0+(W-rx0)/2,30);
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  G('emN').oninput=rebuild; G('emR').oninput=()=>{};
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ COSMIC WEB (rozdXXV) ═══ */
+(function(){
+  const cv = G('cosmicCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=380;
+  const cx = cv.getContext('2d');
+  let particles=[], t=0;
+  function init(){
+    const N=600, W=cv.width, H=cv.height;
+    particles=Array.from({length:N},()=>({
+      x:Math.random()*W, y:Math.random()*H,
+      m:Math.random()*2+0.5, vx:0, vy:0
+    }));
+  }
+  init();
+  let stepCount=0;
+  function step(G2){
+    const N=particles.length;
+    // Simplified N-body (only nearby particles for performance)
+    particles.forEach((p,i)=>{
+      let fx=0, fy=0;
+      for(let j=Math.max(0,i-20);j<Math.min(N,i+20);j++){
+        if(i===j) continue;
+        const q=particles[j];
+        const dx=q.x-p.x, dy=q.y-p.y;
+        const dist2=dx*dx+dy*dy+0.01;
+        const force=G2*p.m*q.m/(dist2);
+        fx+=force*dx/Math.sqrt(dist2);
+        fy+=force*dy/Math.sqrt(dist2);
+      }
+      p.vx=(p.vx+fx)*0.95; p.vy=(p.vy+fy)*0.95;
+      p.x+=p.vx; p.y+=p.vy;
+      const W2=cv.width, H2=cv.height;
+      if(p.x<0) p.x+=W2; if(p.x>W2) p.x-=W2;
+      if(p.y<0) p.y+=H2; if(p.y>H2) p.y-=H2;
+    });
+  }
+  function draw(){
+    const W=cv.width, H=cv.height, Gv=G('cwG').value/100, iters=+G('cwI').value;
+    G('cwGV').textContent=G('cwG').value; G('cwIV').textContent=iters;
+    cx.fillStyle='rgba(3,6,15,0.35)'; cx.fillRect(0,0,W,H);
+    // Run physics steps
+    step(Gv*0.006);
+    // Draw particles
+    particles.forEach(p=>{
+      const alpha=0.15+p.m*0.2;
+      cx.beginPath(); cx.arc(p.x,p.y,p.m*0.8,0,TAU);
+      cx.fillStyle=`rgba(46,232,200,${alpha})`; cx.fill();
+    });
+    // Draw filaments (connections between nearby particles)
+    for(let i=0;i<particles.length;i+=3){
+      for(let j=i+1;j<Math.min(i+8,particles.length);j++){
+        const p=particles[i], q=particles[j];
+        const dx=p.x-q.x, dy=p.y-q.y, dist=Math.sqrt(dx*dx+dy*dy);
+        if(dist<40){
+          cx.beginPath(); cx.moveTo(p.x,p.y); cx.lineTo(q.x,q.y);
+          cx.strokeStyle=`rgba(255,180,60,${(1-dist/40)*0.15})`; cx.lineWidth=0.5; cx.stroke();
+        }
+      }
+    }
+    cx.font="10px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(46,232,200,0.5)';
+    cx.fillText(`Sieć kosmiczna — emergencja z grawitacji (Ĝ) · ${particles.length} węzłów galaktycznych`,W/2,H-10);
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  lazyCanvas(cv, draw);
+})();
+
+/* ═══ SYNTHESIS XX-XXV (rozdXXV) ═══ */
+(function(){
+  const cv = G('synthCanvas'); if(!cv) return;
+  cv.width=cv.offsetWidth||800; cv.height=400;
+  const cx = cv.getContext('2d');
+  let t=0;
+  const layers=[
+    {lbl:'Rozdz. XX · Frege / Peano', sub:'Jedność = akt rozróżnienia (nie obiekt)', col:'#ffb43c'},
+    {lbl:'Rozdz. XXI · Shannon', sub:'Informacja = różnica (nie treść)', col:'#2ee8c8'},
+    {lbl:'Rozdz. XXII · Higgs / TERJ', sub:'„1" = Ĥ(Ĝ) złamanie symetrii', col:'#60d4f8'},
+    {lbl:'Rozdz. XXIII · Rovelli', sub:'Stan kwantowy = opis relacji', col:'#b088f8'},
+    {lbl:'Rozdz. XXIV · Yoneda', sub:'Obiekt ≅ Hom(−, A) węzeł morfizmów', col:'#7ae86e'},
+    {lbl:'Rozdz. XXV · Prigogine', sub:'Całość > suma · emergencja relacyjna', col:'#f86060'},
+  ];
+  function draw(){
+    const W=cv.width, H=cv.height;
+    cx.clearRect(0,0,W,H); cx.fillStyle='#060c1a'; cx.fillRect(0,0,W,H);
+    const N=layers.length;
+    const rowH=(H-60)/N;
+    layers.forEach((lv,i)=>{
+      const y=20+i*rowH;
+      const pulse=0.5+0.5*Math.sin(t*0.3+i*0.9);
+      const bw=(W-80)*(0.6+0.1*(i/N));
+      const bx=(W-bw)/2;
+      if(i>0){
+        const cx0=W/2;
+        cx.beginPath(); cx.moveTo(cx0-8,y-5); cx.lineTo(cx0,y-1); cx.lineTo(cx0+8,y-5);
+        cx.strokeStyle=`rgba(160,185,255,${0.2+0.15*pulse})`; cx.lineWidth=1; cx.stroke();
+      }
+      cx.fillStyle=`${lv.col}${Math.round((0.1+0.05*pulse)*255).toString(16).padStart(2,'0')}`;
+      cx.beginPath(); cx.roundRect(bx,y,bw,rowH-4,4); cx.fill();
+      cx.strokeStyle=`${lv.col}${Math.round((0.35+0.2*pulse)*255).toString(16).padStart(2,'0')}`;
+      cx.lineWidth=1.2; cx.beginPath(); cx.roundRect(bx,y,bw,rowH-4,4); cx.stroke();
+      cx.fillRect(bx,y,3,rowH-4);
+      const midY=y+(rowH-4)/2;
+      cx.font='bold 9px Space Mono,monospace'; cx.textAlign='left';
+      cx.fillStyle=lv.col; cx.fillText(lv.lbl,bx+14,midY-4);
+      cx.font='8px Space Mono,monospace';
+      cx.fillStyle=lv.col+'99'; cx.fillText(lv.sub,bx+14,midY+9);
+    });
+    // Postulate
+    cx.font="9px 'Space Mono',monospace"; cx.textAlign='center';
+    cx.fillStyle='rgba(46,232,200,0.7)';
+    cx.fillText('TERJ: ℛ = Ĝ ⊕ Ĥ · relacja jest ontologicznie pierwotna wobec substancji',W/2,H-10);
+    t+=0.02; requestAnimationFrame(draw);
+  }
+  lazyCanvas(cv, draw);
+})();
+</script>
+</body>
+</html>
